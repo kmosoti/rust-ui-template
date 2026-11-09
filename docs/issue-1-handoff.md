@@ -1,3 +1,5 @@
+> Historical foundation handoff: the browser slice is now implemented; see [O-0003](../knowledge/observations/O-0003-csr-browser.md) for current evidence and the README for build commands. The subsequent native and verification slices remain open.
+
 # Issue #1: implementation handoff
 
 This is the first implementation slice, not the completed CSR release. Work is

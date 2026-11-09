@@ -28,12 +28,16 @@ jobs:
         run: |
           rustc --version --verbose
           cargo --version
+      - name: Fetch locked dependencies
+        run: cargo fetch --locked
       - name: Format
         run: cargo fmt --all -- --check
       - name: Unit, bounded-sequence, and documentation tests
         run: cargo test --workspace --locked --offline
       - name: Clippy
         run: cargo clippy --workspace --all-targets --locked --offline -- -D warnings
+      - name: CSR WASM clippy
+        run: cargo clippy -p client --target wasm32-unknown-unknown --locked --offline -- -D warnings
       - name: Core WASM compatibility
         run: cargo check -p app-core --target wasm32-unknown-unknown --locked --offline
       - name: Actual dependency boundary

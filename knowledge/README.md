@@ -42,6 +42,9 @@ Provenance tracking **must never slow down agentic work**:
 | [D-0002 · Latest-request-wins core](decisions/D-0002-latest-request-core.md) | `agent` | `false` | Concrete state contract, adapter ownership, limits, and alternatives for the first implementation slice |
 | [O-0002 · Core implementation evidence](observations/O-0002-core-foundation.md) | `agent` | `false` | Local checks, exact CI source/run, passed Rust tests, and untested UI/platform boundaries |
 
+| [D-0003 · CSR browser adapter](decisions/D-0003-csr-browser-adapter.md) | `agent` | `false` | Owner-scoped tasks, shared UI, static assets and fragment navigation |
+| [O-0003 · CSR browser evidence](observations/O-0003-csr-browser.md) | `agent` | `false` | Local and CI evidence for the browser slice and its limits |
+
 ## Record protocol
 
 1. Use a stable ID, a descriptive filename, and front matter:
