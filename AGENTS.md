@@ -25,7 +25,9 @@ Scope: the entire repository across all issues, milestones, and refactors. Keep 
 
 ## Finish responsibly
 
-- Follow the commit template ([`.gitmessage`](.gitmessage)), PR template ([`.github/pull_request_template.md`](.github/pull_request_template.md)), and stacked PR workflow in [CONTRIBUTING.md](CONTRIBUTING.md).
+- Prefer **Jujutsu (`jj`) in colocated mode (`jj git init --colocate`)** for local changes and stacked PRs so mid-stack edits automatically rebase descendant layers (`git rebase --update-refs` is the supported fallback).
+- Follow the commit template ([`.github/.gitmessage`](.github/.gitmessage)), PR template ([`.github/pull_request_template.md`](.github/pull_request_template.md)), and stacked PR workflow in [CONTRIBUTING.md](CONTRIBUTING.md).
+- **Cross-model review & stack merge ownership:** do not self-merge unreviewed feature stacks. Delegate stack review and bottom-up landing into `main` (`gh pr merge --rebase --delete-branch`) to an independent agent from an **alternative model family**; if a cross-family model is unavailable, use an independent agent with **higher reasoning effort**.
 - `main` requires rebased PRs (linear history, no merge commits) with all review conversations resolved.
 - Run relevant checks, record exactly what was run and what could not be run, and update affected docs and knowledge records.
 - Never claim a platform is supported or code is formally verified without the corresponding reproducible evidence.

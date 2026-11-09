@@ -11,9 +11,10 @@ Use this loop for every unit of work, regardless of which issue or release phase
 1. **Orient from actual repository state**
    - Read [`README.md`](README.md), [`docs/architecture.md`](docs/architecture.md), [`AGENTS.md`](AGENTS.md), and [`knowledge/README.md`](knowledge/README.md).
    - Inspect the current working tree, open GitHub Issues, and existing PRs. Never assume a planned crate, deployment profile, or platform target already exists until verified in the tree.
-2. **Slice into a focused branch or stacked PR chain**
+2. **Slice into a focused change or stacked PR chain (`jj` preferred)**
    - Keep each PR small, coherent, and independently testable.
-   - When a task spans multiple layers (for example, `app-core` state transitions -> `app-ui` components -> client/Tauri adapter -> integration tests), use **stacked PRs** (see [Section 2](#2-stacked-pr-workflow)).
+   - **Jujutsu (`jj`) in colocated mode (`jj git init --colocate`) is the preferred development method.** `jj` treats changes as first-class objects and automatically rebases descendant commits whenever an earlier layer in a stack is edited. Standard `git` (`git rebase --update-refs`) remains fully supported as a fallback.
+   - When a task spans multiple layers (for example, `app-core` state transitions -> `app-ui` components -> client/Tauri adapter -> integration tests), use **stacked PRs** (see [Section 2](#2-preferred-vcs-jujutsu-jj-and-stacked-pr-workflow)).
 3. **Implement within architectural boundaries**
    - **Pure core (`app-core`):** domain state and transitions only; zero UI, browser (`web-sys`), or host (`tauri`) dependencies.
    - **Shared UI (`app-ui`):** Leptos components and Tailwind 4 utility classes; single owner of DOM updates.
@@ -27,18 +28,34 @@ Use this loop for every unit of work, regardless of which issue or release phase
    - Record new decisions (`D-`), research (`R-`), and dated empirical observations (`O-`) in [`knowledge/`](knowledge/README.md) with provenance (`added_by: agent | human | mixed`) and ratification state (`human_ratified: true | false`).
    - **Do not block agentic work on human ratification:** agents record `added_by: agent` and `human_ratified: false` and continue immediately (see [Section 5](#5-knowledge-base-and-ratification-contract)).
    - Update [`docs/`](docs/architecture.md) only when stable architectural contracts, boundaries, or developer workflows change.
-6. **Rebase, resolve conversations, and land**
-   - `main` is protected: every change lands through a **rebased PR** (linear history, no merge commits) with **all review conversations resolved**.
+6. **Independent cross-model review, rebase, and land**
+   - Hand off the PR or stacked PR chain to an **independent reviewing agent** from an **alternative model family** (or a **higher-reasoning-effort** agent if no cross-family model is available).
+   - The reviewing agent audits the stack, resolves review conversations, and owns merging the stack bottom-up into `main` via **Rebase and merge** (linear history, no merge commits).
 
 ---
 
-## 2. Stacked PR Workflow
+## 2. Preferred VCS (`jj`) and Stacked PR Workflow
 
-Use stacked PRs whenever a feature or milestone is too large for a single small diff or naturally decomposes into sequential layers.
+### Why Jujutsu (`jj`) is the preferred development method
 
-### Branch topology and naming
+Colocated **Jujutsu (`jj`)** (`jj git init --colocate`) is the recommended local workflow for both humans and coding agents:
 
-Name branches with an explicit stack prefix and ordinal so review order is obvious:
+1. **Zero-friction stacked PRs:** Editing an earlier commit (`jj edit <change-id>` or `jj squash --into <change-id>`) **automatically rebases every descendant commit** in the stack. No manual `git rebase --update-refs` choreography is needed after review fixes.
+2. **Working-copy-as-a-commit:** There is no separate staging area or dirty-tree stash juggling when switching between stack layers.
+3. **First-class conflicts and operation log:** Conflicts can be committed and resolved layer by layer, and any mistake can be undone instantaneously with `jj undo` / `jj op restore`.
+4. **Full Git & GitHub interoperability:** Colocated mode shares the `.git` repository in place—`gh`, Cargo, IDE integrations, and GitHub's rebase-only linear-history branch protection work unchanged, with `jj` bookmarks mapping 1:1 to Git branches and `jj git push` enforcing `--force-with-lease`-equivalent safety checks automatically.
+
+Initialize `jj` once in an existing Git clone:
+
+```bash
+jj git init --colocate
+```
+
+*(Note: `.jj/` is local to your clone and ignored by Git automatically.)*
+
+### Branch / bookmark topology and naming
+
+Use stacked PRs whenever a feature or milestone is too large for a single small diff or naturally decomposes into sequential layers. Name bookmarks/branches with an explicit stack prefix and ordinal so review order is obvious:
 
 ```text
 main
@@ -49,79 +66,135 @@ main
 
 Single-PR changes use `<type>/<topic>` (for example `feat/core-reducer`, `fix/tailwind-source-scan`, `docs/workflow-guides`).
 
-### Creating a stack
+### Creating a stack (`jj` preferred)
 
-1. Start the base layer from an up-to-date `main`:
+1. Fetch and start the first layer on top of `main@origin`:
+   ```bash
+   jj git fetch
+   jj new main@origin -m "feat(core): ..."
+   # implement and verify layer 1
+   jj bookmark create stack/<topic>/01-core -r @
+   ```
+2. Stack subsequent layers directly on top:
+   ```bash
+   jj new -m "feat(ui): ..."
+   # implement and verify layer 2
+   jj bookmark create stack/<topic>/02-ui -r @
+
+   jj new -m "feat(client): ..."
+   # implement and verify layer 3
+   jj bookmark create stack/<topic>/03-adapter -r @
+   ```
+3. Push all stack bookmarks to `origin`:
+   ```bash
+   jj git push \
+     --bookmark stack/<topic>/01-core \
+     --bookmark stack/<topic>/02-ui \
+     --bookmark stack/<topic>/03-adapter
+   ```
+4. Open each PR against its **immediate parent branch** so GitHub shows only that layer's diff:
+   - PR 1: `base: main` <- `compare: stack/<topic>/01-core`
+   - PR 2: `base: stack/<topic>/01-core` <- `compare: stack/<topic>/02-ui`
+   - PR 3: `base: stack/<topic>/02-ui` <- `compare: stack/<topic>/03-adapter`
+5. Fill in the **Stack Position** section in every PR description so reviewers can navigate the chain.
+
+### Updating a stack in `jj` after review feedback or `main` updates
+
+- **To edit an earlier layer in the stack:**
+  ```bash
+  jj edit stack/<topic>/01-core
+  # modify files; @ is now 01-core and 02-ui / 03-adapter are automatically rebased on top
+  ```
+- **To rebase the entire stack onto the latest `main`:**
+  ```bash
+  jj git fetch
+  jj rebase -s stack/<topic>/01-core -d main@origin
+  ```
+- **Verify each layer and push:**
+  ```bash
+  jj git push \
+    --bookmark stack/<topic>/01-core \
+    --bookmark stack/<topic>/02-ui \
+    --bookmark stack/<topic>/03-adapter
+  ```
+
+### Alternative: Creating and updating a stack with standard `git`
+
+When working in an environment where `jj` is not installed, use `git` with `--update-refs` (Git 2.38+):
+
+1. Create sequential branches:
    ```bash
    git switch main && git pull --ff-only
    git switch -c stack/<topic>/01-core
    # commit and verify layer 1
    git push -u origin stack/<topic>/01-core
-   ```
-2. Branch the next layer directly off the previous layer:
-   ```bash
+
    git switch -c stack/<topic>/02-ui
    # commit and verify layer 2
    git push -u origin stack/<topic>/02-ui
    ```
-3. Open each PR against its **immediate parent branch** so GitHub shows only that layer's diff:
-   - PR 1: `base: main` <- `compare: stack/<topic>/01-core`
-   - PR 2: `base: stack/<topic>/01-core` <- `compare: stack/<topic>/02-ui`
-   - PR 3: `base: stack/<topic>/02-ui` <- `compare: stack/<topic>/03-adapter`
-4. Fill in the **Stack position** section in every PR description so reviewers can navigate the chain.
-
-### Updating a stack after review feedback or `main` updates
-
-Use `git rebase --update-refs` (Git 2.38+) from the top branch of the stack so all intermediate branch pointers update in a single rebase:
-
-```bash
-git fetch origin
-git switch stack/<topic>/03-adapter
-git rebase --update-refs origin/main
-```
-
-If you amend or add a commit inside `stack/<topic>/01-core`, switch to the top branch (`stack/<topic>/03-adapter`) and run:
-
-```bash
-git rebase --update-refs stack/<topic>/01-core
-```
-
-After verifying each layer still builds and passes tests, push updated branches safely:
-
-```bash
-git push --force-with-lease origin \
-  stack/<topic>/01-core \
-  stack/<topic>/02-ui \
-  stack/<topic>/03-adapter
-```
-
-### Landing a stack into `main`
-
-Always land from the **bottom of the stack upward**:
-
-1. Ensure PR 1 (`base: main`) is rebased onto `origin/main`, passes checks, and has **all review conversations resolved**.
-2. Merge PR 1 into `main` using **Rebase and merge** (`gh pr merge <pr-1> --rebase --delete-branch`).
-3. Retarget PR 2 to `main`, rebase the remaining stack onto `origin/main`, and push:
+2. Rebase the entire stack and update intermediate branch refs in one pass from the top branch:
    ```bash
-   gh pr edit <pr-2> --base main
    git fetch origin
    git switch stack/<topic>/03-adapter
    git rebase --update-refs origin/main
-   git push --force-with-lease origin stack/<topic>/02-ui stack/<topic>/03-adapter
+   git push --force-with-lease origin \
+     stack/<topic>/01-core \
+     stack/<topic>/02-ui \
+     stack/<topic>/03-adapter
    ```
-4. Repeat until every layer in the stack is merged.
+
+### Agentic Cross-Model Review & Stack Merge Ownership
+
+To catch model-specific blind spots while keeping agentic development autonomous and fast, **every feature PR or stacked PR chain must be reviewed and merged by an independent reviewer agent**:
+
+1. **Authoring vs. reviewing separation**
+   - The authoring agent creates the PR (or stack), verifies all touched layers, and populates verification evidence, but **does not self-merge** feature stacks into `main`.
+   - Instead, the authoring agent delegates review and merge execution to a dedicated **Reviewer & Merger Agent**.
+2. **Reviewer model selection hierarchy**
+   - **Preferred — Alternative model family:** Delegate to a subagent running a **different model family/provider** from the authoring agent (for example, Claude <-> Gemini <-> GPT/DeepSeek). Cross-family review reduces correlated errors in Rust ownership, Leptos reactivity, Tauri security capabilities, and test coverage claims.
+   - **Fallback — Higher reasoning effort:** If an alternative model family is unavailable (e.g., quota exhaustion, single-provider environment, or outage), spawn a fresh subagent using the **highest available reasoning effort** (higher than the authoring pass) so the review never deadlocks solo/autonomous progress.
+3. **What the Reviewer & Merger Agent checks**
+   - Architectural boundaries (`app-core` purity, single Leptos UI owner, explicit `csr`/`hydrate`/`ssr` profile isolation, capability-scoped Tauri ACLs).
+   - Verification honesty (reported commands were actually executed; untested platforms/WebViews are explicitly disclosed).
+   - Knowledge provenance (`added_by` and `human_ratified` fields accurate; no silent overturning of `human_ratified: true` decisions).
+   - Commit hygiene (atomic commits conforming to [`.github/.gitmessage`](.github/.gitmessage), clean linear history).
+4. **Bottom-up stack merge ownership (executed by the Reviewer & Merger Agent)**
+   - Once review findings are addressed and all review conversations are resolved, **the reviewing agent is responsible for landing the stack into `main` from the bottom upward**:
+     1. Confirm PR 1 (`base: main`) is rebased onto `origin/main`, passes checks, and has **all review conversations resolved**.
+     2. Merge PR 1 into `main` using **Rebase and merge**:
+        ```bash
+        gh pr merge <pr-1> --rebase --delete-branch
+        ```
+     3. Retarget PR 2 to `main`, rebase the remaining stack onto `origin/main`, and push:
+        ```bash
+        gh pr edit <pr-2> --base main
+        # Using jj (preferred):
+        jj git fetch
+        jj rebase -s stack/<topic>/02-ui -d main@origin
+        jj git push --bookmark stack/<topic>/02-ui --bookmark stack/<topic>/03-adapter
+        # Or using git:
+        # git fetch origin && git switch stack/<topic>/03-adapter
+        # git rebase --update-refs origin/main
+        # git push --force-with-lease origin stack/<topic>/02-ui stack/<topic>/03-adapter
+        ```
+     4. Re-verify if the rebase touched code, then repeat until every layer in the stack is merged into `main`.
 
 ---
 
 ## 3. Commit Message Convention and Template
 
-Enable the repository commit template locally once per clone:
+The commit message template lives in [`.github/.gitmessage`](.github/.gitmessage) alongside the repository's GitHub workflow templates.
+
+Enable it locally once per clone:
 
 ```bash
-git config commit.template .gitmessage
+git config commit.template .github/.gitmessage
 ```
 
-### Format ([`.gitmessage`](.gitmessage))
+*(When writing commit descriptions with `jj describe` or `jj commit`, follow the same structure in [`.github/.gitmessage`](.github/.gitmessage).)*
+
+### Format ([`.github/.gitmessage`](.github/.gitmessage))
 
 ```text
 <type>(<scope>): <imperative summary under 72 chars>
@@ -178,9 +251,12 @@ GitHub automatically loads [`.github/pull_request_template.md`](.github/pull_req
 - **Knowledge records added/updated (`knowledge/`):** `none` (or list IDs with `added_by` and `human_ratified` status)
 - **Stable docs updated (`docs/`):** `none` (or list files)
 
-## Merge Readiness (`main` Protection)
+## Merge Readiness & Agentic Review (`main` Protection)
+- **Authoring agent / model:** `...`
+- **Reviewer & merger agent / model:** `...` (prefer alternative model family; fallback: higher reasoning effort)
+- [ ] Reviewed by an alternative model family (or higher-reasoning-effort fallback when cross-family is unavailable)
 - [ ] Branch is rebased onto its target base with a clean linear history (no merge commits)
-- [ ] All review conversations are resolved
+- [ ] All review conversations are resolved before the reviewing agent rebase-merges into `main`
 ```
 
 ### Protected `main` rules
@@ -189,6 +265,7 @@ GitHub automatically loads [`.github/pull_request_template.md`](.github/pull_req
 - Changes must merge via a Pull Request (no direct pushes or force-pushes to `main`).
 - **Linear history required:** merge commits are disabled; PRs must be rebased and merged via **Rebase and merge**.
 - **Conversation resolution required:** every review thread must be resolved before a PR can merge.
+- **Cross-model agentic review & merge ownership:** an independent reviewing agent (from an alternative model family when available, or a higher-reasoning-effort agent as fallback) reviews the PR/stack and executes the bottom-up rebase merge into `main`.
 
 ---
 
