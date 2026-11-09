@@ -21,6 +21,14 @@ The implementation roadmap calls for stable Rust Edition 2024/resolver 3 where c
 
 See [Architecture and verification scope](docs/architecture.md) and the repository's GitHub Issues for implementation plans and acceptance criteria.
 
+## Collaboration and linked knowledge
+
+- [AGENTS.md](AGENTS.md): minimal, repo-wide working agreement for coding agents.
+- [CONTRIBUTING.md](CONTRIBUTING.md): the authoritative contributor guide; [contributions.md](contributions.md) is an alias.
+- [Knowledge graph](knowledge/README.md): linked, dated decisions, research, and observations that preserve nuance, counterevidence, and results for future work.
+- [docs/](docs/architecture.md) remains relatively stable documentation; `knowledge/` records evolving understanding and must not be treated as proof of implementation.
+
+
 ## Deliberately excluded from the baseline
 
 Topcoat, htmx, Electron, parallel reactive frameworks, custom mount coordinators, and an embedded HTTP server in the native shell.
@@ -31,4 +39,4 @@ The template should state only what its tests and proofs establish. A Lean proof
 
 ## Licenses and platform support
 
-Licensing and a validated target support matrix are release decisions. A public repository is not automatically an open-source licensed project.
+Licensed under the [MIT License](LICENSE) (Copyright 2026 Kennedy Mosoti). The validated platform-support matrix remains a release decision; public repository visibility alone does not establish platform support.
