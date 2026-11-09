@@ -25,6 +25,9 @@
 - **Knowledge records added/updated (`knowledge/`):** `none` (or list IDs with `added_by` and `human_ratified` status)
 - **Stable docs updated (`docs/`):** `none` (or list files)
 
-## Merge Readiness (`main` Protection)
+## Merge Readiness & Agentic Review (`main` Protection)
+- **Authoring agent / model:** `...`
+- **Reviewer & merger agent / model:** `...` (prefer alternative model family; fallback: higher reasoning effort)
+- [ ] Reviewed by an alternative model family (or higher-reasoning-effort fallback when cross-family is unavailable)
 - [ ] Branch is rebased onto its target base with a clean linear history (no merge commits)
-- [ ] All review conversations are resolved
+- [ ] All review conversations are resolved before the reviewing agent rebase-merges into `main`
