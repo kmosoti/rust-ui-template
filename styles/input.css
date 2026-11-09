@@ -1,0 +1,5 @@
+@import "tailwindcss" source(none);
+@source "../crates/app-ui/src";
+@theme {
+  --color-brand: #3157b7;
+}

@@ -1,6 +1,6 @@
 # rust-ui-template
 
-**Status: first core implementation; not a complete UI template.** The dependency-free Rust core has CI evidence. Leptos/Tailwind browser integration and native packaging are still to be implemented and validated.
+**Status: CSR browser slice; not a complete UI template.** A Leptos browser example uses the dependency-free core. Native packaging and platform validation remain future work.
 
 A minimal Rust-first UI foundation for browser, desktop, and mobile clients. The template will be implemented incrementally through the repository's GitHub issues.
 
@@ -14,6 +14,28 @@ cargo test --workspace --locked --offline
 
 See the [coding-agent handoff and full check commands](docs/issue-1-handoff.md), [decision D-0002](knowledge/decisions/D-0002-latest-request-core.md), and [execution evidence O-0002](knowledge/observations/O-0002-core-foundation.md). A successful core test is not a browser, desktop, or mobile launch test. Issue #1 remains open.
 
+## Browser development
+
+Install Rust 1.99.1 with the `wasm32-unknown-unknown` target, Node 24.22.1,
+and Trunk 0.21.14 (`cargo install trunk --version 0.21.14 --locked`). From the
+repository root:
+
+```sh
+npm ci
+cargo fetch --locked
+npm run css
+node tests/check-css.cjs
+trunk build --release --locked
+trunk build --release --locked --public-url /sub/ --dist dist/sub
+npx playwright install --with-deps chromium
+npm run test:browser
+```
+
+The second build exercises a `/sub/` asset base; use the matching `--public-url`
+for a different deployment path. Navigation uses URL fragments and requires no
+route rewrite. Tests serve the production files locally. Timed requests are
+simulations; no persistence or network API is implemented.
+
 ## Selected architecture
 
 - **Leptos** owns UI components, client-side routing, and reactive presentation state.
@@ -22,7 +44,7 @@ See the [coding-agent handoff and full check commands](docs/issue-1-handoff.md),
 - **Tauri 2** packages the same client for desktop (Windows, macOS, Linux) and mobile (Android, iOS), with native functionality behind narrow capability-scoped adapters.
 - **Pure Rust core** owns reusable application rules and state transitions, independent of UI, browser, or operating-system APIs.
 
-The core workspace pins Rust 1.99.1 with Edition 2024/resolver 3. The remaining implementation roadmap calls for current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. Frontend/native toolchain pins still require implementation and compatibility testing.
+The core workspace pins Rust 1.99.1 with Edition 2024/resolver 3. The remaining implementation roadmap calls for current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. The browser slice pins its dependencies and build tools; native toolchain compatibility remains to be established.
 
 ## Release sequence
 

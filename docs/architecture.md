@@ -10,7 +10,7 @@
 6. No platform is labeled supported without building, launching, and exercising it on the actual platform. iOS requires macOS/Xcode.
 7. All toolchain/component versions and feature flags used for releases must be pinned and verified together.
 
-## Intended minimal workspace (to be implemented under issue 1)
+## Minimal workspace (native host remains future work)
 
 ```text
 crates/
