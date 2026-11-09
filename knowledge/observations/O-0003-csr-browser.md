@@ -52,6 +52,12 @@ Environment: Linux x86_64, Rust/Cargo 1.99.1, Node 24.22.1, npm 11.9.0.
 - `CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`: four tests passed in
   Chromium 156.0.8078.79. They exercised stale responses, observed timer clearing
   on cancel and unmount, navigation, keyboard, axe smoke, CSS and subpath assets.
+- Review exposed a false positive in the first timer instrumentation: a timer can
+  clear itself after firing. The revised test counts only pre-fire clears. A
+  deliberately compiled variant replacing both `task.abort()` calls with
+  `drop(task)` caused both cancel and unmount browser assertions to fail; the
+  restored build passed all four tests again. This is targeted sensitivity
+  evidence, not a general mutation-testing claim.
 - `git diff --check` passed before commit. The browser workflow is new; no CI
   result for this slice is claimed until its run executes.
 

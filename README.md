@@ -9,6 +9,7 @@ A minimal Rust-first UI foundation for browser, desktop, and mobile clients. The
 `crates/app-core` provides a latest-request-wins state tracker without UI or platform dependencies. Its tests cover stale, duplicate and cancelled responses, non-wrapping request IDs, and bounded event sequences. The adapter, not the core, owns actual I/O and task cleanup.
 
 ```sh
+cargo fetch --locked
 cargo test --workspace --locked --offline
 ```
 
