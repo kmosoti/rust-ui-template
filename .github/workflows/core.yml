@@ -1,0 +1,49 @@
+name: Core foundation
+
+on:
+  pull_request:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: core-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: core-checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
+      - name: Report toolchain
+        run: |
+          rustc --version --verbose
+          cargo --version
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Unit, bounded-sequence, and documentation tests
+        run: cargo test --workspace --locked --offline
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets --locked --offline -- -D warnings
+      - name: Core WASM compatibility
+        run: cargo check -p app-core --target wasm32-unknown-unknown --locked --offline
+      - name: Actual dependency boundary
+        run: |
+          cargo metadata --format-version 1 --locked --offline > "$RUNNER_TEMP/core-metadata.json"
+          python3 scripts/check_core_boundary.py "$RUNNER_TEMP/core-metadata.json"
+          python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Reject deliberate freshness and overflow defects
+        run: python3 scripts/check_core_mutations.py
+      - name: No generated source or lockfile drift
+        run: |
+          git diff --exit-code
+          test -z "$(git ls-files --others --exclude-standard)"
