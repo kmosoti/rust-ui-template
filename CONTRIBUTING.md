@@ -28,13 +28,13 @@ Use this loop for every unit of work, regardless of which issue or release phase
    - Record new decisions (`D-`), research (`R-`), and dated empirical observations (`O-`) in [`knowledge/`](knowledge/README.md) with provenance (`added_by: agent | human | mixed`) and ratification state (`human_ratified: true | false`).
    - **Do not block agentic work on human ratification:** agents record `added_by: agent` and `human_ratified: false` and continue immediately (see [Section 5](#5-knowledge-base-and-ratification-contract)).
    - Update [`docs/`](docs/architecture.md) only when stable architectural contracts, boundaries, or developer workflows change.
-6. **Independent cross-model review, rebase, and land**
-   - Hand off the PR or stacked PR chain to an **independent reviewing agent** from an **alternative model family** (or a **higher-reasoning-effort** agent if no cross-family model is available).
-   - The reviewing agent audits the stack, resolves review conversations, and owns merging the stack bottom-up into `main` via **Rebase and merge** (linear history, no merge commits).
+6. **Independent cross-model review, rebase, and land into `develop` (plus human-gated promotion to `main`)**
+   - **Autonomous agent landing on `develop`:** Hand off the PR or stacked PR chain to an **independent reviewing agent** from an **alternative model family** (or a **higher-reasoning-effort** agent if no cross-family model is available). The reviewing agent audits the stack, resolves review conversations, and owns merging the stack bottom-up into `develop` via **Rebase and merge** (linear history, no merge commits).
+   - **Human-gated releases into `main`:** Merges from `develop -> main` require **human review and manual approval** of the `main-release` GitHub Environment gate ([`.github/workflows/main-human-gate.yml`](.github/workflows/main-human-gate.yml)). Agents may open a `develop -> main` release PR, but must never approve the `main-release` deployment gate or merge into `main`.
 
 ---
 
-## 2. Preferred VCS (`jj`) and Stacked PR Workflow
+## 2. Preferred VCS (`jj`), Branch Topology (`develop` vs `main`), and Stacked PRs
 
 ### Why Jujutsu (`jj`) is the preferred development method
 
@@ -49,29 +49,31 @@ Initialize `jj` once in an existing Git clone:
 
 ```bash
 jj git init --colocate
+jj bookmark track develop@origin main@origin
 ```
 
 *(Note: `.jj/` is local to your clone and ignored by Git automatically.)*
 
-### Branch / bookmark topology and naming
+### Two-branch topology (`develop` for agents, `main` for human-gated releases)
 
-Use stacked PRs whenever a feature or milestone is too large for a single small diff or naturally decomposes into sequential layers. Name bookmarks/branches with an explicit stack prefix and ordinal so review order is obvious:
+Day-to-day feature work and stacked PRs branch from and land into **`develop`**. **`main`** is the human-gated release branch promoted from `develop`:
 
 ```text
-main
- └── stack/<topic>/01-core
-      └── stack/<topic>/02-ui
-           └── stack/<topic>/03-adapter
+main (human-gated release branch; requires main-release environment approval)
+ └── develop (autonomous agent integration branch; linear history + cross-model review)
+      └── stack/<topic>/01-core
+           └── stack/<topic>/02-ui
+                └── stack/<topic>/03-adapter
 ```
 
-Single-PR changes use `<type>/<topic>` (for example `feat/core-reducer`, `fix/tailwind-source-scan`, `docs/workflow-guides`).
+Single-PR changes targeting `develop` use `<type>/<topic>` (for example `feat/core-reducer`, `fix/tailwind-source-scan`, `docs/workflow-guides`).
 
-### Creating a stack (`jj` preferred)
+### Creating a stack on `develop` (`jj` preferred)
 
-1. Fetch and start the first layer on top of `main@origin`:
+1. Fetch and start the first layer on top of `develop@origin`:
    ```bash
    jj git fetch
-   jj new main@origin -m "feat(core): ..."
+   jj new develop@origin -m "feat(core): ..."
    # implement and verify layer 1
    jj bookmark create stack/<topic>/01-core -r @
    ```
@@ -93,22 +95,22 @@ Single-PR changes use `<type>/<topic>` (for example `feat/core-reducer`, `fix/ta
      --bookmark stack/<topic>/03-adapter
    ```
 4. Open each PR against its **immediate parent branch** so GitHub shows only that layer's diff:
-   - PR 1: `base: main` <- `compare: stack/<topic>/01-core`
+   - PR 1: `base: develop` <- `compare: stack/<topic>/01-core`
    - PR 2: `base: stack/<topic>/01-core` <- `compare: stack/<topic>/02-ui`
    - PR 3: `base: stack/<topic>/02-ui` <- `compare: stack/<topic>/03-adapter`
-5. Fill in the **Stack Position** section in every PR description so reviewers can navigate the chain.
+5. Fill in the **Stack Position & Target Branch** section in every PR description so reviewers can navigate the chain.
 
-### Updating a stack in `jj` after review feedback or `main` updates
+### Updating a stack in `jj` after review feedback or `develop` updates
 
 - **To edit an earlier layer in the stack:**
   ```bash
   jj edit stack/<topic>/01-core
   # modify files; @ is now 01-core and 02-ui / 03-adapter are automatically rebased on top
   ```
-- **To rebase the entire stack onto the latest `main`:**
+- **To rebase the entire stack onto the latest `develop`:**
   ```bash
   jj git fetch
-  jj rebase -s stack/<topic>/01-core -d main@origin
+  jj rebase -s stack/<topic>/01-core -d develop@origin
   ```
 - **Verify each layer and push:**
   ```bash
@@ -122,9 +124,9 @@ Single-PR changes use `<type>/<topic>` (for example `feat/core-reducer`, `fix/ta
 
 When working in an environment where `jj` is not installed, use `git` with `--update-refs` (Git 2.38+):
 
-1. Create sequential branches:
+1. Create sequential branches off `develop`:
    ```bash
-   git switch main && git pull --ff-only
+   git switch develop && git pull --ff-only
    git switch -c stack/<topic>/01-core
    # commit and verify layer 1
    git push -u origin stack/<topic>/01-core
@@ -137,19 +139,19 @@ When working in an environment where `jj` is not installed, use `git` with `--up
    ```bash
    git fetch origin
    git switch stack/<topic>/03-adapter
-   git rebase --update-refs origin/main
+   git rebase --update-refs origin/develop
    git push --force-with-lease origin \
      stack/<topic>/01-core \
      stack/<topic>/02-ui \
      stack/<topic>/03-adapter
    ```
 
-### Agentic Cross-Model Review & Stack Merge Ownership
+### Agentic Cross-Model Review & Stack Merge Ownership (`develop`)
 
-To catch model-specific blind spots while keeping agentic development autonomous and fast, **every feature PR or stacked PR chain must be reviewed and merged by an independent reviewer agent**:
+To catch model-specific blind spots while keeping agentic development autonomous and fast, **every feature PR or stacked PR chain targeting `develop` must be reviewed and merged by an independent reviewer agent**:
 
 1. **Authoring vs. reviewing separation**
-   - The authoring agent creates the PR (or stack), verifies all touched layers, and populates verification evidence, but **does not self-merge** feature stacks into `main`.
+   - The authoring agent creates the PR (or stack), verifies all touched layers, and populates verification evidence, but **does not self-merge** feature stacks into `develop`.
    - Instead, the authoring agent delegates review and merge execution to a dedicated **Reviewer & Merger Agent**.
 2. **Reviewer model selection hierarchy**
    - **Preferred — Alternative model family:** Delegate to a subagent running a **different model family/provider** from the authoring agent (for example, Claude <-> Gemini <-> GPT/DeepSeek). Cross-family review reduces correlated errors in Rust ownership, Leptos reactivity, Tauri security capabilities, and test coverage claims.
@@ -159,26 +161,33 @@ To catch model-specific blind spots while keeping agentic development autonomous
    - Verification honesty (reported commands were actually executed; untested platforms/WebViews are explicitly disclosed).
    - Knowledge provenance (`added_by` and `human_ratified` fields accurate; no silent overturning of `human_ratified: true` decisions).
    - Commit hygiene (atomic commits conforming to [`.github/.gitmessage`](.github/.gitmessage), clean linear history).
-4. **Bottom-up stack merge ownership (executed by the Reviewer & Merger Agent)**
-   - Once review findings are addressed and all review conversations are resolved, **the reviewing agent is responsible for landing the stack into `main` from the bottom upward**:
-     1. Confirm PR 1 (`base: main`) is rebased onto `origin/main`, passes checks, and has **all review conversations resolved**.
-     2. Merge PR 1 into `main` using **Rebase and merge**:
+4. **Bottom-up stack merge ownership into `develop` (executed by the Reviewer & Merger Agent)**
+   - Once review findings are addressed and all review conversations are resolved, **the reviewing agent is responsible for landing the stack into `develop` from the bottom upward**:
+     1. Confirm PR 1 (`base: develop`) is rebased onto `origin/develop`, passes checks, and has **all review conversations resolved**.
+     2. Merge PR 1 into `develop` using **Rebase and merge**:
         ```bash
         gh pr merge <pr-1> --rebase --delete-branch
         ```
-     3. Retarget PR 2 to `main`, rebase the remaining stack onto `origin/main`, and push:
+     3. Retarget PR 2 to `develop`, rebase the remaining stack onto `origin/develop`, and push:
         ```bash
-        gh pr edit <pr-2> --base main
+        gh pr edit <pr-2> --base develop
         # Using jj (preferred):
         jj git fetch
-        jj rebase -s stack/<topic>/02-ui -d main@origin
+        jj rebase -s stack/<topic>/02-ui -d develop@origin
         jj git push --bookmark stack/<topic>/02-ui --bookmark stack/<topic>/03-adapter
         # Or using git:
         # git fetch origin && git switch stack/<topic>/03-adapter
-        # git rebase --update-refs origin/main
+        # git rebase --update-refs origin/develop
         # git push --force-with-lease origin stack/<topic>/02-ui stack/<topic>/03-adapter
         ```
-     4. Re-verify if the rebase touched code, then repeat until every layer in the stack is merged into `main`.
+     4. Re-verify if the rebase touched code, then repeat until every layer in the stack is merged into `develop`.
+
+### Promoting `develop` to `main` (Human-Gated Release)
+
+1. When `develop` reaches a release or milestone checkpoint, a contributor or agent opens a release promotion PR (`base: main` <- `compare: develop`).
+2. Opening or updating a PR targeting `main` triggers the [`Main Branch Human Gate`](.github/workflows/main-human-gate.yml) workflow (`main-human-approval`), which pauses in a `Waiting` state on the `main-release` GitHub Environment.
+3. A **human reviewer** audits the diff, ratifies any applicable [`knowledge/`](knowledge/README.md) decisions (`human_ratified: true`), approves the `main-release` deployment gate in GitHub, and merges the PR into `main` via **Rebase and merge**.
+4. Agents must **never** approve the `main-release` environment gate or run `gh pr merge` on a PR targeting `main`.
 
 ---
 
@@ -215,11 +224,11 @@ Knowledge: <D-xxxx / R-xxxx / O-xxxx or none>
 
 - **Allowed `<type>` values:** `feat`, `fix`, `refactor`, `test`, `docs`, `build`, `ci`, `proof`, `chore`.
 - **Typical `<scope>` values:** `core`, `ui`, `client`, `native`, `ssr`, `styles`, `proofs`, `knowledge`, `repo`.
-- Keep commits atomic: a rebased PR merges commits onto `main` without squashing by default, so every commit in a PR should build cleanly and carry an accurate message.
+- Keep commits atomic: a rebased PR merges commits onto `develop` and `main` without squashing by default, so every commit in a PR should build cleanly and carry an accurate message.
 
 ---
 
-## 4. Pull Request Template and `main` Branch Protection
+## 4. Pull Request Template and Branch Protection (`develop` vs `main`)
 
 GitHub automatically loads [`.github/pull_request_template.md`](.github/pull_request_template.md) on new PRs:
 
@@ -229,13 +238,14 @@ GitHub automatically loads [`.github/pull_request_template.md`](.github/pull_req
 - **Changes / What:**
 - **Linked Issue(s):** Refs #
 
-## Stack Position
-- [ ] Standalone PR targeting `main`
-- [ ] Part of a stacked PR chain:
-  - Base branch for this PR: `main` (or `stack/<topic>/...`)
+## Stack Position & Target Branch
+- [ ] Standalone PR targeting `develop` (agentic / day-to-day integration)
+- [ ] Part of a stacked PR chain targeting `develop`:
+  - Base branch for this PR: `develop` (or `stack/<topic>/...`)
   - Stack order:
     1. #... (`stack/<topic>/01-...`)
     2. **-> This PR** (`stack/<topic>/02-...`)
+- [ ] Release promotion PR (`develop` -> `main`, **human review & merge required**)
 
 ## Architectural & Boundary Check
 - [ ] Single owner per concern preserved (`app-core` pure Rust, `app-ui` Leptos/Tailwind 4, explicit browser/Tauri adapters)
@@ -251,21 +261,25 @@ GitHub automatically loads [`.github/pull_request_template.md`](.github/pull_req
 - **Knowledge records added/updated (`knowledge/`):** `none` (or list IDs with `added_by` and `human_ratified` status)
 - **Stable docs updated (`docs/`):** `none` (or list files)
 
-## Merge Readiness & Agentic Review (`main` Protection)
+## Merge Readiness & Review Gate (`develop` vs `main`)
 - **Authoring agent / model:** `...`
-- **Reviewer & merger agent / model:** `...` (prefer alternative model family; fallback: higher reasoning effort)
-- [ ] Reviewed by an alternative model family (or higher-reasoning-effort fallback when cross-family is unavailable)
+- **Reviewer & merger agent / model (for `develop`):** `...` (prefer alternative model family; fallback: higher reasoning effort)
+- [ ] For PRs targeting `develop`: reviewed by an alternative model family (or higher-reasoning-effort fallback) and ready for the reviewing agent to rebase-merge bottom-up into `develop`
+- [ ] For PRs targeting `main`: **`main-human-approval` (`main-release` environment gate) approved and merged by a human user** (agents must never merge into `main` or approve the `main-release` gate)
 - [ ] Branch is rebased onto its target base with a clean linear history (no merge commits)
-- [ ] All review conversations are resolved before the reviewing agent rebase-merges into `main`
+- [ ] All review conversations are resolved
 ```
 
-### Protected `main` rules
+### Protected `develop` and `main` rules
 
-`main` enforces:
-- Changes must merge via a Pull Request (no direct pushes or force-pushes to `main`).
-- **Linear history required:** merge commits are disabled; PRs must be rebased and merged via **Rebase and merge**.
+Both **`develop`** and **`main`** enforce:
+- Changes must merge via a Pull Request (no direct pushes, force-pushes, or branch deletions).
+- **Linear history required:** merge commits and squash merges are disabled; PRs must be rebased and merged via **Rebase and merge**.
 - **Conversation resolution required:** every review thread must be resolved before a PR can merge.
-- **Cross-model agentic review & merge ownership:** an independent reviewing agent (from an alternative model family when available, or a higher-reasoning-effort agent as fallback) reviews the PR/stack and executes the bottom-up rebase merge into `main`.
+
+Additionally:
+- **`develop` (Autonomous Agent Integration Branch):** `required_approving_review_count: 0` on GitHub so an independent **Reviewer & Merger Agent** (alternative model family, or higher-reasoning-effort fallback) can review and land stacked PRs bottom-up into `develop` without blocking on human availability.
+- **`main` (Human-Gated Release Branch):** requires the **`main-human-approval`** status check ([`.github/workflows/main-human-gate.yml`](.github/workflows/main-human-gate.yml)), which is gated by the **`main-release` GitHub Environment** with required human reviewer approval (`kmosoti`). Even when an agent shares local CLI credentials, GitHub blocks `gh pr merge` into `main` until the human reviewer approves the `main-release` deployment in GitHub, and [AGENTS.md](AGENTS.md) strictly forbids agents from approving that environment gate or merging into `main`.
 
 ---
 

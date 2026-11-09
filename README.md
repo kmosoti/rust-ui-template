@@ -23,8 +23,8 @@ See [Architecture and verification scope](docs/architecture.md) and the reposito
 
 ## Collaboration and linked knowledge
 
-- [AGENTS.md](AGENTS.md): minimal, repo-wide working agreement for coding agents.
-- [CONTRIBUTING.md](CONTRIBUTING.md): the authoritative, issue-agnostic contributor guide covering the iterative development loop, colocated Jujutsu (`jj`) and stacked PR workflows, cross-model agentic review & stack merge ownership, commit conventions ([`.github/.gitmessage`](.github/.gitmessage)), and the PR template ([`.github/pull_request_template.md`](.github/pull_request_template.md)).
+- [AGENTS.md](AGENTS.md): minimal, repo-wide working agreement for coding agents (`develop` for autonomous agent stacks, `main` gated by human review).
+- [CONTRIBUTING.md](CONTRIBUTING.md): the authoritative, issue-agnostic contributor guide covering the iterative development loop, the `develop` vs. `main` branch model ([`.github/workflows/main-human-gate.yml`](.github/workflows/main-human-gate.yml)), colocated Jujutsu (`jj`) and stacked PR workflows, cross-model agentic review & stack merge ownership, commit conventions ([`.github/.gitmessage`](.github/.gitmessage)), and the PR template ([`.github/pull_request_template.md`](.github/pull_request_template.md)).
 - [Knowledge graph](knowledge/README.md): linked, dated decisions (`D-`), research (`R-`), and observations (`O-`) that track provenance (`added_by: agent | human | mixed`) and explicit human sign-off (`human_ratified: true | false`) without gating agent velocity.
 - [docs/](docs/architecture.md) remains relatively stable documentation; `knowledge/` records evolving understanding and must not be treated as proof of implementation.
 
