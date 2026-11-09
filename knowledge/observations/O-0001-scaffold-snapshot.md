@@ -3,6 +3,8 @@ id: O-0001
 type: observation
 status: historical-snapshot
 updated: 2026-11-09
+added_by: agent
+human_ratified: false
 ---
 
 # O-0001: Initial public repository snapshot
