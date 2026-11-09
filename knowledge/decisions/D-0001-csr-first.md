@@ -3,6 +3,8 @@ id: D-0001
 type: decision
 status: accepted-for-v0.1
 updated: 2026-11-09
+added_by: agent
+human_ratified: false
 ---
 
 # D-0001: CSR first, SSR as an optional later web profile

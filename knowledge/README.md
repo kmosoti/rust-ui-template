@@ -7,6 +7,23 @@ This directory is a **versioned Markdown knowledge graph**, not a second set of 
 - [`docs/`](../docs/architecture.md): relatively stable instructions, public design contracts, and how the project is intended to work.
 - `knowledge/`: revisable understanding, dated evidence, failures, alternatives, and contextual decisions. A research note is not an implementation guarantee.
 
+## Provenance and human ratification (non-blocking for agents)
+
+Every knowledge artifact distinguishes **who added it** from **whether a human explicitly ratified it**:
+
+- `added_by`: `agent` | `human` | `mixed` — records whether the artifact was authored by an autonomous/assisted coding agent, a human contributor, or both.
+- `human_ratified`: `true` | `false` — `true` **only** when a human user has explicitly ratified the artifact's claim or decision. When `true`, record `ratified_by` (handle/name) and `ratified_on` (`YYYY-MM-DD`).
+
+### Zero-friction velocity rule
+
+Provenance tracking **must never slow down agentic work**:
+
+1. **No ratification gate for execution:** Agents create, link, update, and act on `knowledge/` artifacts immediately with `added_by: agent` and `human_ratified: false`. Agents do not pause or block implementation waiting for human sign-off on knowledge notes.
+2. **Asynchronous ratification:** Humans ratify records when convenient (during PR review, issue triage, or a later pass) by flipping `human_ratified: true` and setting `ratified_by` / `ratified_on`, or by explicitly instructing an agent to mark a specific record ratified. Merging a PR does not implicitly ratify every `human_ratified: false` record in the tree unless stated.
+3. **Authority semantics:**
+   - `human_ratified: false` artifacts are active working knowledge. Agents and humans may refine, challenge, or supersede them freely as new evidence emerges.
+   - `human_ratified: true` artifacts carry explicit human confirmation. Agents may always record new observations (`O-`) or research (`R-`) that challenge a ratified record without blocking, but must not silently supersede or violate a `human_ratified: true` decision (`D-`) without explicit human approval.
+
 ## Node types
 
 | Directory | Prefix | Purpose |
@@ -15,15 +32,31 @@ This directory is a **versioned Markdown knowledge graph**, not a second set of 
 | [`research/`](research/R-0001-cross-platform-evidence.md) | `R-` | Sources, hypotheses, contradictions, unanswered tests |
 | [`observations/`](observations/O-0001-scaffold-snapshot.md) | `O-` | Dated reports of actual state, environment, and evidence |
 
-## Initial connected nodes
+## Connected nodes
 
-- [D-0001 · CSR-first client delivery](decisions/D-0001-csr-first.md), informed by [R-0001](research/R-0001-cross-platform-evidence.md), contextualized by [O-0001](observations/O-0001-scaffold-snapshot.md).
-- [R-0001 · Cross-platform and verification evidence](research/R-0001-cross-platform-evidence.md), with alternatives and falsification tests for [D-0001](decisions/D-0001-csr-first.md).
-- [O-0001 · Repository scaffold snapshot](observations/O-0001-scaffold-snapshot.md), linked to both [D-0001](decisions/D-0001-csr-first.md) and [R-0001](research/R-0001-cross-platform-evidence.md).
+| Node | Added by | Human ratified | Summary |
+| --- | --- | --- | --- |
+| [D-0001 · CSR-first client delivery](decisions/D-0001-csr-first.md) | `agent` | `false` | CSR-first baseline; informed by [R-0001](research/R-0001-cross-platform-evidence.md), contextualized by [O-0001](observations/O-0001-scaffold-snapshot.md) |
+| [R-0001 · Cross-platform and verification evidence](research/R-0001-cross-platform-evidence.md) | `agent` | `false` | Alternatives and falsification tests for [D-0001](decisions/D-0001-csr-first.md) |
+| [O-0001 · Repository scaffold snapshot](observations/O-0001-scaffold-snapshot.md) | `agent` | `false` | Initial repository state linked to [D-0001](decisions/D-0001-csr-first.md) and [R-0001](research/R-0001-cross-platform-evidence.md) |
 
 ## Record protocol
 
-1. Use a stable ID, a descriptive filename, and front matter: `id`, `type`, `status`, `updated` (YYYY-MM-DD). IDs must not be reused.
+1. Use a stable ID, a descriptive filename, and front matter:
+   ```yaml
+   ---
+   id: D-0001
+   type: decision # decision | research | observation
+   status: proposed # e.g., proposed | accepted | preliminary | historical-snapshot | superseded
+   updated: YYYY-MM-DD
+   added_by: agent # agent | human | mixed
+   human_ratified: false # true | false
+   # Include when human_ratified is true:
+   # ratified_by: <github-handle>
+   # ratified_on: YYYY-MM-DD
+   ---
+   ```
+   IDs must not be reused.
 2. Label statements as **Observed**, **Inferred**, **Hypothesis**, or **Unknown** when confusing them would change a decision. Link sources and state the date/environment of observations.
 3. In a **Relations** section, use ordinary relative Markdown links with a typed edge such as *informed-by*, *challenges*, *supports*, *observed-in*, or *supersedes*. Maintain backlinks when they communicate real meaning.
 4. Keep alternatives and a **Revisit when** trigger. If evidence overturns a choice, add a new decision and link it with *supersedes* rather than silently rewriting past reasoning.

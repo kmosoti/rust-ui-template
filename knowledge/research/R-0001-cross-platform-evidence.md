@@ -3,6 +3,8 @@ id: R-0001
 type: research
 status: preliminary
 updated: 2026-11-09
+added_by: agent
+human_ratified: false
 ---
 
 # R-0001: Cross-platform and verification evidence to establish

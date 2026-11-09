@@ -24,8 +24,8 @@ See [Architecture and verification scope](docs/architecture.md) and the reposito
 ## Collaboration and linked knowledge
 
 - [AGENTS.md](AGENTS.md): minimal, repo-wide working agreement for coding agents.
-- [CONTRIBUTING.md](CONTRIBUTING.md): the authoritative contributor guide; [contributions.md](contributions.md) is an alias.
-- [Knowledge graph](knowledge/README.md): linked, dated decisions, research, and observations that preserve nuance, counterevidence, and results for future work.
+- [CONTRIBUTING.md](CONTRIBUTING.md): the authoritative, issue-agnostic contributor guide covering the iterative development loop, stacked PRs, commit conventions ([`.gitmessage`](.gitmessage)), and the PR template ([`.github/pull_request_template.md`](.github/pull_request_template.md)); [contributions.md](contributions.md) is an alias.
+- [Knowledge graph](knowledge/README.md): linked, dated decisions (`D-`), research (`R-`), and observations (`O-`) that track provenance (`added_by: agent | human | mixed`) and explicit human sign-off (`human_ratified: true | false`) without gating agent velocity.
 - [docs/](docs/architecture.md) remains relatively stable documentation; `knowledge/` records evolving understanding and must not be treated as proof of implementation.
 
 
