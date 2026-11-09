@@ -1,0 +1,11 @@
+# Build outputs may be nested in the Cargo/frontend workspace.
+target/
+dist/
+node_modules/
+.trunk/
+.leptos/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example

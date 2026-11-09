@@ -1,0 +1,34 @@
+# rust-ui-template
+
+**Status: architecture scaffold only.** No application implementation or platform build has been validated yet.
+
+A minimal Rust-first UI foundation for browser, desktop, and mobile clients. The template will be implemented incrementally through the repository's GitHub issues.
+
+## Selected architecture
+
+- **Leptos** owns UI components, client-side routing, and reactive presentation state.
+- **WebAssembly** executes the browser client build; browser-facing glue remains explicit.
+- **Tailwind CSS 4** provides one shared styling pipeline.
+- **Tauri 2** packages the same client for desktop (Windows, macOS, Linux) and mobile (Android, iOS), with native functionality behind narrow capability-scoped adapters.
+- **Pure Rust core** owns reusable application rules and state transitions, independent of UI, browser, or operating-system APIs.
+
+The implementation roadmap calls for stable Rust Edition 2024/resolver 3 where compatible, current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. Exact toolchain pins will be established and tested during implementation, not implied by this scaffold.
+
+## Release sequence
+
+1. **v0.1, client-side rendering:** establish a single Leptos CSR frontend usable in the browser and through Tauri 2, with build/test/packaging evidence. No server-rendering dependency in the client bundle.
+2. **Follow-up, optional web SSR + hydration:** add a separate web deployment profile using the same components where technically justified. Keep Tauri clients on CSR; do not introduce a parallel UI framework.
+
+See [Architecture and verification scope](docs/architecture.md) and the repository's GitHub Issues for implementation plans and acceptance criteria.
+
+## Deliberately excluded from the baseline
+
+Topcoat, htmx, Electron, parallel reactive frameworks, custom mount coordinators, and an embedded HTTP server in the native shell.
+
+## Verification standard
+
+The template should state only what its tests and proofs establish. A Lean proof over a handwritten model does not verify Leptos or the shipped WebView. Formal verification, if introduced, must be tied to supported Rust source extraction and explicitly scoped invariants; platform interactions require independent integration tests.
+
+## Licenses and platform support
+
+Licensing and a validated target support matrix are release decisions. A public repository is not automatically an open-source licensed project.
