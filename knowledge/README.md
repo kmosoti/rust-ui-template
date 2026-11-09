@@ -39,6 +39,8 @@ Provenance tracking **must never slow down agentic work**:
 | [D-0001 · CSR-first client delivery](decisions/D-0001-csr-first.md) | `agent` | `false` | CSR-first baseline; informed by [R-0001](research/R-0001-cross-platform-evidence.md), contextualized by [O-0001](observations/O-0001-scaffold-snapshot.md) |
 | [R-0001 · Cross-platform and verification evidence](research/R-0001-cross-platform-evidence.md) | `agent` | `false` | Alternatives and falsification tests for [D-0001](decisions/D-0001-csr-first.md) |
 | [O-0001 · Repository scaffold snapshot](observations/O-0001-scaffold-snapshot.md) | `agent` | `false` | Initial repository state linked to [D-0001](decisions/D-0001-csr-first.md) and [R-0001](research/R-0001-cross-platform-evidence.md) |
+| [D-0002 · Latest-request-wins core](decisions/D-0002-latest-request-core.md) | `agent` | `false` | Concrete state contract, adapter ownership, limits, and alternatives for the first implementation slice |
+| [O-0002 · Core implementation evidence](observations/O-0002-core-foundation.md) | `agent` | `false` | Local checks, exact CI source/run, passed Rust tests, and untested UI/platform boundaries |
 
 ## Record protocol
 

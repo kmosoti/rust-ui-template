@@ -1,8 +1,18 @@
 # rust-ui-template
 
-**Status: architecture scaffold only.** No application implementation or platform build has been validated yet.
+**Status: first core implementation; not a complete UI template.** The dependency-free Rust core has CI evidence. Leptos/Tailwind browser integration and native packaging are still to be implemented and validated.
 
 A minimal Rust-first UI foundation for browser, desktop, and mobile clients. The template will be implemented incrementally through the repository's GitHub issues.
+
+## Implemented foundation
+
+`crates/app-core` provides a latest-request-wins state tracker without UI or platform dependencies. Its tests cover stale, duplicate and cancelled responses, non-wrapping request IDs, and bounded event sequences. The adapter, not the core, owns actual I/O and task cleanup.
+
+```sh
+cargo test --workspace --locked --offline
+```
+
+See the [coding-agent handoff and full check commands](docs/issue-1-handoff.md), [decision D-0002](knowledge/decisions/D-0002-latest-request-core.md), and [execution evidence O-0002](knowledge/observations/O-0002-core-foundation.md). A successful core test is not a browser, desktop, or mobile launch test. Issue #1 remains open.
 
 ## Selected architecture
 
@@ -12,7 +22,7 @@ A minimal Rust-first UI foundation for browser, desktop, and mobile clients. The
 - **Tauri 2** packages the same client for desktop (Windows, macOS, Linux) and mobile (Android, iOS), with native functionality behind narrow capability-scoped adapters.
 - **Pure Rust core** owns reusable application rules and state transitions, independent of UI, browser, or operating-system APIs.
 
-The implementation roadmap calls for stable Rust Edition 2024/resolver 3 where compatible, current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. Exact toolchain pins will be established and tested during implementation, not implied by this scaffold.
+The core workspace pins Rust 1.99.1 with Edition 2024/resolver 3. The remaining implementation roadmap calls for current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. Frontend/native toolchain pins still require implementation and compatibility testing.
 
 ## Release sequence
 
