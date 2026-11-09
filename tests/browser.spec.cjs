@@ -5,15 +5,21 @@ async function observeSlowTimers(page) {
   await page.addInitScript(() => {
     const set = window.setTimeout.bind(window);
     const clear = window.clearTimeout.bind(window);
-    const slow = new Set();
+    const slow = new Map();
     window.__slowTimersCleared = 0;
     window.setTimeout = (callback, delay, ...args) => {
-      const id = set(callback, delay, ...args);
-      if (delay === 1500) slow.add(id);
+      let id;
+      const wrapped = (...callbackArgs) => {
+        if (slow.has(id)) slow.set(id, true);
+        callback(...callbackArgs);
+      };
+      id = set(wrapped, delay, ...args);
+      if (delay === 1500) slow.set(id, false);
       return id;
     };
     window.clearTimeout = id => {
-      if (slow.delete(id)) window.__slowTimersCleared++;
+      if (slow.get(id) === false) window.__slowTimersCleared++;
+      slow.delete(id);
       return clear(id);
     };
   });
