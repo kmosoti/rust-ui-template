@@ -55,6 +55,9 @@ Provenance tracking **must never slow down agentic work**:
 | [D-0006 · Design workflow and reusable CI](decisions/D-0006-design-workflow-and-ci.md) | `agent` | `false` | Local skill, standard/medium review, diagrams and trusted caches |
 | [O-0006 · Design/CI evidence](observations/O-0006-design-ci.md) | `agent` | `false` | Executed checks, observed geometry defect and CI timing boundaries |
 
+| [D-0007 · Default workspace launcher](decisions/D-0007-default-workspace-design.md) | `agent` | `false` | Nocturne default design and ongoing CI contributor discipline |
+| [O-0007 · Workspace launcher evidence](observations/O-0007-workspace-launcher.md) | `agent` | `false` | Rendered design, production assets, accessibility and regression evidence |
+
 ## Record protocol
 
 1. Use a stable ID, a descriptive filename, and front matter:

@@ -55,6 +55,7 @@ impl Assets {
                                 Some("js") => "text/javascript",
                                 Some("css") => "text/css",
                                 Some("wasm") => "application/wasm",
+                                Some("svg") => "image/svg+xml",
                                 _ => "text/html",
                             };
                             Response::from_data(bytes).with_header(
@@ -110,7 +111,7 @@ async fn click(page: &Page, text: &str) -> Result<()> {
         "Cancel" => "button[type=button]:nth-child(3)",
         "Apply preferences" => "button[type=submit]",
         "About" => "nav[aria-label='Main navigation'] a[href='#/about']",
-        "Overview" => "nav[aria-label='Main navigation'] a[href='#/overview']",
+        "Library" => "nav[aria-label='Main navigation'] a[href='#/overview']",
         "Preferences" => "nav[aria-label='Main navigation'] a[href='#/settings']",
         "Latest response" => "nav[aria-label='Main navigation'] a[href='#/']",
         _ => return Err(format!("Unknown action: {text}").into()),
@@ -118,9 +119,9 @@ async fn click(page: &Page, text: &str) -> Result<()> {
     check(
         page,
         &format!(
-            "document.querySelector({})?.textContent.trim() === {}",
-            serde_json::to_string(selector)?,
-            serde_json::to_string(text)?
+            "((e) => e && (e.getAttribute('aria-label') || e.textContent.trim()) === {})(document.querySelector({}))",
+            serde_json::to_string(text)?,
+            serde_json::to_string(selector)?
         ),
     )
     .await?;
@@ -175,6 +176,31 @@ const INIT: &str = r#"(() => {
 async fn suite(page: &Page, url: &str) -> Result<()> {
     page.evaluate_on_new_document(INIT).await?;
     page.goto(url).await?;
+    check(
+        page,
+        "document.querySelector('h1')?.textContent === 'Your library'",
+    )
+    .await?;
+    check(page, "document.querySelector('[data-testid=featured-art]')?.naturalWidth > 0 && document.querySelector('nav [aria-current=page]')?.textContent.includes('Library')").await?;
+    js(page, "document.querySelector('.skip-link').focus()").await?;
+    check(page, "document.activeElement.matches('.skip-link') && document.activeElement.getBoundingClientRect().width > 100 && document.activeElement.getBoundingClientRect().left >= 0").await?;
+    page.find_element(".skip-link")
+        .await?
+        .press_key("Enter")
+        .await?;
+    check(
+        page,
+        "document.activeElement.id === 'workspace-content' && location.hash === ''",
+    )
+    .await?;
+    page.find_element("[data-testid=launch-example]")
+        .await?
+        .click()
+        .await?;
+    check(page, "location.hash === '#/' && document.querySelector('nav [aria-current=page]')?.textContent.includes('Latest response')").await?;
+    println!(
+        "PASS: default library, bundled original artwork, active navigation and keyboard skip/launch"
+    );
     check(page, "!!document.querySelector('#number')").await?;
     input(page, 11).await?;
     click(page, "Slow request").await?;
@@ -242,13 +268,13 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
         return Err(format!("Accessibility violations: {violations}").into());
     }
     for (route, name, heading) in [
-        ("overview", "workspace-overview", "A little more clarity."),
-        ("settings", "preferences", "Your space, your pace."),
+        ("overview", "workspace-overview", "Your library"),
+        ("settings", "preferences", "Preferences"),
     ] {
         click(
             page,
             if route == "overview" {
-                "Overview"
+                "Library"
             } else {
                 "Preferences"
             },
@@ -299,8 +325,8 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
     for (width, height) in [(1440, 1000), (390, 844), (320, 812)] {
         for (link, name, heading) in [
             ("Latest response", "response", "Latest response"),
-            ("Overview", "overview", "A little more clarity."),
-            ("Preferences", "preferences", "Your space, your pace."),
+            ("Library", "overview", "Your library"),
+            ("Preferences", "preferences", "Preferences"),
             ("About", "about", "About"),
         ] {
             page.execute(SetDeviceMetricsOverrideParams::new(
@@ -345,6 +371,39 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
             }
         }
     }
+    // 200% text at the narrow reflow viewport; all routes must remain reachable.
+    page.execute(SetDeviceMetricsOverrideParams::new(320, 812, 1.0, false))
+        .await?;
+    js(page, "document.documentElement.style.fontSize = '200%'").await?;
+    for link in ["Library", "Latest response", "Preferences", "About"] {
+        click(page, link).await?;
+        let heading = if link == "Library" {
+            "Your library"
+        } else {
+            link
+        };
+        check(
+            page,
+            &format!(
+                "document.querySelector('h1')?.textContent === {}",
+                serde_json::to_string(heading)?
+            ),
+        )
+        .await?;
+        page.evaluate_function("async () => { await document.fonts.ready; await new Promise(requestAnimationFrame); return true; }").await?;
+        let metrics: serde_json::Value = page
+            .evaluate_function(include_str!("../../../tests/layout-audit.js"))
+            .await?
+            .into_value()?;
+        if metrics["horizontalOverflow"] == true
+            || metrics["clippedText"] != serde_json::json!([])
+            || metrics["escapedControls"] != serde_json::json!([])
+        {
+            return Err(format!("200% text reflow defect on {link}: {metrics}").into());
+        }
+    }
+    capture(page, "text-zoom-about-320").await?;
+    js(page, "document.documentElement.style.fontSize = ''").await?;
     page.execute(SetDeviceMetricsOverrideParams::new(1440, 1000, 1.0, false))
         .await?;
     println!("PASS: desktop/390px/320px layout metrics, captures and axe smoke");
@@ -355,9 +414,15 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
         "document.querySelector('h1')?.textContent === 'About'",
     )
     .await?;
+    click(page, "Library").await?;
+    check(
+        page,
+        "document.querySelector('[data-testid=featured-art]')?.naturalWidth > 0",
+    )
+    .await?;
     click(page, "Latest response").await?;
     check(page, "!!document.querySelector('#number')").await?;
-    check(page, "getComputedStyle([...document.querySelectorAll('button')].find(e=>e.textContent === 'Fast request')).backgroundColor === 'rgb(49, 87, 183)'").await?;
+    check(page, "getComputedStyle([...document.querySelectorAll('button')].find(e=>e.textContent === 'Fast request')).backgroundColor === 'rgb(182, 156, 255)'").await?;
     input(page, 42).await?;
     click(page, "Fast request").await?;
     check(

@@ -1,40 +1,35 @@
-//! Small local-only examples sharing the same Leptos and Tailwind pipeline.
+//! Local-only examples using the template's default workspace/launcher design.
 use leptos::prelude::*;
 
 #[component]
 pub fn Overview() -> impl IntoView {
     view! {
         <section>
-            <div class="mb-10 flex flex-wrap items-end justify-between gap-5">
-                <div><p class="mb-3 text-xs font-bold uppercase tracking-widest text-emerald-800">"02 / Workspace overview"</p><h1 class="text-4xl font-bold tracking-tight">"A little more clarity."</h1><p class="mt-3 text-slate-600">"A sample workspace for the things you’re building next."</p></div>
-                <a href="#/" class="rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-white">"Open interaction lab →"</a>
-            </div>
-            <div class="mb-8 grid gap-5 sm:grid-cols-3">
-                <Metric label="Active projects" value="03" detail="Two ready for review" />
-                <Metric label="This week" value="12" detail="Tasks completed · sample data" />
-                <Metric label="Next milestone" value="Friday" detail="Browser prototype review" />
-            </div>
-            <div class="grid gap-6 md:grid-cols-3">
-                <section class="rounded-2xl border border-slate-200 bg-white p-7 md:col-span-2">
-                    <div class="mb-6 flex items-center justify-between"><h2 class="text-xl font-bold">"On your desk"</h2><span class="text-sm text-slate-500">"Sample projects"</span></div>
-                    <Project name="Field notes" description="A calmer home for everyday observations." tag="In progress" />
-                    <Project name="Studio website" description="A small space for your best work." tag="In review" />
-                    <Project name="Component library" description="Good foundations, one component at a time." tag="Planning" />
+            <div class="flex flex-wrap items-end justify-between gap-4"><div><p class="eyebrow mb-3">"Workspace / Library"</p><h1 class="page-heading">"Your library"</h1><p class="page-summary">"A little space for your next big idea."</p></div><span class="font-mono text-xs text-muted">"03 EXAMPLES"</span></div>
+            <section aria-labelledby="featured-title" class="feature-grid">
+                <img data-testid="featured-art" src="public/observatory.svg" alt="A small observatory above a winding trail in a violet mountain landscape." class="feature-art" width="1200" height="900" />
+                <div class="feature-detail"><p class="eyebrow text-brand">"Featured / Interaction lab"</p><h2 id="featured-title" class="feature-title">"Signal & silence"</h2><p class="mt-4 leading-relaxed text-muted">"Keep the latest signal. Leave the noise behind. Explore requests, timing, and cancellation in one small working example."</p><a data-testid="launch-example" class="primary-action mt-7" href="#/">"Open response lab"<span aria-hidden="true">"→"</span></a><div class="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-hairline pt-5 text-xs text-muted"><span class="text-ready">"Ready to explore"</span><span>"Local simulation"</span></div></div>
+            </section>
+            <div class="mt-10 grid gap-10 xl:grid-cols-[2fr_1fr]">
+                <section data-layout-region="library" aria-labelledby="library-title"><div class="mb-5 flex flex-wrap items-center justify-between gap-3"><h2 id="library-title" class="text-lg font-semibold">"Workspace examples"</h2><span class="text-xs text-muted">"Sample library"</span></div>
+                    <LibraryRow number="01" title="Response lab" description="Slow, fast, cancel. The latest result wins." href="#/" />
+                    <LibraryRow number="02" title="Preferences" description="Make a few adjustments. Keep things local." href="#/settings" />
+                    <LibraryRow number="03" title="Application info" description="A clear view of the browser or native host." href="#/about" />
                 </section>
-                <div class="rounded-2xl bg-slate-900 p-7 text-white"><p class="text-xs font-bold uppercase tracking-widest text-emerald-300">"Make room for focus"</p><h2 class="mt-6 text-3xl font-bold leading-tight">"Less noise."<br/>"More making."</h2><p class="mt-5 leading-relaxed text-slate-300">"Start with one useful interaction. Build the rest on a foundation you can test."</p><a class="mt-8 inline-block font-semibold text-emerald-300 underline" href="#/settings">"Make it yours →"</a></div>
+                <section data-layout-region="workspace-notes" aria-labelledby="notes-title" class="border-t border-hairline pt-5"><p class="eyebrow">"From the workspace"</p><h2 id="notes-title" class="mt-4 text-xl font-semibold">"Built for the in-between."</h2><p class="mt-3 text-sm leading-relaxed text-muted">"Part notebook, part launchpad. A shared Rust UI with room for your own tools, worlds, and ideas."</p><a class="mt-5 inline-block py-2 text-sm font-medium text-brand underline underline-offset-4" href="#/about">"Explore the foundation →"</a><p class="mt-5 border-t border-hairline pt-5 font-mono text-xs text-muted">"SAMPLE CONTENT / ORIGINAL ARTWORK"</p></section>
             </div>
         </section>
     }
 }
 
 #[component]
-fn Metric(label: &'static str, value: &'static str, detail: &'static str) -> impl IntoView {
-    view! { <div data-layout-region=label class="rounded-2xl border border-slate-200 bg-white p-6"><p class="text-sm font-medium text-slate-600">{label}</p><p class="mt-3 text-4xl font-bold tracking-tight">{value}</p><p class="mt-3 text-sm text-slate-500">{detail}</p></div> }
-}
-
-#[component]
-fn Project(name: &'static str, description: &'static str, tag: &'static str) -> impl IntoView {
-    view! { <div class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 py-5"><div><h3 class="font-semibold">{name}</h3><p class="mt-1 text-sm text-slate-600">{description}</p></div><span class="rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-slate-700">{tag}</span></div> }
+fn LibraryRow(
+    number: &'static str,
+    title: &'static str,
+    description: &'static str,
+    href: &'static str,
+) -> impl IntoView {
+    view! { <a href=href class="library-row"><span class="demo-number">{number}</span><span class="min-w-0"><span class="block font-medium">{title}</span><span class="mt-1 block text-sm leading-relaxed text-muted">{description}</span></span><span aria-hidden="true" class="text-muted">"→"</span></a> }
 }
 
 #[component]
@@ -44,15 +39,15 @@ pub fn Preferences() -> impl IntoView {
     let saved = RwSignal::new(false);
     view! {
         <section class="max-w-3xl">
-            <p class="mb-3 text-xs font-bold uppercase tracking-widest text-emerald-800">"03 / Preferences"</p><h1 class="text-4xl font-bold tracking-tight">"Your space, your pace."</h1><p class="mt-3 text-slate-600">"A small settings example. Changes live in this page only."</p>
-            <form class="mt-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm" on:submit=move |ev| { ev.prevent_default(); saved.set(true); }>
-                <h2 class="text-xl font-bold">"Make yourself at home"</h2>
-                <div class="mt-7"><label for="display-name" class="block text-sm font-semibold">"Display name"</label><input id="display-name" value="Alex Morgan" on:input=move |_| saved.set(false) class="mt-2 w-full rounded-lg border border-slate-400 px-4 py-3" /></div>
-                <fieldset class="mt-8 border-t border-slate-100 pt-6"><legend class="px-1 font-semibold">"Workspace options"</legend>
-                    <label class="mt-3 flex items-start gap-3"><input type="checkbox" class="mt-1 size-5 accent-brand" prop:checked=move || digest.get() on:change=move |ev| { digest.set(event_target_checked(&ev)); saved.set(false); } /><span><span class="block font-medium">"Weekly digest"</span><span class="text-sm text-slate-600">"Keep a little perspective on your week."</span></span></label>
-                    <label class="mt-6 flex items-start gap-3"><input type="checkbox" class="mt-1 size-5 accent-brand" prop:checked=move || compact.get() on:change=move |ev| { compact.set(event_target_checked(&ev)); saved.set(false); } /><span><span class="block font-medium">"Compact view"</span><span class="text-sm text-slate-600">"A little more information in a little less space."</span></span></label>
+            <p class="eyebrow mb-3">"Workspace / Personalize"</p><h1 class="page-heading">"Preferences"</h1><p class="page-summary">"A workspace that feels like yours. Changes live in this page only."</p>
+            <form class="mt-8 border-t border-hairline py-8" on:submit=move |ev| { ev.prevent_default(); saved.set(true); }>
+                <h2 class="text-xl font-semibold">"Your profile"</h2>
+                <div class="mt-7 max-w-lg"><label for="display-name" class="block text-sm font-medium">"Display name"</label><input id="display-name" value="Alex Morgan" on:input=move |_| saved.set(false) class="field" /></div>
+                <fieldset class="mt-8 border-t border-hairline pt-6"><legend class="pr-4 font-medium">"Workspace options"</legend>
+                    <label class="mt-3 flex items-start gap-3"><input type="checkbox" class="mt-1 size-5 shrink-0 accent-brand" prop:checked=move || digest.get() on:change=move |ev| { digest.set(event_target_checked(&ev)); saved.set(false); } /><span><span class="block font-medium">"Weekly digest"</span><span class="text-sm text-muted">"Keep a little perspective on your week."</span></span></label>
+                    <label class="mt-6 flex items-start gap-3"><input type="checkbox" class="mt-1 size-5 shrink-0 accent-brand" prop:checked=move || compact.get() on:change=move |ev| { compact.set(event_target_checked(&ev)); saved.set(false); } /><span><span class="block font-medium">"Compact view"</span><span class="text-sm text-muted">"A little more information in a little less space."</span></span></label>
                 </fieldset>
-                <div class="mt-8 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-6"><button type="submit" class="rounded-lg bg-brand px-5 py-3 font-semibold text-white">"Apply preferences"</button><p role="status" class="text-sm text-emerald-900">{move || if saved.get() { "Applied for this demo session." } else { "No account or server required." }}</p></div>
+                <div class="mt-8 flex flex-wrap items-center gap-4 border-t border-hairline pt-6"><button type="submit" class="primary-action">"Apply preferences"</button><p role="status" class="text-sm text-ready">{move || if saved.get() { "Applied for this demo session." } else { "No account or server required." }}</p></div>
             </form>
         </section>
     }

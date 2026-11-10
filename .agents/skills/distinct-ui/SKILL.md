@@ -11,11 +11,13 @@ boundaries intact. A visually unusual UI still needs to be usable and accessible
 
 ## 1. Establish the brief before writing view! macros
 
-Read the target route/components, styles/input.css, docs/architecture.md and the
+Read the target route/components, styles/input.css, docs/default-design.md, docs/architecture.md and the
 relevant knowledge. Record `design/<feature>-brief.md` using
 [the brief template](references/brief.md). Identify the user, primary task,
 important information, real/sample content, states, viewport constraints and
-existing brand. Discover facts from the code; ask only for consequential missing
+existing brand. Nocturne is this template’s default workspace/launcher identity;
+fit new work to it unless the user requests another identity. Alternatives can
+vary geometry/density within that identity. Discover facts from the code; ask only for consequential missing
 preferences. Use reasonable recorded assumptions where authorization is clear.
 
 Propose **three structurally different directions**, not three accent colors.
@@ -95,4 +97,5 @@ Record choices, screenshots, metrics, executed commands and limitations in the
 brief and knowledge/ with agent provenance. Update the overall architecture when
 boundaries change and include the focused change diagram in the PR. Preserve the
 independent standard/medium review policy; never use max/ultra reviewers.
-The existing demo pages are examples, not a mandatory visual system for new work.
+Nocturne shell/tokens are the default; adapt example content and layout to the
+actual task, or deliberately replace the identity when the user brief calls for it.

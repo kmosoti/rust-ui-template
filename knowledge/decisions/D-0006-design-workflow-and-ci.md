@@ -41,6 +41,12 @@ sharing PR-built executable caches with trusted signing jobs. Revisit if measure
 cache transfer/eviction costs exceed savings, a task requires different visual
 constraints, or research/evaluation changes the evidence.
 
+## Follow-up
+
+[D-0007](D-0007-default-workspace-design.md) records the subsequent user request
+for a concrete default workspace/launcher identity. It refines the default-neutral
+starting stance here; task-specific alternatives and rendered critique remain.
+
 ## Relations
 
 - **informed-by**: [R-0002](../research/R-0002-ui-diversity-and-verification.md)

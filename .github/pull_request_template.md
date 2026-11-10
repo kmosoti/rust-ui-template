@@ -24,6 +24,7 @@
 ## Verification Evidence
 - **Commands executed & results:**
   - `...`
+- **CI/setup impact (when touched):** fresh/repeated-run behavior, cold/warm evidence, cache trust/invalidation, retained checks and efficiency opportunities.
 - **Not run / untested platforms or environments:**
   - `...`
 

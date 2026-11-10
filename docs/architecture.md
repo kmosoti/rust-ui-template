@@ -155,3 +155,26 @@ Cache contents contain no signing material; release signing remains separate.
 Human reviewers use the focused change diagram in each architectural PR alongside
 these overall diagrams. Source changes still run the same functional/security
 checks; cached builds do not replace verification.
+
+## Default shared UI and static artwork
+
+```mermaid
+flowchart LR
+  Shell["Nocturne workspace shell + accessible navigation"] --> Library["Default library: original scene + launch link"]
+  Shell --> Lab["Response lab: unchanged core/task ownership"]
+  Shell --> Settings["Preferences: local state"]
+  Shell --> About["Host information: existing adapter/ACL"]
+  Library -->|fragment link| Lab
+  Tokens["Semantic Tailwind tokens + shared recipes"] --> Shell
+  Art["Original local SVG"] --> Trunk["Trunk production bundle"]
+  Tokens --> Trunk
+  Trunk --> Browser["Browser, root and subpath"]
+  Trunk --> Native["Tauri embedded assets, same UI"]
+```
+
+[Default design](default-design.md) and the [spatial brief](../design/workspace-launcher-brief.md)
+describe hierarchy and responsive geometry. Initial empty/unknown fragments show
+the library; #/ explicitly opens the response lab. The skip link focuses main
+without navigating the fragment router. No game execution, new IPC or persistent
+library state is implied. Static artwork is bundled locally alongside the one
+production stylesheet and CSR assets.

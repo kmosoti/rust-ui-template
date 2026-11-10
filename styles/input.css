@@ -1,5 +1,60 @@
 @import "tailwindcss" source(none);
 @source "../crates/app-ui/src";
 @theme {
-  --color-brand: #3157b7;
+  --color-*: initial;
+  --radius-*: initial;
+  --color-canvas: #111216;
+  --color-sidebar: #15161c;
+  --color-panel: #1b1c24;
+  --color-raised: #242530;
+  --color-ink: #f0eff5;
+  --color-muted: #b0afc0;
+  --color-brand: #b69cff;
+  --color-ready: #a7d7bd;
+  --color-hairline: #353640;
+  --color-control: #77788d;
+  --radius-control: 6px;
+  --radius-art: 10px;
+}
+@layer base {
+  html { color-scheme: dark; }
+  body { @apply m-0 bg-canvas text-ink antialiased; font-family: ui-sans-serif, system-ui, sans-serif; overflow-wrap: anywhere; }
+  button, input { font: inherit; }
+  button, a, input { -webkit-tap-highlight-color: transparent; }
+  a, button, input { @apply focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand; }
+  input { @apply min-w-0 max-w-full; }
+  ::selection { @apply bg-brand text-canvas; }
+}
+@layer components {
+  .app-shell { @apply min-h-screen lg:grid lg:grid-cols-[224px_minmax(0,1fr)]; }
+  .workspace-rail { @apply flex min-w-0 flex-col border-b border-hairline bg-sidebar p-5 lg:border-r lg:border-b-0 lg:p-6; }
+  .workspace-brand { @apply flex items-center gap-3 text-sm font-semibold tracking-[0.16em]; }
+  .brand-mark { @apply text-3xl leading-none text-brand; }
+  .workspace-caption { @apply mt-2 text-xs text-muted; }
+  .workspace-nav { @apply mt-7 flex flex-wrap gap-1 lg:flex-col; }
+  .nav-link { @apply flex items-center gap-3 rounded-control px-3 py-3 text-sm text-muted hover:bg-raised hover:text-ink; }
+  .nav-link[aria-current="page"] { @apply bg-raised text-ink; box-shadow: inset 2px 0 var(--color-brand); }
+  .rail-index { @apply mt-10 hidden border-t border-hairline pt-6 lg:block; }
+  .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.14em] text-muted; }
+  .index-link { @apply mt-4 block text-sm text-muted hover:text-brand; }
+  .rail-note { @apply mt-auto hidden pt-16 text-xs leading-relaxed text-muted lg:block; }
+  .workspace-body { @apply min-w-0; }
+  .context-bar { @apply flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-hairline px-4 py-4 text-xs text-muted sm:px-6 xl:px-8; }
+  .workspace-main { @apply mx-auto w-full max-w-[1304px] min-w-0 px-4 py-8 sm:px-6 xl:px-8 xl:py-10; }
+  .page-heading { @apply text-4xl font-semibold tracking-tight sm:text-[2.75rem]; line-height: 1.15; }
+  .page-summary { @apply mt-3 max-w-2xl text-base leading-relaxed text-muted; }
+  .primary-action { @apply inline-flex min-h-11 items-center justify-center gap-4 rounded-control bg-brand px-5 py-3 text-sm font-semibold text-canvas hover:brightness-110; }
+  .secondary-action { @apply inline-flex min-h-11 items-center justify-center rounded-control border border-control px-4 py-2 text-sm font-medium text-ink hover:bg-raised; }
+  .field { @apply mt-2 block w-full rounded-control border border-control bg-canvas px-4 py-3 text-ink; }
+  .feature-grid { @apply mt-8 grid overflow-hidden rounded-art bg-panel xl:grid-cols-[1.4fr_1fr]; }
+  .feature-art { @apply h-64 w-full object-cover sm:h-80 xl:h-full xl:min-h-96; }
+  .feature-detail { @apply flex min-w-0 flex-col items-start p-6 sm:p-8; }
+  .feature-title { @apply mt-5 text-3xl font-semibold tracking-tight sm:text-4xl; }
+  .library-row { @apply grid min-w-0 grid-cols-[2.5rem_minmax(0,1fr)_1.5rem] items-center gap-4 border-t border-hairline py-5 hover:text-brand; }
+  .demo-number { @apply font-mono text-sm tabular-nums text-muted; }
+  .workspace-footer { @apply mx-auto flex max-w-[1304px] flex-wrap justify-between gap-3 border-t border-hairline px-4 py-5 text-xs text-muted sm:px-6 xl:px-8; }
+  .skip-link { @apply sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-control focus:bg-brand focus:px-5 focus:py-3 focus:text-canvas; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }

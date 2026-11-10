@@ -68,6 +68,9 @@ def main():
             if time.monotonic() > deadline:
                 raise AssertionError('Missing expected window: ' + target)
             time.sleep(.05)
+        wait("document.querySelector('h1')?.textContent === 'Your library'")
+        wait("document.querySelector('[data-testid=featured-art]')?.naturalWidth > 0")
+        execute("document.querySelector(\"nav[aria-label='Main navigation'] a[href='#/']\").click()")
         wait("!!document.querySelector('#number')")
         execute("window.__nativeErrors=[]; addEventListener('error', e=>window.__nativeErrors.push(e.message)); addEventListener('unhandledrejection', e=>window.__nativeErrors.push(String(e.reason)));")
         result = invoke({'schema_version': 1})
@@ -89,7 +92,7 @@ def main():
         wait("document.querySelector('[role=status]')?.textContent.includes('Latest result: 22')")
         time.sleep(1.7)
         wait("document.querySelector('[role=status]')?.textContent.includes('Latest result: 22')")
-        assert execute("return getComputedStyle(document.querySelectorAll('button')[1]).backgroundColor") == 'rgb(49, 87, 183)'
+        assert execute("return getComputedStyle(document.querySelectorAll('button')[1]).backgroundColor") == 'rgb(182, 156, 255)'
         execute("window.__inlineProbe=false; window.__cspEvents=0; addEventListener('securitypolicyviolation',()=>window.__cspEvents++); const script=document.createElement('script'); script.textContent='window.__inlineProbe=true'; document.head.append(script);")
         wait('window.__cspEvents > 0')
         assert execute('return window.__inlineProbe') is False
