@@ -13,3 +13,6 @@ node_modules/
 styles/generated.css
 playwright-report/
 test-results/
+.tools/
+artifacts/
+.superdesign/

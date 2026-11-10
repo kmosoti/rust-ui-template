@@ -26,6 +26,9 @@ replicate [D-0002](D-0002-latest-request-core.md). Revisit when real I/O needs
 transport-specific cancellation, a server needs path-based routes, or native
 packaging establishes different asset requirements.
 
+The npm tooling choice is superseded by [D-0004](D-0004-node-free-tooling.md);
+the owner-lifetime and freshness contract is retained.
+
 ## Relations
 
 - **extends**: [D-0002](D-0002-latest-request-core.md)

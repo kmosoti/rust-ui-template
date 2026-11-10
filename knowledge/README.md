@@ -45,6 +45,9 @@ Provenance tracking **must never slow down agentic work**:
 | [D-0003 · CSR browser adapter](decisions/D-0003-csr-browser-adapter.md) | `agent` | `false` | Owner-scoped tasks, shared UI, static assets and fragment navigation |
 | [O-0003 · CSR browser evidence](observations/O-0003-csr-browser.md) | `agent` | `false` | Local and CI evidence for the browser slice and its limits |
 
+| [D-0004 · Node-free tooling](decisions/D-0004-node-free-tooling.md) | `agent` | `false` | Official standalone Tailwind and Chromiumoxide browser checks |
+| [O-0004 · Node-free examples](observations/O-0004-node-free-examples.md) | `agent` | `false` | Production captures, checks and limits of the Rust-driven examples |
+
 ## Record protocol
 
 1. Use a stable ID, a descriptive filename, and front matter:
