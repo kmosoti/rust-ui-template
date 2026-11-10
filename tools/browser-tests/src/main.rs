@@ -106,12 +106,21 @@ async fn click(page: &Page, text: &str) -> Result<()> {
         "Fast request" => "button[type=button]:nth-child(2)",
         "Cancel" => "button[type=button]:nth-child(3)",
         "Apply preferences" => "button[type=submit]",
-        "About" => "a[href='#/about']",
-        "Overview" => "a[href='#/overview']",
-        "Preferences" => "a[href='#/settings']",
-        "Latest response" => "a[href='#/']",
+        "About" => "nav[aria-label='Main navigation'] a[href='#/about']",
+        "Overview" => "nav[aria-label='Main navigation'] a[href='#/overview']",
+        "Preferences" => "nav[aria-label='Main navigation'] a[href='#/settings']",
+        "Latest response" => "nav[aria-label='Main navigation'] a[href='#/']",
         _ => return Err(format!("Unknown action: {text}").into()),
     };
+    check(
+        page,
+        &format!(
+            "document.querySelector({})?.textContent.trim() === {}",
+            serde_json::to_string(selector)?,
+            serde_json::to_string(text)?
+        ),
+    )
+    .await?;
     page.find_element(selector).await?.click().await?;
     Ok(())
 }
