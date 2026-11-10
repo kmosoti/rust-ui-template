@@ -66,11 +66,15 @@ def main():
         if not found:
             raise AssertionError('Missing expected window: ' + target)
         wait("!!document.querySelector('#number')")
+        execute("window.__nativeErrors=[]; addEventListener('error', e=>window.__nativeErrors.push(e.message)); addEventListener('unhandledrejection', e=>window.__nativeErrors.push(String(e.reason)));")
         result = invoke({'schema_version': 1})
         if args.denial_fixture:
             assert result['ok'] is False, result
             assert any(term in result['error'].lower() for term in ['not allowed', 'denied']), result
-            print('PASS: real app_info invocation denied in restricted window')
+            execute("location.hash='#/about'")
+            wait("document.querySelector('[data-testid=host-info]')?.textContent === 'Application information could not be read.'")
+            assert execute('return window.__nativeErrors') == []
+            print('PASS: real app_info denial and predictable UI error in restricted window')
             return
         assert result['ok'] and result['value'] == {'schema_version': 1, 'name': 'rust-ui-template', 'version': '0.1.0', 'platform': 'linux'}, result
         for payload in [{'schema_version': 0}, {'schema_version': 1, 'path': '/etc/passwd'}, {}]:
@@ -88,6 +92,7 @@ def main():
         assert execute('return window.__inlineProbe') is False
         execute("location.hash='#/about'")
         wait("document.querySelector('[data-testid=host-info]')?.textContent.includes('rust-ui-template 0.1.0')")
+        assert execute('return window.__nativeErrors') == []
         Path('artifacts').mkdir(exist_ok=True)
         Path('artifacts/native-linux.png').write_bytes(base64.b64decode(request('GET', prefix + '/screenshot')))
         print('PASS: installed Debian package launch, shared CSS/WASM, stale-response behavior, typed IPC validation, CSP enforcement and UI host information')

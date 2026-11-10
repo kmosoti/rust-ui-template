@@ -39,6 +39,8 @@ jobs:
       - run: cargo clippy --manifest-path apps/native/Cargo.toml --all-targets --locked --offline -- -D warnings
       - name: Install and launch production package
         run: |
+          mkdir -p artifacts
+          cp apps/native/target/release/bundle/deb/*.deb artifacts/rust-ui-native-linux.deb
           sudo dpkg -i apps/native/target/release/bundle/deb/*.deb
           xvfb-run -a python3 scripts/native_smoke.py
       - name: Build restricted-window fixture with the same command and ACL
@@ -49,3 +51,10 @@ jobs:
           sudo dpkg -i apps/native/target/release/bundle/deb/*.deb
           xvfb-run -a python3 scripts/native_smoke.py --denial-fixture
       - run: git diff --exit-code && test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: linux-native-evidence
+          path: artifacts/
+          retention-days: 7
+          if-no-files-found: ignore
