@@ -11,10 +11,10 @@ import urllib.error
 import urllib.request
 
 
-def request(method, path, body=None):
+def request(method, path, body=None, timeout=40):
     data = None if body is None else json.dumps(body).encode()
     req = urllib.request.Request('http://127.0.0.1:4444' + path, data=data, method=method, headers={'Content-Type': 'application/json'})
-    with urllib.request.urlopen(req, timeout=40) as response:
+    with urllib.request.urlopen(req, timeout=timeout) as response:
         result = json.load(response)
     value = result.get('value')
     return value
@@ -37,7 +37,7 @@ def main():
                 if driver.poll() is not None or time.monotonic() > deadline:
                     raise RuntimeError('tauri-driver did not start')
                 time.sleep(.1)
-        session = request('POST', '/session', {'capabilities': {'alwaysMatch': {'tauri:options': {'application': str(Path(args.application).resolve())}}}})['sessionId']
+        session = request('POST', '/session', {'capabilities': {'alwaysMatch': {'tauri:options': {'application': str(Path(args.application).resolve())}}}}, timeout=90)['sessionId']
         prefix = '/session/' + session
         request('POST', prefix + '/timeouts', {'script': 15000})
 
