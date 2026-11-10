@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Rust UI Template",
+  "version": "0.1.0",
+  "identifier": "dev.kmosoti.rust-ui-template",
+  "build": {
+    "frontendDist": "../../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Rust UI Template",
+        "width": 1200,
+        "height": 900,
+        "url": "index.html"
+      }
+    ],
+    "security": {
+      "capabilities": [
+        "main-info"
+      ],
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost; object-src 'none'; frame-src 'none'; base-uri 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "deb"
+    ],
+    "shortDescription": "Shared Leptos CSR UI example",
+    "longDescription": "A Linux desktop host for the same production Leptos browser UI.",
+    "icon": [
+      "icons/icon.png"
+    ]
+  }
+}

@@ -48,6 +48,9 @@ Provenance tracking **must never slow down agentic work**:
 | [D-0004 · Node-free tooling](decisions/D-0004-node-free-tooling.md) | `agent` | `false` | Official standalone Tailwind and Chromiumoxide browser checks |
 | [O-0004 · Node-free examples](observations/O-0004-node-free-examples.md) | `agent` | `false` | Production captures, checks and limits of the Rust-driven examples |
 
+| [D-0005 · Linux native host](decisions/D-0005-linux-native-host.md) | `agent` | `false` | Isolated Tauri host, versioned boundary, explicit permissions and CSP |
+| [O-0005 · Linux host evidence](observations/O-0005-linux-native-host.md) | `agent` | `false` | Browser checks and native CI prerequisites/results |
+
 ## Record protocol
 
 1. Use a stable ID, a descriptive filename, and front matter:

@@ -16,8 +16,17 @@ fn current_route() -> String {
         .unwrap_or_default()
 }
 
+pub type HostInfoReader = fn() -> futures::future::LocalBoxFuture<
+    'static,
+    Result<app_contract::AppInfo, app_contract::HostError>,
+>;
+
+#[derive(Clone, Copy)]
+struct HostReader(HostInfoReader);
+
 #[component]
-pub fn App() -> impl IntoView {
+pub fn App(read_host_info: HostInfoReader) -> impl IntoView {
+    provide_context(HostReader(read_host_info));
     let route = RwSignal::new(current_route());
     let listener = gloo_events::EventListener::new(
         &web_sys::window().expect("browser window"),
@@ -53,7 +62,19 @@ pub fn App() -> impl IntoView {
 
 #[component]
 fn About() -> impl IntoView {
-    view! { <section><h1 class="text-3xl font-bold">"About"</h1><p class="mt-4">"Requests are simulated in your browser."</p></section> }
+    let reader = expect_context::<HostReader>().0;
+    let info = LocalResource::new(reader);
+    view! {
+        <section><h1 class="text-3xl font-bold">"About"</h1><p class="mt-4">"Requests are simulated in your browser or desktop WebView."</p>
+        <h2 class="mt-8 text-xl font-semibold">"Application information"</h2>
+        <Suspense fallback=move || view! { <p role="status">"Reading application information…"</p> }>
+        <p class="mt-3" role="status" data-testid="host-info">{move || info.get().map(|result| match result {
+            Ok(info) => format!("{} {} · {}", info.name, info.version, info.platform),
+            Err(app_contract::HostError::Unsupported) => "Application information is unavailable in browser mode.".to_string(),
+            Err(_) => "Application information could not be read.".to_string(),
+        })}</p>
+        </Suspense></section>
+    }
 }
 
 #[component]

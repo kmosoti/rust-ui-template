@@ -7,6 +7,7 @@ license.workspace = true
 publish.workspace = true
 
 [dependencies]
+app-contract = { path = "../app-contract" }
 app-core = { path = "../app-core" }
 leptos = { version = "=0.8.23", features = ["csr"] }
 futures = "=0.3.31"

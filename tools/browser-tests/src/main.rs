@@ -188,6 +188,7 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
         "window.__cleared === 1 && document.querySelector('h1')?.textContent === 'About'",
     )
     .await?;
+    check(page, "document.querySelector('[data-testid=host-info]')?.textContent.includes('unavailable in browser mode')").await?;
     tokio::time::sleep(Duration::from_millis(1700)).await;
     click(page, "Latest response").await?;
     check(
