@@ -1,8 +1,13 @@
 {
   "app": {
     "windows": [
-      { "label": "main", "title": "Main test window", "width": 1200, "height": 900, "url": "index.html" },
-      { "label": "restricted", "title": "Restricted test window", "width": 900, "height": 700, "url": "index.html" }
+      {
+        "label": "restricted",
+        "title": "Restricted test window",
+        "width": 900,
+        "height": 700,
+        "url": "index.html"
+      }
     ]
   }
 }
