@@ -25,7 +25,7 @@ filesystem, shell, remote-origin or dynamic ACL grants are added.
 
 Production CSP restricts scripts and styles to bundled assets, permits WASM
 compilation and the Tauri IPC transport, and blocks arbitrary inline scripts.
-A separate merged test configuration adds a restricted window without changing
+A separate merged test configuration replaces the window with a restricted one without changing
 the production command or its capability. The denial test must exercise the
 real registered command from that unprivileged window, not a nonexistent command.
 

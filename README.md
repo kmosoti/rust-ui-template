@@ -81,7 +81,7 @@ cargo install tauri-driver --version 2.1.0 --locked
 xvfb-run -a python3 scripts/native_smoke.py
 ```
 
-The separate `tauri.e2e.conf.json` adds a restricted window for a real permission
+The separate `tauri.e2e.conf.json` replaces the window with a restricted one for a real permission
 denial test; its bundle is a test fixture, not the production package. Production
 CSP allows the bundled scripts and WASM while blocking arbitrary inline scripts.
 No signing/notarization, persistence, mobile build or general platform support
