@@ -15,6 +15,15 @@ cargo test --workspace --locked --offline
 
 See the [coding-agent handoff and full check commands](docs/issue-1-handoff.md), [decision D-0002](knowledge/decisions/D-0002-latest-request-core.md), and [execution evidence O-0002](knowledge/observations/O-0002-core-foundation.md). A successful core test is not a browser, desktop, or mobile launch test. Issue #1 remains open.
 
+## Default workspace
+
+Nocturne combines Obsidian-like workspace organization with a game-launcher-style
+featured library. It ships original local artwork, dark semantic tokens, shared
+controls and responsive navigation. [Design guide](docs/default-design.md) ·
+[Mobile preview](docs/images/nocturne-mobile.png).
+
+![Nocturne default workspace](docs/images/nocturne-desktop.png)
+
 ## Browser development
 
 Install Rust 1.99.1 with the `wasm32-unknown-unknown` target, Python 3,
