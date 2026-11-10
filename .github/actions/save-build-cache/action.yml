@@ -1,0 +1,20 @@
+name: Save trusted build cache
+description: Save only from successful develop pushes; PRs never publish executable caches.
+inputs:
+  key:
+    required: true
+    description: Exact key from restore-build-cache
+runs:
+  using: composite
+  steps:
+    - uses: actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0, Node 24
+      if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git/db
+          ~/.cache/trunk
+          .tools
+          target
+          apps/native/target
+        key: ${{ inputs.key }}

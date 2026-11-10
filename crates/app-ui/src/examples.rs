@@ -29,7 +29,7 @@ pub fn Overview() -> impl IntoView {
 
 #[component]
 fn Metric(label: &'static str, value: &'static str, detail: &'static str) -> impl IntoView {
-    view! { <div class="rounded-2xl border border-slate-200 bg-white p-6"><p class="text-sm font-medium text-slate-600">{label}</p><p class="mt-3 text-4xl font-bold tracking-tight">{value}</p><p class="mt-3 text-sm text-slate-500">{detail}</p></div> }
+    view! { <div data-layout-region=label class="rounded-2xl border border-slate-200 bg-white p-6"><p class="text-sm font-medium text-slate-600">{label}</p><p class="mt-3 text-4xl font-bold tracking-tight">{value}</p><p class="mt-3 text-sm text-slate-500">{detail}</p></div> }
 }
 
 #[component]

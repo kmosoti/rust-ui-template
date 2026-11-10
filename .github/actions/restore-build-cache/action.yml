@@ -1,0 +1,35 @@
+name: Restore isolated build cache
+description: Restore trusted dependency/build caches by platform, job, toolchain and lockfiles.
+inputs:
+  profile:
+    required: true
+    description: core, browser or native (separate build outputs)
+  sdk:
+    default: portable
+    description: Native SDK version fingerprint
+outputs:
+  key:
+    description: Primary key used for a later trusted save
+    value: ${{ steps.cache.outputs.cache-primary-key }}
+  hit:
+    description: Exact key restored
+    value: ${{ steps.cache.outputs.cache-hit }}
+runs:
+  using: composite
+  steps:
+    - id: image
+      shell: bash
+      run: echo "version=${ImageOS:-unknown}-${ImageVersion:-uncached-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}}" >> "$GITHUB_OUTPUT"
+    - id: cache
+      uses: actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0, Node 24
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git/db
+          ~/.cache/trunk
+          .tools
+          target
+          apps/native/target
+        key: build-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-${{ inputs.profile }}-${{ inputs.sdk }}-rust1.99.1-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock', 'apps/native/Cargo.lock', 'scripts/*setup*.py', 'scripts/tool-assets.json') }}
+        restore-keys: |
+          build-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-${{ inputs.profile }}-${{ inputs.sdk }}-rust1.99.1-

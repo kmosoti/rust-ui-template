@@ -29,7 +29,7 @@ Use this loop for every unit of work, regardless of which issue or release phase
    - **Do not block agentic work on human ratification:** agents record `added_by: agent` and `human_ratified: false` and continue immediately (see [Section 5](#5-knowledge-base-and-ratification-contract)).
    - Update [`docs/`](docs/architecture.md) only when stable architectural contracts, boundaries, or developer workflows change.
 6. **Independent cross-model review, rebase, and land into `develop` (plus human-gated promotion to `main`)**
-   - **Autonomous agent landing on `develop`:** Hand off the PR or stacked PR chain to an **independent reviewing agent** from an **alternative model family** (or a **higher-reasoning-effort** agent if no cross-family model is available). The reviewing agent audits the stack, resolves review conversations, and owns merging the stack bottom-up into `develop` via **Rebase and merge** (linear history, no merge commits).
+   - **Autonomous agent landing on `develop`:** Hand off the PR or stacked PR chain to an **independent reviewing agent** from an **alternative model family** (or a fresh independent agent at standard/medium reasoning if no cross-family model is available). The reviewing agent audits the stack, resolves review conversations, and owns merging the stack bottom-up into `develop` via **Rebase and merge** (linear history, no merge commits).
    - **Human-gated releases into `main`:** Merges from `develop -> main` require **human review and manual approval** of the `main-release` GitHub Environment gate ([`.github/workflows/main-human-gate.yml`](.github/workflows/main-human-gate.yml)). Agents may open a `develop -> main` release PR, but must never approve the `main-release` deployment gate or merge into `main`.
 
 ---
@@ -155,7 +155,7 @@ To catch model-specific blind spots while keeping agentic development autonomous
    - Instead, the authoring agent delegates review and merge execution to a dedicated **Reviewer & Merger Agent**.
 2. **Reviewer model selection hierarchy**
    - **Preferred — Alternative model family:** Delegate to a subagent running a **different model family/provider** from the authoring agent (for example, Claude <-> Gemini <-> GPT/DeepSeek). Cross-family review reduces correlated errors in Rust ownership, Leptos reactivity, Tauri security capabilities, and test coverage claims.
-   - **Fallback — Higher reasoning effort:** If an alternative model family is unavailable (e.g., quota exhaustion, single-provider environment, or outage), spawn a fresh subagent using the **highest available reasoning effort** (higher than the authoring pass) so the review never deadlocks solo/autonomous progress.
+   - **Fallback — Independent standard review:** If an alternative model family is unavailable, use a fresh independent agent from an available model at standard/medium reasoning. Independence, evidence and focused checklists are the review controls. Never select `max` or `ultra` for review; do not automatically raise effort when another family is unavailable.
 3. **What the Reviewer & Merger Agent checks**
    - Architectural boundaries (`app-core` purity, single Leptos UI owner, explicit `csr`/`hydrate`/`ssr` profile isolation, capability-scoped Tauri ACLs).
    - Verification honesty (reported commands were actually executed; untested platforms/WebViews are explicitly disclosed).
@@ -190,6 +190,21 @@ To catch model-specific blind spots while keeping agentic development autonomous
 4. Agents must **never** approve the `main-release` environment gate or run `gh pr merge` on a PR targeting `main`.
 
 ---
+
+## UI workflow and architecture diagrams
+
+For UI work read [.agents/skills/distinct-ui/SKILL.md](.agents/skills/distinct-ui/SKILL.md).
+Separate the design brief, spatial specification, implementation and rendered
+critique. Do not make token restrictions a substitute for task usability or
+accessibility. No Superdesign account or other design service is required.
+
+Every PR links the overall [architecture](docs/architecture.md). Changes to crate
+boundaries, data/control flow, build/CI topology, IPC or deployment include a
+small Mermaid diagram explaining the changed path and its trust/ownership
+boundaries. Show before/after when the topology changes; prose-only changes can
+state “no architectural change” with a reason. Diagrams describe the shipped
+state, identify future components as such, and must agree with the code. A human
+reviewer should be able to locate inputs, decisions, effects and validation.
 
 ## 3. Commit Message Convention and Template
 
@@ -251,6 +266,11 @@ GitHub automatically loads [`.github/pull_request_template.md`](.github/pull_req
 - [ ] Single owner per concern preserved (`app-core` pure Rust, `app-ui` Leptos/Tailwind 4, explicit browser/Tauri adapters)
 - [ ] Rendering profiles (`csr` / `hydrate` / `ssr`) and platform dependencies remain isolated
 
+## Architecture for Human Review
+- **Overall architecture:** [docs/architecture.md](docs/architecture.md)
+- **Change diagram:** include a focused Mermaid diagram for changed architecture, data flow, IPC, build or CI; for prose-only changes explain why no update is needed.
+- **Ownership/trust boundaries and impact:**
+
 ## Verification Evidence
 - **Commands executed & results:**
   - `...`
@@ -263,9 +283,10 @@ GitHub automatically loads [`.github/pull_request_template.md`](.github/pull_req
 
 ## Merge Readiness & Review Gate (`develop` vs `main`)
 - **Authoring agent / model:** `...`
-- **Reviewer & merger agent / model (for `develop`):** `...` (prefer alternative model family; fallback: higher reasoning effort)
-- [ ] For PRs targeting `develop`: reviewed by an alternative model family (or higher-reasoning-effort fallback) and ready for the reviewing agent to rebase-merge bottom-up into `develop`
+- **Reviewer & merger agent / model (for `develop`):** `...` (prefer alternative model family; fallback: fresh independent agent at standard/medium reasoning)
+- [ ] For PRs targeting `develop`: reviewed by an alternative model family (or independent standard/medium fallback) and ready for the reviewing agent to rebase-merge bottom-up into `develop`
 - [ ] For PRs targeting `main`: **`main-human-approval` (`main-release` environment gate) approved and merged by a human user** (agents must never merge into `main` or approve the `main-release` gate)
+- [ ] Reviewer used standard/medium reasoning; max/ultra were not used
 - [ ] Branch is rebased onto its target base with a clean linear history (no merge commits)
 - [ ] All review conversations are resolved
 ```
@@ -278,7 +299,7 @@ Both **`develop`** and **`main`** enforce:
 - **Conversation resolution required:** every review thread must be resolved before a PR can merge.
 
 Additionally:
-- **`develop` (Autonomous Agent Integration Branch):** `required_approving_review_count: 0` on GitHub so an independent **Reviewer & Merger Agent** (alternative model family, or higher-reasoning-effort fallback) can review and land stacked PRs bottom-up into `develop` without blocking on human availability.
+- **`develop` (Autonomous Agent Integration Branch):** `required_approving_review_count: 0` on GitHub so an independent **Reviewer & Merger Agent** (alternative model family, or independent standard/medium fallback) can review and land stacked PRs bottom-up into `develop` without blocking on human availability.
 - **`main` (Human-Gated Release Branch):** requires the **`main-human-approval`** status check ([`.github/workflows/main-human-gate.yml`](.github/workflows/main-human-gate.yml)), which is gated by the **`main-release` GitHub Environment** with required human reviewer approval (`kmosoti`). Even when an agent shares local CLI credentials, GitHub blocks `gh pr merge` into `main` until the human reviewer approves the `main-release` deployment in GitHub, and [AGENTS.md](AGENTS.md) strictly forbids agents from approving that environment gate or merging into `main`.
 
 ---

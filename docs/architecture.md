@@ -77,3 +77,81 @@ Checked during scaffold review; these links do not substitute for testing pinned
 - [Tailwind 4 CLI](https://tailwindcss.com/docs/installation/tailwind-cli), [source discovery](https://tailwindcss.com/docs/detecting-classes-in-source-files), and [browser compatibility](https://tailwindcss.com/docs/compatibility)
 - [Tauri capabilities and application command defaults](https://v2.tauri.app/security/capabilities/)
 - [hax Lean backend and tool management](https://github.com/pereq-dev/hax#usage)
+
+## Overall runtime architecture (current)
+
+```mermaid
+flowchart LR
+  subgraph shared[Shared Rust code]
+    UI["app-ui: components and owner cleanup"] --> Core["app-core: pure latest-request rules"]
+    DTO["app-contract: versioned DTOs"]
+  end
+  Client["client: CSR entry and host adapter"] --> UI
+  Client --> DTO
+  Client -->|browser mode| Unsupported["Typed Unsupported result"]
+  Unsupported --> UI
+  Client -->|native app_info invocation| ACL["Tauri ACL: local Linux main window"]
+  ACL --> Host["apps/native: Rust input validation and handler"]
+  Host --> DTO
+  Build["Standalone Tailwind + Trunk"] --> Assets["One production CSS/JS/WASM bundle"]
+  Assets --> Web["Browser: independent runtime instance"]
+  Assets --> Desktop["Tauri WebKitGTK: independent runtime instance"]
+  Desktop --> Client
+  Web --> Client
+```
+
+Sharing code and wire types does not share process state or permission authority.
+The browser adapter never grants native authority; the host enforces the ACL and
+validates the schema independently. Other native platforms remain unvalidated.
+
+## Host information flow (current)
+
+```mermaid
+sequenceDiagram
+  participant View as About component
+  participant Adapter as client host reader
+  participant Gate as Tauri ACL
+  participant Rust as app_info Rust handler
+  View->>Adapter: owner-scoped LocalResource read
+  alt ordinary browser
+    Adapter-->>View: Unsupported
+  else Tauri WebView
+    Adapter->>Gate: app_info(request schema_version=1)
+    alt local Linux main window
+      Gate->>Rust: authorized invocation
+      Rust->>Rust: validate typed input/version
+      Rust-->>Adapter: AppInfo or typed error
+      Adapter-->>View: validate/decode result
+    else restricted window or ungranted origin
+      Gate-->>Adapter: denied
+      Adapter-->>View: predictable invocation error
+    end
+  end
+```
+
+## Build, verification and review flow
+
+```mermaid
+flowchart TD
+  Change["PR or develop push"] --> Restore["Read permitted cache: job / image / Rust / lock / SDK key"]
+  Restore --> Tools["Verify pinned tool archives and ensure Rust toolchain"]
+  Tools --> Checks["Locked tests, lint, boundary and source-drift checks"]
+  Tools --> Frontend["Tailwind + Trunk production assets"]
+  Frontend --> Chrome["Chromiumoxide: interaction, axe, geometry and captures"]
+  Frontend --> Linux["Tauri Debian package: installed WebKit/CSP/ACL smoke"]
+  Checks --> Gate["Applicable checks + independent standard/medium review"]
+  Chrome --> Gate
+  Linux --> Gate
+  Gate --> Develop["Reviewer rebase lands into develop"]
+  Develop --> Trusted["Successful develop push may save immutable caches"]
+  Trusted -.-> Restore
+  Develop --> Human["Human-reviewed release PR and main-release approval"]
+  Human --> Main["Human promotion to main"]
+```
+
+PR jobs do not save trusted caches. Native jobs retain OS package installation,
+include SDK versions in cache identity, and rebuild package-owned embedded assets.
+Cache contents contain no signing material; release signing remains separate.
+Human reviewers use the focused change diagram in each architectural PR alongside
+these overall diagrams. Source changes still run the same functional/security
+checks; cached builds do not replace verification.

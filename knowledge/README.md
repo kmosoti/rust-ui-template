@@ -51,6 +51,10 @@ Provenance tracking **must never slow down agentic work**:
 | [D-0005 · Linux native host](decisions/D-0005-linux-native-host.md) | `agent` | `false` | Isolated Tauri host, versioned boundary, explicit permissions and CSP |
 | [O-0005 · Linux host evidence](observations/O-0005-linux-native-host.md) | `agent` | `false` | Browser checks and native CI prerequisites/results |
 
+| [R-0002 · UI diversity and verification](research/R-0002-ui-diversity-and-verification.md) | `agent` | `false` | Primary-source assessment of UI sameness claims and practical controls |
+| [D-0006 · Design workflow and reusable CI](decisions/D-0006-design-workflow-and-ci.md) | `agent` | `false` | Local skill, standard/medium review, diagrams and trusted caches |
+| [O-0006 · Design/CI evidence](observations/O-0006-design-ci.md) | `agent` | `false` | Executed checks, observed geometry defect and CI timing boundaries |
+
 ## Record protocol
 
 1. Use a stable ID, a descriptive filename, and front matter:

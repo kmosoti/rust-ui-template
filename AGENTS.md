@@ -15,6 +15,12 @@ Scope: the entire repository across all issues, milestones, and refactors. Keep 
 - Keep platform capabilities behind explicit adapters. Never conflate a shared type with shared process state or authority.
 - Do not add a tool, framework, or abstraction without showing which distinct concern it owns.
 
+## UI design and human review
+
+- For UI creation or changes, use the repository-local [distinct UI skill](.agents/skills/distinct-ui/SKILL.md). Establish task hierarchy and geometry before writing components; render and critique desktop/mobile output before claiming visual quality.
+- Do not invoke Superdesign or require an external design-service account. Author designs directly with the existing Leptos/Tailwind/browser tooling.
+- Keep [architecture diagrams](docs/architecture.md) current. PRs must include a change-focused Mermaid diagram for architectural/data-flow/build/workflow changes, plus a link to the overall architecture; for prose-only changes explain why no diagram changes are needed.
+
 ## Evidence, provenance, and human ratification
 
 - `docs/` contains stable, reader-facing instructions and architectural contracts.
@@ -27,7 +33,7 @@ Scope: the entire repository across all issues, milestones, and refactors. Keep 
 
 - **Two-branch model (`develop` for agents, `main` for human-gated releases):**
   - Base all day-to-day branches and stacked PRs off `develop` (`develop@origin`), never directly off `main`.
-  - **Cross-model review & stack merge ownership on `develop`:** do not self-merge unreviewed feature stacks. Delegate stack review and bottom-up landing into `develop` (`gh pr merge --rebase --delete-branch`) to an independent agent from an **alternative model family**; if a cross-family model is unavailable, use an independent agent with **higher reasoning effort**.
+  - **Cross-model review & stack merge ownership on `develop`:** do not self-merge unreviewed feature stacks. Delegate stack review and bottom-up landing into `develop` (`gh pr merge --rebase --delete-branch`) to an independent agent from an **alternative model family** when available; otherwise use a fresh independent agent from the available model. Use standard/medium reasoning for reviews. **Never use `max` or `ultra` for review**, and do not automatically escalate reasoning to compensate for model availability.
   - **Strict human gate on `main`:** merges into `main` require human review and manual approval of the `main-release` GitHub Environment gate ([`.github/workflows/main-human-gate.yml`](.github/workflows/main-human-gate.yml)). Agents may open a `develop -> main` release PR when requested, but **must never run `gh pr merge` on a PR targeting `main` and must never call the GitHub API to approve or bypass the `main-release` environment deployment gate**.
 - Prefer **Jujutsu (`jj`) in colocated mode (`jj git init --colocate`)** for local changes and stacked PRs so mid-stack edits automatically rebase descendant layers (`git rebase --update-refs` is the supported fallback).
 - Follow the commit template ([`.github/.gitmessage`](.github/.gitmessage)), PR template ([`.github/pull_request_template.md`](.github/pull_request_template.md)), and stacked PR workflow in [CONTRIBUTING.md](CONTRIBUTING.md).
