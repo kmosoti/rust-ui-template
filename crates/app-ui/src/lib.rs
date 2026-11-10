@@ -28,6 +28,7 @@ struct HostReader(HostInfoReader);
 pub fn App(read_host_info: HostInfoReader) -> impl IntoView {
     provide_context(HostReader(read_host_info));
     let route = RwSignal::new(current_route());
+    let main_ref = NodeRef::<leptos::html::Main>::new();
     let listener = gloo_events::EventListener::new(
         &web_sys::window().expect("browser window"),
         "hashchange",
@@ -35,29 +36,51 @@ pub fn App(read_host_info: HostInfoReader) -> impl IntoView {
     );
     let _listener = StoredValue::new_local(listener);
     view! {
-        <div class="min-h-screen bg-stone-50 text-slate-900">
-            <header data-layout-region="header" class="border-b border-slate-200 bg-white">
-                <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-5">
-                    <a href="#/overview" class="text-xl font-bold tracking-tight">"Form & Function"<span class="ml-3 rounded bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-900">"UI EXAMPLES"</span></a>
-                    <nav aria-label="Main navigation" class="flex flex-wrap gap-5 text-sm font-semibold">
-                        <a class="text-brand underline underline-offset-4" href="#/overview">"Overview"</a>
-                        <a class="text-brand underline underline-offset-4" href="#/">"Latest response"</a>
-                        <a class="text-brand underline underline-offset-4" href="#/settings">"Preferences"</a>
-                        <a class="text-brand underline underline-offset-4" href="#/about">"About"</a>
-                    </nav>
-                </div>
-            </header>
-            <main data-layout-region="main" class="mx-auto max-w-6xl px-6 py-12">
-                {move || match route.get().as_str() {
-                    "#/about" => view! { <About /> }.into_any(),
-                    "#/overview" => view! { <examples::Overview /> }.into_any(),
-                    "#/settings" => view! { <examples::Preferences /> }.into_any(),
-                    _ => view! { <LatestResponse /> }.into_any(),
-                }}
-            </main>
-            <footer data-layout-region="footer" class="mx-auto max-w-6xl border-t border-slate-200 px-6 py-6 text-sm text-slate-600">"Built with Leptos · Styled with Tailwind · Tested from Rust"</footer>
+        <a class="skip-link" data-ui-overflow="allow" data-ui-reason="Visually hidden skip link expands on keyboard focus; tested before activation." href="#workspace-content" on:click=move |ev| {
+            ev.prevent_default();
+            if let Some(main) = main_ref.get() { let _ = main.focus(); }
+        }>"Skip to content"</a>
+        <div class="app-shell">
+            <aside data-layout-region="workspace-rail" class="workspace-rail" aria-label="Workspace">
+                <a href="#/overview" class="workspace-brand"><span aria-hidden="true" class="brand-mark">"◈"</span>"NOCTURNE"</a>
+                <p class="workspace-caption">"Your personal workspace"</p>
+                <nav aria-label="Main navigation" class="workspace-nav">
+                    <NavLink route href="#/overview" label="Library" glyph="▦" />
+                    <NavLink route href="#/" label="Latest response" glyph="→" />
+                    <NavLink route href="#/settings" label="Preferences" glyph="≡" />
+                    <NavLink route href="#/about" label="About" glyph="◇" />
+                </nav>
+                <div class="rail-index"><p class="eyebrow">"In this workspace"</p><a class="index-link" href="#/">"01 / Response lab"</a><a class="index-link" href="#/settings">"02 / Preferences"</a><a class="index-link" href="#/about">"03 / Application info"</a></div>
+                <p class="rail-note"><span class="block text-ink">"A place to make things."</span>"Local examples. No account needed."</p>
+            </aside>
+            <div data-layout-region="workspace-body" class="workspace-body">
+                <header data-layout-region="header" class="context-bar"><span>"Personal workspace"<span aria-hidden="true" class="mx-3">"/"</span>"Examples"</span><span class="font-mono text-ready">"CSR · LOCAL DEMO"</span></header>
+                <main node_ref=main_ref id="workspace-content" tabindex="-1" data-layout-region="main" class="workspace-main">
+                    {move || match route.get().as_str() {
+                        "#/about" => view! { <About /> }.into_any(),
+                        "#/settings" => view! { <examples::Preferences /> }.into_any(),
+                        "#/" => view! { <LatestResponse /> }.into_any(),
+                        _ => view! { <examples::Overview /> }.into_any(),
+                    }}
+                </main>
+                <footer data-layout-region="footer" class="workspace-footer"><span>"NOCTURNE / Rust UI Template"</span><span>"Leptos · Tailwind · Rust"</span></footer>
+            </div>
         </div>
     }
+}
+
+#[component]
+fn NavLink(
+    route: RwSignal<String>,
+    href: &'static str,
+    label: &'static str,
+    glyph: &'static str,
+) -> impl IntoView {
+    view! { <a class="nav-link" href=href aria-label=label aria-current=move || {
+        let current = route.get();
+        let selected = current == href || (href == "#/overview" && !matches!(current.as_str(), "#/" | "#/settings" | "#/about"));
+        selected.then_some("page")
+    }><span aria-hidden="true" class="w-4 text-center text-base text-brand">{glyph}</span>{label}</a> }
 }
 
 #[component]
@@ -65,10 +88,10 @@ fn About() -> impl IntoView {
     let reader = expect_context::<HostReader>().0;
     let info = LocalResource::new(reader);
     view! {
-        <section><h1 class="text-3xl font-bold">"About"</h1><p class="mt-4">"Requests are simulated in your browser or desktop WebView."</p>
-        <h2 class="mt-8 text-xl font-semibold">"Application information"</h2>
+        <section class="max-w-3xl"><p class="eyebrow mb-3">"Workspace / System"</p><h1 class="page-heading">"About"</h1><p class="page-summary">"Requests are simulated in your browser or desktop WebView."</p>
+        <h2 class="mt-8 border-t border-hairline pt-6 text-xl font-semibold">"Application information"</h2>
         <Suspense fallback=move || view! { <p role="status">"Reading application information…"</p> }>
-        <p class="mt-3" role="status" data-testid="host-info">{move || info.get().map(|result| match result {
+        <p class="mt-3 text-muted" role="status" data-testid="host-info">{move || info.get().map(|result| match result {
             Ok(info) => format!("{} {} · {}", info.name, info.version, info.platform),
             Err(app_contract::HostError::Unsupported) => "Application information is unavailable in browser mode.".to_string(),
             Err(_) => "Application information could not be read.".to_string(),
@@ -121,23 +144,23 @@ fn LatestResponse() -> impl IntoView {
     let cancel_tasks = Arc::clone(&tasks);
     view! {
         <section class="max-w-3xl">
-            <p class="mb-3 text-xs font-bold uppercase tracking-widest text-emerald-800">"01 / Interaction lab"</p>
-            <h1 class="text-4xl font-bold tracking-tight">"Latest response"</h1>
-            <p class="mt-3">"Start a slow request, then a fast one to see the latest result win."</p>
-            <form class="mt-8 space-y-6 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm" on:submit=move |ev| ev.prevent_default()>
+            <p class="eyebrow mb-3">"Workspace / Interaction lab"</p>
+            <h1 class="page-heading">"Latest response"</h1>
+            <p class="page-summary">"Start a slow request, then a fast one to see the latest result win."</p>
+            <form class="mt-8 space-y-6 border-t border-hairline py-8" on:submit=move |ev| ev.prevent_default()>
                 <div><label class="block font-semibold" for="number">"Number"</label>
-                <input class="mt-1 max-w-full rounded border border-slate-500 px-3 py-2" id="number" type="number" step="1" prop:value=move || input.get() on:input=move |ev| input.set(event_target_value(&ev)) /></div>
+                <input class="field sm:max-w-80" id="number" type="number" step="1" prop:value=move || input.get() on:input=move |ev| input.set(event_target_value(&ev)) /></div>
                 <div class="flex flex-wrap gap-3">
-                    <button class="rounded bg-brand px-4 py-2 font-semibold text-white" type="button" on:click=move |_| slow(1500)>"Slow request"</button>
-                    <button class="rounded bg-brand px-4 py-2 font-semibold text-white" type="button" on:click=move |_| start(150)>"Fast request"</button>
-                    <button class="rounded border border-slate-600 px-4 py-2 font-semibold" type="button" on:click=move |_| {
+                    <button class="primary-action" type="button" on:click=move |_| slow(1500)>"Slow request"</button>
+                    <button class="primary-action" type="button" on:click=move |_| start(150)>"Fast request"</button>
+                    <button class="secondary-action" type="button" on:click=move |_| {
                         tracker.update(|state| state.cancel());
                         for (_, task) in cancel_tasks.lock().expect("task lock").drain() { task.abort(); }
                         message.set("Request cancelled.".into());
                     }>"Cancel"</button>
                 </div>
             </form>
-            <p class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-6 font-medium text-emerald-950" role="status" aria-live="polite">{move || {
+            <p class="border-t border-hairline py-6 font-medium leading-relaxed text-ready" role="status" aria-live="polite">{move || {
                 let state = tracker.get();
                 let result = state.value().map_or_else(|| "No result yet.".to_string(), |value| format!("Latest result: {value}"));
                 let pending = if state.active().is_some() { " Request pending." } else { "" };

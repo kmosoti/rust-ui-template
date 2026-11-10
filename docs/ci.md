@@ -1,5 +1,10 @@
 # CI runtime, cache boundaries and measurement
 
+Contributors must continually inspect affected workflows for efficiency and
+idempotency within their change scope. The [contributor rules](../CONTRIBUTING.md#ci-efficiency-and-idempotency-are-contributor-responsibilities)
+make measurement, safe repeated setup, optional caches and retained verification
+part of review, rather than a one-time optimization task.
+
 The native baseline [run 42908982231](https://github.com/kmosoti/rust-ui-template/actions/runs/42908982231)
 (job 130154305222) took 14m20s on Ubuntu 24.04:
 

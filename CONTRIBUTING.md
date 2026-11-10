@@ -34,6 +34,41 @@ Use this loop for every unit of work, regardless of which issue or release phase
 
 ---
 
+## CI efficiency and idempotency are contributor responsibilities
+
+For every change, inspect affected CI and setup steps for practical efficiency
+and idempotency improvements. Fix relevant waste within the change's scope;
+record larger opportunities for follow-up rather than mixing in a broad rewrite.
+Use [docs/ci.md](docs/ci.md) for existing cache boundaries and measured baselines.
+
+- **Measure first:** identify repeated installs/builds and the critical path from
+  job/step timings. Compare cold, seed and warm runs with source, runner, cache
+  state and transfer costs; label estimates and single-run limitations.
+- **Make reruns safe:** setup/build steps must converge on the same intended
+  versions/output when repeated. Verify cached assets and pinned hashes, replace
+  partial/corrupt downloads, and rebuild generated/embedded assets from current
+  inputs. Idempotency does not mean identical timestamps or skip-all-on-hit.
+- **Treat caches as optional:** cold misses, stale dependency restores and warm
+  hits must all remain correct. Key compatibility by platform/toolchain/locks/SDK
+  as appropriate; use the existing trusted-save policy and least permissions.
+  No secrets, system-directory snapshots or PR-to-release executable trust.
+- **Reuse verified work:** prefer pinned verified binaries over recompiling tools,
+  compatible dependency caches, shared setup actions, appropriate concurrency and
+  cancellation of superseded PR runs. Avoid redundant network/download/build
+  steps; test artifact handoffs if introducing them.
+- **Preserve verification:** never buy speed by weakening tests, dropping security
+  checks, using floating versions, hiding failures, or skipping required checks
+  through unsafe path filters. Validate both fresh setup and repeated setup when
+  changing installers/workflows; exercise cache-miss and warm paths as relevant.
+- **Report the tradeoff:** PRs touching CI/setup/build tooling state executed
+  fresh/repeated-run evidence, retained coverage, cache trust/invalidation and
+  measured runtime/resource effects (or explicitly unmeasured effects). Prefer a
+  small justified improvement over speculative cache complexity.
+
+The reviewer checks these points at standard/medium effort, never max/ultra.
+
+---
+
 ## 2. Preferred VCS (`jj`), Branch Topology (`develop` vs `main`), and Stacked PRs
 
 ### Why Jujutsu (`jj`) is the preferred development method
@@ -274,6 +309,7 @@ GitHub automatically loads [`.github/pull_request_template.md`](.github/pull_req
 ## Verification Evidence
 - **Commands executed & results:**
   - `...`
+- **CI/setup impact (when touched):** fresh/repeated-run behavior, cold/warm evidence, cache trust/invalidation, retained checks and efficiency opportunities.
 - **Not run / untested platforms or environments:**
   - `...`
 

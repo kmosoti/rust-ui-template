@@ -47,8 +47,8 @@ loopback port, checks interactions and accessibility, and writes actual screensh
 to `artifacts/response-lab.png`, `artifacts/workspace-overview.png`, and
 `artifacts/preferences.png`.
 
-Example routes are `#/` (response lab), `#/overview` (sample dashboard), and
-`#/settings` (preferences form). Dashboard figures are sample data. Preferences
+The initial URL opens the Nocturne library. Example routes are `#/` (response lab), `#/overview` (library), and
+`#/settings` (preferences form). Library content and artwork are examples. Preferences
 are local component state and reset on navigation; no persistence or network API
 is implemented. Browser binaries come from the environment; their versions must
 be recorded with test results. Other system browsers/WebViews remain unverified.
@@ -113,7 +113,9 @@ See [Architecture and verification scope](docs/architecture.md) and the reposito
 The template ships a [local distinct UI skill](.agents/skills/distinct-ui/SKILL.md):
 write a task brief, compare structural directions, specify geometry, implement,
 then inspect real desktop/mobile captures and metrics. No design-service account
-is required. The optional [restricted theme](design/restricted-theme.css) is a
+is required. The [default Nocturne design](docs/default-design.md) combines a dark workspace
+rail with a featured library and launch action, using original local artwork.
+The optional [restricted theme](design/restricted-theme.css) is a
 starting profile, not the existing demos' mandatory style. See the
 [research review](knowledge/research/R-0002-ui-diversity-and-verification.md) for
 which AI-sameness claims are supported and which remain hypotheses.

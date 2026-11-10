@@ -15,8 +15,14 @@ Scope: the entire repository across all issues, milestones, and refactors. Keep 
 - Keep platform capabilities behind explicit adapters. Never conflate a shared type with shared process state or authority.
 - Do not add a tool, framework, or abstraction without showing which distinct concern it owns.
 
+## CI efficiency and idempotency
+
+- For each change, inspect affected workflows/setup for practical waste and safe reruns; improve relevant inefficiencies within scope and record larger follow-ups. Follow the [contributor CI rules](CONTRIBUTING.md#ci-efficiency-and-idempotency-are-contributor-responsibilities).
+- Measure cold/warm costs, use optional trusted caches and pinned verified tools, and make repeated setup converge safely. Preserve all applicable functional/security checks; cache hits never substitute for verification.
+
 ## UI design and human review
 
+- The default visual system is [Nocturne](docs/default-design.md): Obsidian-like workspace organization plus game-launcher library/feature hierarchy. Use it unless the user brief deliberately changes the identity.
 - For UI creation or changes, use the repository-local [distinct UI skill](.agents/skills/distinct-ui/SKILL.md). Establish task hierarchy and geometry before writing components; render and critique desktop/mobile output before claiming visual quality.
 - Do not invoke Superdesign or require an external design-service account. Author designs directly with the existing Leptos/Tailwind/browser tooling.
 - Keep [architecture diagrams](docs/architecture.md) current. PRs must include a change-focused Mermaid diagram for architectural/data-flow/build/workflow changes, plus a link to the overall architecture; for prose-only changes explain why no diagram changes are needed.
