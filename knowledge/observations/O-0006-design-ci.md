@@ -1,7 +1,7 @@
 ---
 id: O-0006
 type: observation
-status: local-checked-ci-pending
+status: cold-and-warm-ci-passed
 updated: 2026-11-10
 added_by: agent
 human_ratified: false
@@ -78,7 +78,7 @@ standalone Tailwind 4.3.4 and pinned official Trunk 0.21.14 binary.
   wasm32-unknown-unknown --locked --offline`, `git diff --check`, and actionlint
   passed.
 - Fresh independent `gpt-6.1-terra` reviewer, explicitly medium effort, reported
-  no blocking source findings. Final browser/native CI is still required.
+  no blocking source findings. All final PR CI passed (see below).
 
 ## Limits
 
@@ -90,10 +90,83 @@ rendered contrast checks when adopted. Existing sample layouts are not globally
 restyled; the skill guides subsequent task-specific design.
 
 Native build/launch cannot run locally due to missing GTK/WebKit development
-packages; CI must verify native behavior under caching/profile changes. Cold
-pipeline improvement and warm cache reuse remain unmeasured until those runs
-execute. OS libraries still install on fresh runners. No native/mobile support
+packages; actual GitHub native CI passed. All three profiles passed exact-hit warm reruns, including native production
+and restricted-window checks (measurements below). OS libraries still install on fresh runners. No native/mobile support
 matrix expansion, persistence, signing or formal proof is implied.
+
+## Cold CI and independent landing
+
+PR [#12](https://github.com/kmosoti/rust-ui-template/pull/12), source
+`fd7590f0bf4787395721e12c2e025fdf000071bc`, passed all three jobs. Each restored
+no build cache and skipped trusted cache save, as intended for pull requests.
+The fresh medium-effort reviewer independently checked the PR, CI and empty
+review-thread list, then rebase-merged into develop as
+`96b2baad832d3eb9de3eb0cd7bc0cb0ad959c4ba`. Main was not merged and Issue #1
+remained open.
+
+| Profile | Baseline run / total | Cold PR run / total | Selected cold steps |
+| --- | --- | --- | --- |
+| Browser | [42913938158](https://github.com/kmosoti/rust-ui-template/actions/runs/42913938158), 8m51s | [42918057649](https://github.com/kmosoti/rust-ui-template/actions/runs/42918057649), 2m15s | Trunk setup 1s; production frontend 56s; browser runner compile/test 58s; cache restore 1s |
+| Core | Not compared | [42918057543](https://github.com/kmosoti/rust-ui-template/actions/runs/42918057543), 3m28s | Full Rust/Python/boundary/mutation checks passed |
+| Native | [42908982231](https://github.com/kmosoti/rust-ui-template/actions/runs/42908982231), 14m20s | [42918057774](https://github.com/kmosoti/rust-ui-template/actions/runs/42918057774), 9m06s | Trunk setup <1s; frontend 89s; production build 196s; Clippy 86s; production smoke 35s; fixture build 27s; denial smoke 31s |
+
+The latest pre-change develop browser run (8m51s) is a better baseline than the
+older 9m11s PR example mentioned during progress reporting. Browser Trunk source
+installation was 349s in that latest baseline. These are single observed runs,
+not repeated-trial causal estimates or performance guarantees. The changes also
+alter CI debuginfo/incremental settings, and hosted-runner variability matters.
+
+Environment: Ubuntu 24.04 image `20261101.360.1`, Linux X64; Rust 1.99.1.
+Native SDK key is GTK `3.24.41` / WebKit `2.52.6`. Lock/tool digest:
+`259ea3c5188f4affd9278a5730a0e3eb6a22f3ef8acf32d0beee2b8bfca4f8b1`.
+Cache primary-key prefix is `build-v1-Linux-X64-ubuntu24-20261101.360.1-`, followed
+by `browser-portable`, `core-portable` or `native-3.24.41-2.52.6-`, Rust and digest.
+For avoidance of ambiguity, the exact native key (including the double hyphen) is:
+`build-v1-Linux-X64-ubuntu24-20261101.360.1-native-3.24.41-2.52.6--rust1.99.1-259ea3c5188f4affd9278a5730a0e3eb6a22f3ef8acf32d0beee2b8bfca4f8b1`.
+
+Executed `gh api repos/kmosoti/rust-ui-template/actions/runs/RUN/jobs` for every
+listed run and piped responses to `python3 scripts/ci_timings.py`. Retrieved PR
+browser/native logs with `gh run view RUN --log` to confirm misses and tool
+verification; all PR saves were skipped. Browser evidence artifact contains
+12 screenshots/JSON metrics with axe scans and prior functional checks. Native
+installed production UI, real command, CSP rejection and unauthorized-window
+error paths passed; source/lockfile drift checks also passed.
+
+## Trusted seed and warm measurements
+
+Executed `gh run rerun RUN` after each successful develop push saved its cache.
+Collected explicit attempt-one/two jobs endpoints
+`gh api repos/kmosoti/rust-ui-template/actions/runs/RUN/attempts/ATTEMPT/jobs`
+and `gh run view RUN --attempt ATTEMPT --log`. All reruns use exact develop source
+`96b2baad832d3eb9de3eb0cd7bc0cb0ad959c4ba`, not a different optimization commit.
+
+| Profile / run | Seed attempt 1 | Warm attempt 2 | Warm cache restore | Cache archive | Result |
+| --- | ---: | ---: | ---: | ---: | --- |
+| [Core 42919435911](https://github.com/kmosoti/rust-ui-template/actions/runs/42919435911/attempts/2) | 2m25s | 26s | 6s | ~348 MiB | All checks passed; exact hit; no cache overwrite |
+| [Browser 42919436010](https://github.com/kmosoti/rust-ui-template/actions/runs/42919436010/attempts/2) | 3m13s | 44s | 8s | ~391 MiB | All checks passed; exact hit; no cache overwrite |
+| [Native 42919436364](https://github.com/kmosoti/rust-ui-template/actions/runs/42919436364/attempts/2) | 8m08s | 3m00s | 20s | ~880 MiB | Production/CSP/denial and all checks passed; exact hit; no cache overwrite |
+
+Seed cache saves took 4s/core and 6s/browser. Warm browser rebuilt production CSS
+and root/subpath assets (4s/2s Trunk), ran the browser interactions/audits (11s),
+and passed source/lock drift. Warm core tests, host Clippy and WASM Clippy each
+took 1s; pure-core boundary and mutation checks still executed. These numbers
+include restore costs; the pinned Rust ensure step still took 12s in both jobs.
+Native seed cache save took 10s. Warm tauri-driver installation was correctly
+skipped as already installed (0s); frontend build was 4s, production native build
+21s, Clippy 1s, installed production smoke 39s, restricted fixture build 21s and
+denial smoke 31s. The package-owned clean explicitly removed 31 files/57.2 MiB
+before building production from a cache left after the restricted fixture.
+Both real production `app_info`/CSP tests and the restricted-window denial passed.
+The native SDK/image/key were unchanged between seed and rerun. OS prerequisites
+still took 25s and pinned Rust setup 10s; these costs are not claimed eliminated.
+
+Local raw API/log captures were kept in `/tmp/design-ci-evidence` during this
+session; durable run/attempt links and commands above are the reproducible source.
+No secret material or full runner logs are committed. A failed exploratory
+`gh run view --json attempt` query revealed that field is unsupported by this gh
+version; explicit attempts API endpoints and `--attempt` logs were used instead.
+The reviewed cold and warm comparison does not replace repeated-trial benchmarking
+and says nothing about the unmeasured originality of future generated UIs.
 
 ## Relations
 
