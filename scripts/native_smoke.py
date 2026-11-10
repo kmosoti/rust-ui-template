@@ -57,14 +57,19 @@ def main():
             return request('POST', prefix + '/execute/async', {'script': "const done = arguments[arguments.length-1]; window.__TAURI_INTERNALS__.invoke('app_info', {request: " + json.dumps(payload) + "}).then(value=>done({ok:true,value})).catch(error=>done({ok:false,error:String(error)}));", 'args': []})
 
         target = 'restricted' if args.denial_fixture else 'main'
-        found = False
-        for handle in request('GET', prefix + '/window/handles'):
-            request('POST', prefix + '/window', {'handle': handle})
-            if execute('return window.__TAURI_INTERNALS__?.metadata?.currentWindow?.label') == target:
-                found = True
+        deadline = time.monotonic() + 15
+        while True:
+            found = False
+            for handle in request('GET', prefix + '/window/handles'):
+                request('POST', prefix + '/window', {'handle': handle})
+                if execute('return window.__TAURI_INTERNALS__?.metadata?.currentWindow?.label') == target:
+                    found = True
+                    break
+            if found:
                 break
-        if not found:
-            raise AssertionError('Missing expected window: ' + target)
+            if time.monotonic() > deadline:
+                raise AssertionError('Missing expected window: ' + target)
+            time.sleep(.05)
         wait("!!document.querySelector('#number')")
         execute("window.__nativeErrors=[]; addEventListener('error', e=>window.__nativeErrors.push(e.message)); addEventListener('unhandledrejection', e=>window.__nativeErrors.push(String(e.reason)));")
         result = invoke({'schema_version': 1})

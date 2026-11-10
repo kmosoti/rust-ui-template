@@ -78,6 +78,7 @@ Linux CI installs the Debian package and launches it under Xvfb using
 
 ```sh
 cargo install tauri-driver --version 2.1.0 --locked
+sudo dpkg -i apps/native/target/release/bundle/deb/*.deb
 xvfb-run -a python3 scripts/native_smoke.py
 ```
 
