@@ -1,7 +1,7 @@
 ---
 id: O-0005
 type: observation
-status: native-built-smoke-retry-pending
+status: native-runtime-ci-observed
 updated: 2026-11-10
 added_by: agent
 human_ratified: false
@@ -63,6 +63,26 @@ matching CI and removing the browser subpath fixture from the embedded assets.
 Browser [run 42903521168](https://github.com/kmosoti/rust-ui-template/actions/runs/42903521168)
 and core [run 42903521132](https://github.com/kmosoti/rust-ui-template/actions/runs/42903521132)
 passed on that same head. This does not establish the final corrected native run.
+
+## CI observation: native runtime smoke passed
+
+[Run 42906605542](https://github.com/kmosoti/rust-ui-template/actions/runs/42906605542)
+on source 7b6dd69 passed the native build, Clippy, Debian package installation,
+and all runtime smoke assertions on Ubuntu 24.04, GTK 3.24.41 and WebKitGTK /
+WebKitWebDriver 2.52.6-0ubuntu0.24.04.1. The installed production package passed
+shared CSS/WASM, stale-response behavior, typed IPC validation, effective CSP
+blocking of an injected inline script, and host information rendered in About.
+The restricted-window package passed actual app_info denial and its predictable
+UI error without page errors. This is packaged-client evidence under Xvfb,
+not a manual GPU/desktop accessibility audit or evidence for other platforms.
+
+The overall job failed only its final source-drift check: cargo-tauri normalized
+`tauri-build = "=2.7.4"` to the equivalent table with `features = []`. The
+canonical form is now committed; the native lockfile is unchanged. A fresh
+full CI run must pass the drift check before landing. Current check results
+are linked from [PR #10](https://github.com/kmosoti/rust-ui-template/pull/10).
+The package and screenshot were uploaded by CI; downloading artifacts into this
+session returned HTTP 403 from artifact storage, so local inspection is not claimed.
 
 ## Limits and follow-up
 
