@@ -1,7 +1,7 @@
 ---
 id: O-0005
 type: observation
-status: native-runtime-ci-observed
+status: native-ci-passed
 updated: 2026-11-10
 added_by: agent
 human_ratified: false
@@ -56,8 +56,9 @@ stopped the test. CSP and restricted-window denial were not reached.
 The helper now leaves successful HTTP/WebDriver values unchanged, including
 application errors; urllib still rejects actual HTTP/WebDriver failures. Two
 focused Python regression tests pass along with the nine boundary tests.
-The native job must rerun before CSP, permission denial or a complete native
-smoke success is claimed. README now rebuilds root assets before packaging,
+At that point the native job needed a rerun before CSP, permission denial or
+a complete native smoke success could be claimed; the final successful run is
+recorded below. README now rebuilds root assets before packaging,
 matching CI and removing the browser subpath fixture from the embedded assets.
 
 Browser [run 42903521168](https://github.com/kmosoti/rust-ui-template/actions/runs/42903521168)
@@ -83,6 +84,40 @@ full CI run must pass the drift check before landing. Current check results
 are linked from [PR #10](https://github.com/kmosoti/rust-ui-template/pull/10).
 The package and screenshot were uploaded by CI; downloading artifacts into this
 session returned HTTP 403 from artifact storage, so local inspection is not claimed.
+
+## Final CI observation and develop landing
+
+[Native run 42908982231](https://github.com/kmosoti/rust-ui-template/actions/runs/42908982231)
+completed successfully on source eebd4ae907e892bff206c138b60566fb838306c2.
+[Browser run 42908982340](https://github.com/kmosoti/rust-ui-template/actions/runs/42908982340)
+and [core run 42908982222](https://github.com/kmosoti/rust-ui-template/actions/runs/42908982222)
+also passed on that head. The independent higher-reasoning reviewer verified
+source, logs and review threads and landed [PR #10](https://github.com/kmosoti/rust-ui-template/pull/10)
+into develop at e8b7fa3108bfbf224407106fe76ff995c2486826. Its merged tree is
+identical to the reviewed source tree; the automated review found no issues.
+
+Executed native CI commands included:
+
+- `../../.tools/cargo-tauri tauri build --bundles deb -- --locked` from apps/native.
+- `cargo clippy --manifest-path apps/native/Cargo.toml --all-targets --locked
+  --offline -- -D warnings`.
+- `sudo dpkg -i apps/native/target/release/bundle/deb/*.deb` and
+  `xvfb-run -a python3 scripts/native_smoke.py` for the production package.
+- The same package build with `--config tauri.e2e.conf.json`, package installation,
+  and `xvfb-run -a python3 scripts/native_smoke.py --denial-fixture`.
+- The final tracked/untracked source-drift gate passed. Native Cargo.lock remained
+  unchanged after both configuration builds. The job uploaded the unsigned
+  production package and native screenshot as `linux-native-evidence`.
+
+Local manifest-only verification additionally ran the pinned CLI with
+`--runner /bin/false --no-bundle -- --locked` for both production and e2e configs.
+Both intentionally stopped at the stub runner after manifest processing;
+`git diff --exit-code -- apps/native/Cargo.toml apps/native/Cargo.lock` confirmed
+idempotence. This is manifest processing evidence, not local native compilation.
+
+The documented browser/native build commands require no Node installation.
+Native workflow path filters skip a separate documentation-only change; every
+code, asset, script, lockfile and workflow change still triggers native checks.
 
 ## Limits and follow-up
 

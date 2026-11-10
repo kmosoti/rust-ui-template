@@ -1,4 +1,4 @@
-> Current native work and exact evidence: [D-0005](../knowledge/decisions/D-0005-linux-native-host.md) and [O-0005](../knowledge/observations/O-0005-linux-native-host.md). Other platforms remain open.
+> The Linux Tauri slice is implemented and verified by package-launch CI. Exact evidence: [D-0005](../knowledge/decisions/D-0005-linux-native-host.md) and [O-0005](../knowledge/observations/O-0005-linux-native-host.md). Remaining slices include Windows/macOS package and launch checks, Android/iOS prerequisites and validation, and the remaining security/release and proof work. Issue #1 remains open.
 
 > Historical foundation handoff: the browser slice is now implemented; see [O-0003](../knowledge/observations/O-0003-csr-browser.md) for current evidence and the README for build commands. The subsequent native and verification slices remain open.
 
