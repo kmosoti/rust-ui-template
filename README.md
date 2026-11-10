@@ -65,6 +65,7 @@ On Ubuntu 24.04, install `libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`
 `librsvg2-dev`, and `patchelf`. Build the root production assets as above, then:
 
 ```sh
+trunk build --release --locked
 python3 scripts/setup_native_cli.py
 cargo fetch --manifest-path apps/native/Cargo.toml --locked
 (cd apps/native && ../../.tools/cargo-tauri tauri build --bundles deb -- --locked)
@@ -73,7 +74,8 @@ cargo fetch --manifest-path apps/native/Cargo.toml --locked
 The CLI setup script pins the official Linux x86_64 Tauri 2.12.4 binary and hash;
 other development platforms can install the same version with
 `cargo install tauri-cli --version 2.12.4 --locked` but are untested here.
-Linux CI installs the Debian package and launches it under Xvfb using
+The root rebuild removes the browser test’s nested `dist/sub` fixture before
+embedding assets, matching CI. Linux CI installs the Debian package and launches it under Xvfb using
 `tauri-driver` 2.1.0 and `WebKitWebDriver` (`webkit2gtk-driver` package):
 
 ```sh
@@ -85,6 +87,7 @@ xvfb-run -a python3 scripts/native_smoke.py
 The separate `tauri.e2e.conf.json` replaces the window with a restricted one for a real permission
 denial test; its bundle is a test fixture, not the production package. Production
 CSP allows the bundled scripts and WASM while blocking arbitrary inline scripts.
+See the [platform evidence matrix](docs/platforms.md) for verified and untested targets.
 No signing/notarization, persistence, mobile build or general platform support
 claim is made. See the knowledge records for exact execution evidence.
 

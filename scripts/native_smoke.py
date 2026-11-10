@@ -17,8 +17,6 @@ def request(method, path, body=None):
     with urllib.request.urlopen(req, timeout=40) as response:
         result = json.load(response)
     value = result.get('value')
-    if isinstance(value, dict) and value.get('error'):
-        raise RuntimeError(value)
     return value
 
 

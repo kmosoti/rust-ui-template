@@ -1,7 +1,7 @@
 ---
 id: O-0005
 type: observation
-status: browser-passed-native-ci-pending
+status: native-built-smoke-retry-pending
 updated: 2026-11-10
 added_by: agent
 human_ratified: false
@@ -43,14 +43,26 @@ Tailwind standalone 4.3.4 and Chromium 156.0.8078.79.
   Debian package installation, WebKit launch, effective CSP and actual ACL
   denial remain pending the dedicated Ubuntu 24.04 CI job.
 
-## Planned CI evidence, not yet observed
+## CI observation: first native run
 
-The job installs Linux prerequisites, builds the production Debian package,
-installs it and launches its packaged executable via tauri-driver 2.1.0 under
-Xvfb. It tests the shared styles/WASM and latest-response behavior, real typed
-IPC input validation and effective inline-script CSP blocking. A separate
-restricted-window package configuration tests actual app_info denial without
-granting that window any permission. Screenshots are test artifacts.
+[Native run 42903521256](https://github.com/kmosoti/rust-ui-template/actions/runs/42903521256)
+on source head 452db7a built the production Debian package, passed native Clippy,
+installed the package, launched its packaged executable via WebKitWebDriver,
+and successfully returned the expected app_info result. The next deliberate
+unsupported-version call returned the correct application rejection, but the
+Python helper mistook its `error` field for a WebDriver protocol failure and
+stopped the test. CSP and restricted-window denial were not reached.
+
+The helper now leaves successful HTTP/WebDriver values unchanged, including
+application errors; urllib still rejects actual HTTP/WebDriver failures. Two
+focused Python regression tests pass along with the nine boundary tests.
+The native job must rerun before CSP, permission denial or a complete native
+smoke success is claimed. README now rebuilds root assets before packaging,
+matching CI and removing the browser subpath fixture from the embedded assets.
+
+Browser [run 42903521168](https://github.com/kmosoti/rust-ui-template/actions/runs/42903521168)
+and core [run 42903521132](https://github.com/kmosoti/rust-ui-template/actions/runs/42903521132)
+passed on that same head. This does not establish the final corrected native run.
 
 ## Limits and follow-up
 
