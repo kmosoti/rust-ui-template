@@ -1,8 +1,10 @@
 name: Linux native host
 on:
   pull_request:
+    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
   push:
     branches: [develop]
+    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
 permissions:
   contents: read
 concurrency:
