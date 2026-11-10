@@ -7,6 +7,16 @@ an original name, illustration and component styling; no product branding or
 external asset service is required. These references describe interaction and
 spatial character, not affiliations or copied interfaces.
 
+## Preview
+
+Actual production desktop capture (1440 CSS px):
+
+![Nocturne desktop workspace and featured library](images/nocturne-desktop.png)
+
+[Mobile capture at 320 CSS px](images/nocturne-mobile.png). These are implemented
+browser captures; execution provenance and limitations are in
+[O-0007](../knowledge/observations/O-0007-workspace-launcher.md).
+
 ## Composition
 
 - A 224px workspace rail on desktop keeps the library, lab, preferences and host

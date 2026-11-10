@@ -1,7 +1,7 @@
 ---
 id: O-0007
 type: observation
-status: local-passed-ci-pending
+status: ci-verified
 updated: 2026-11-10
 added_by: agent
 human_ratified: false
@@ -68,7 +68,39 @@ instructional change; existing verified binaries/cache reuse remain in use.
 - Spatial/optical critique and the mobile image-first/scroll tradeoff are in the
   design brief. No new CI/install logic changed, so no new cache-speedup claim is
   made; O-0006 retains existing cold/warm evidence. Independent medium reviewer
-  reported no initial source blocker; final review and all three CI jobs pending.
+  reported no initial source blocker; final source review and all CI subsequently passed (below).
+
+## CI, review and landing
+
+[PR #14](https://github.com/kmosoti/rust-ui-template/pull/14), source `d5a6bda`,
+passed all checks and fresh independent gpt-6.1-terra review explicitly at medium
+effort. Automated code review reported no issues and no review threads remained.
+The independent reviewer rebase-merged into develop as
+`fb82b91233173cfed41c91327a7f5ffc57c3c952`. Main was unchanged and Issue #1 open.
+
+| Job | Executed run | Total | Result |
+| --- | --- | ---: | --- |
+| Core | [42923175434](https://github.com/kmosoti/rust-ui-template/actions/runs/42923175434) | 23s | Passed all Rust, lint, boundary, mutation and Python checks |
+| Browser | [42923175766](https://github.com/kmosoti/rust-ui-template/actions/runs/42923175766) | 40s | Passed production assets, original interactions, 12 route/viewport audits, 200% text, axe/keyboard and artwork loading |
+| Linux native | [42923175517](https://github.com/kmosoti/rust-ui-template/actions/runs/42923175517) | 3m17s | Passed actual installed package/artwork, typed IPC, CSP and restricted-window denial |
+
+Executed `gh api repos/kmosoti/rust-ui-template/actions/runs/RUN/jobs` for all three
+runs and `python3 scripts/ci_timings.py` on native output. Retrieved native log
+with `gh run view 42923175517 --log`. It confirms exact cache restore, already
+installed tauri-driver, production smoke and real app_info permission denial.
+Native steps: restore 13s, OS dependencies 37s, Rust ensure 14s, frontend 4s,
+production package 29s, installed smoke 35s, fixture 27s and denial smoke 31s.
+Cache keys/trust/verification logic were unchanged; these are observations rather
+than a new performance guarantee. Native checks here executed in CI, not locally.
+
+Copied the final actual production captures from artifacts/layout-overview-1440.png
+and artifacts/layout-overview-320.png into docs/images/nocturne-desktop.png and
+nocturne-mobile.png without editing. They are Chromiumoxide-generated screenshots
+of the implemented UI, not design mockups. Both were visually inspected after
+arrow corrections. Local capture environment: Chromium 156.0.8078.79, Tailwind
+4.3.4, Trunk 0.21.14 and Rust 1.99.1. The brief records composition and tradeoffs.
+Preview/evidence-only follow-up is separate so updating this record does not
+rerun native packaging for an otherwise unchanged PR implementation diff.
 
 ## Limits
 
