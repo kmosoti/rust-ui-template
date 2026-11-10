@@ -41,7 +41,7 @@ Tailwind standalone 4.3.4 and Chromium 156.0.8078.79.
   successful native check or a claim of platform support.
 - Python native smoke/setup scripts passed syntax compilation. Native build,
   Debian package installation, WebKit launch, effective CSP and actual ACL
-  denial remain pending the dedicated Ubuntu 24.04 CI job.
+  denial were pending at that point; the subsequent CI results are recorded below.
 
 ## CI observation: first native run
 
@@ -79,8 +79,9 @@ not a manual GPU/desktop accessibility audit or evidence for other platforms.
 
 The overall job failed only its final source-drift check: cargo-tauri normalized
 `tauri-build = "=2.7.4"` to the equivalent table with `features = []`. The
-canonical form is now committed; the native lockfile is unchanged. A fresh
-full CI run must pass the drift check before landing. Current check results
+canonical form is now committed; the native lockfile is unchanged. At that point, a fresh
+full CI run was required to pass the drift check before landing; its final
+successful result is recorded below. Current check results
 are linked from [PR #10](https://github.com/kmosoti/rust-ui-template/pull/10).
 The package and screenshot were uploaded by CI; downloading artifacts into this
 session returned HTTP 403 from artifact storage, so local inspection is not claimed.
@@ -88,7 +89,13 @@ session returned HTTP 403 from artifact storage, so local inspection is not clai
 ## Final CI observation and develop landing
 
 [Native run 42908982231](https://github.com/kmosoti/rust-ui-template/actions/runs/42908982231)
-completed successfully on source eebd4ae907e892bff206c138b60566fb838306c2.
+completed successfully for source head eebd4ae907e892bff206c138b60566fb838306c2.
+The three PR jobs checked out GitHub's synthetic CI merge
+812daf453e317a0d006d2366fd558e1d559b46ee, whose parents are develop
+ef3188c7e29f3398fc35a41239ef52dc23d3176b and that source head. Its tree
+b2882c01493258f89f25a65f69a36458ec95eab1 matches both the source head and
+the subsequently landed develop tree. This was the PR execution ref; the actual
+develop landing is identified below.
 [Browser run 42908982340](https://github.com/kmosoti/rust-ui-template/actions/runs/42908982340)
 and [core run 42908982222](https://github.com/kmosoti/rust-ui-template/actions/runs/42908982222)
 also passed on that head. The independent higher-reasoning reviewer verified
@@ -116,8 +123,8 @@ Both intentionally stopped at the stub runner after manifest processing;
 idempotence. This is manifest processing evidence, not local native compilation.
 
 The documented browser/native build commands require no Node installation.
-Native workflow path filters skip a separate documentation-only change; every
-code, asset, script, lockfile and workflow change still triggers native checks.
+Native workflow path filters skip a separate documentation-only change; changes
+outside README.md, docs/** and knowledge/** trigger native checks.
 
 ## Limits and follow-up
 
