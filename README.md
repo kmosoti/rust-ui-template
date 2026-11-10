@@ -17,25 +17,41 @@ See the [coding-agent handoff and full check commands](docs/issue-1-handoff.md),
 
 ## Browser development
 
-Install Rust 1.99.1 with the `wasm32-unknown-unknown` target, Node 24.22.1,
-and Trunk 0.21.14 (`cargo install trunk --version 0.21.14 --locked`). From the
-repository root:
+Install Rust 1.99.1 with the `wasm32-unknown-unknown` target, Python 3,
+Chrome or Chromium, and Trunk 0.21.14 (`cargo install trunk --version 0.21.14 --locked`).
+Node and npm are not required. From the repository root:
 
 ```sh
-npm ci
+python3 scripts/setup_frontend.py
 cargo fetch --locked
-npm run css
-node tests/check-css.cjs
+.tools/tailwindcss -i styles/input.css -o styles/generated.css --minify
+python3 scripts/check_css.py
 trunk build --release --locked
 trunk build --release --locked --public-url /sub/ --dist dist/sub
-npx playwright install --with-deps chromium
-npm run test:browser
+cargo run -p browser-tests --locked --offline
 ```
+
+The setup script verifies the official Tailwind 4.3.4 executable and axe-core
+4.10.3 test asset against committed hashes. On Windows, use `.tools/tailwindcss.exe`.
+Linux musl is detected automatically; `TAILWIND_TARGET` can explicitly select a
+pinned asset name from `scripts/tool-assets.json`. Set `CHROMIUM_PATH` if
+Chrome/Chromium is not discoverable. Sandboxing is enabled
+by default; `CHROMIUM_NO_SANDBOX=1` is available only for restricted containers
+that cannot launch Chromium's sandbox. If your environment sets `NO_COLOR=1`,
+unset it for Trunk 0.21.14, which expects a boolean string.
 
 The second build exercises a `/sub/` asset base; use the matching `--public-url`
 for a different deployment path. Navigation uses URL fragments and requires no
-route rewrite. Tests serve the production files locally. Timed requests are
-simulations; no persistence or network API is implemented.
+route rewrite. The Rust browser runner serves the production files on an ephemeral
+loopback port, checks interactions and accessibility, and writes actual screenshots
+to `artifacts/response-lab.png`, `artifacts/workspace-overview.png`, and
+`artifacts/preferences.png`.
+
+Example routes are `#/` (response lab), `#/overview` (sample dashboard), and
+`#/settings` (preferences form). Dashboard figures are sample data. Preferences
+are local component state and reset on navigation; no persistence or network API
+is implemented. Browser binaries come from the environment; their versions must
+be recorded with test results. Other system browsers/WebViews remain unverified.
 
 ## Selected architecture
 

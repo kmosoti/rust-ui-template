@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/app-core", "crates/app-ui", "crates/client"]
+members = ["crates/app-core", "crates/app-ui", "crates/client", "tools/browser-tests"]
 resolver = "3"
 
 [workspace.package]

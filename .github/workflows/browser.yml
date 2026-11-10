@@ -10,23 +10,24 @@ concurrency:
   cancel-in-progress: true
 jobs:
   browser:
+    env:
+      CARGO_BUILD_JOBS: 2
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: '24.22.1'
       - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
       - run: cargo install trunk --version 0.21.14 --locked
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: python3 scripts/setup_frontend.py
+      - run: /usr/bin/google-chrome --version
       - run: cargo fetch --locked
-      - run: npm run css
-      - run: node tests/check-css.cjs
+      - run: .tools/tailwindcss -i styles/input.css -o styles/generated.css --minify
+      - run: python3 scripts/check_css.py
       - run: trunk build --release --locked
       - run: trunk build --release --locked --public-url /sub/ --dist dist/sub
-      - run: npm run test:browser
+      - run: cargo run -p browser-tests --locked --offline
+        env:
+          CHROMIUM_PATH: /usr/bin/google-chrome
       - run: git diff --exit-code && test -z "$(git ls-files --others --exclude-standard)"

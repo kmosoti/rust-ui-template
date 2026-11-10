@@ -34,6 +34,7 @@ def main() -> None:
             for filename in ("Cargo.toml", "Cargo.lock", "rust-toolchain.toml"):
                 shutil.copy2(ROOT / filename, checkout / filename)
             shutil.copytree(ROOT / "crates", checkout / "crates")
+            shutil.copytree(ROOT / "tools", checkout / "tools")
             source = checkout / "crates/app-core/src/lib.rs"
             text = source.read_text(encoding="utf-8")
             if text.count(original) != 1:
