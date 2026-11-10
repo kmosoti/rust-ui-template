@@ -108,6 +108,23 @@ The core workspace pins Rust 1.99.1 with Edition 2024/resolver 3. The remaining 
 
 See [Architecture and verification scope](docs/architecture.md) and the repository's GitHub Issues for implementation plans and acceptance criteria.
 
+## Agent design and review workflow
+
+The template ships a [local distinct UI skill](.agents/skills/distinct-ui/SKILL.md):
+write a task brief, compare structural directions, specify geometry, implement,
+then inspect real desktop/mobile captures and metrics. No design-service account
+is required. The optional [restricted theme](design/restricted-theme.css) is a
+starting profile, not the existing demos' mandatory style. See the
+[research review](knowledge/research/R-0002-ui-diversity-and-verification.md) for
+which AI-sameness claims are supported and which remain hypotheses.
+
+Production browser checks now include desktop, 390px and 320px layout/axe checks.
+Screenshots and `layout-*.json` reports are written to `artifacts/` and uploaded
+by browser CI. [CI documentation](docs/ci.md) explains verified tools, trusted
+caches and cold/warm measurement. Human review uses the [overall diagrams](docs/architecture.md)
+and [change diagrams](docs/design-ci-change.md); reviewer effort is standard/medium,
+with max/ultra prohibited.
+
 ## Collaboration and linked knowledge
 
 - [AGENTS.md](AGENTS.md): minimal, repo-wide working agreement for coding agents (`develop` for autonomous agent stacks, `main` gated by human review).

@@ -1,0 +1,16 @@
+/* Optional profile. Import/migrate deliberately; this is not the active demo theme. */
+@import "tailwindcss" source(none);
+@source "../crates/app-ui/src";
+@theme {
+  --color-*: initial;
+  --radius-*: initial;
+  --color-canvas: oklch(0.11 0.005 250);
+  --color-panel: oklch(0.15 0.008 250);
+  --color-ink: oklch(0.92 0.01 250);
+  --color-ink-muted: oklch(0.65 0.015 250);
+  --color-signal: oklch(0.75 0.16 55);
+  --color-hairline: oklch(0.30 0.01 250);
+  --color-control-line: oklch(0.55 0.01 250);
+  --radius-control: 2px;
+  --radius-none: 0px;
+}

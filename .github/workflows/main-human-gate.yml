@@ -20,5 +20,8 @@ jobs:
     environment: main-release
     steps:
       - name: Verify human release approval for main
+        env:
+          RELEASE_HEAD_REF: ${{ github.head_ref }}
+          RELEASE_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          echo "Human reviewer approved promotion of ${{ github.head_ref }} (${{ github.event.pull_request.head.sha }}) into main."
+          echo "Human reviewer approved promotion of $RELEASE_HEAD_REF ($RELEASE_HEAD_SHA) into main."

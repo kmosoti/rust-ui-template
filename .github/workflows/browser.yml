@@ -12,22 +12,42 @@ jobs:
   browser:
     env:
       CARGO_BUILD_JOBS: 2
+      CARGO_INCREMENTAL: 0
+      CARGO_PROFILE_DEV_DEBUG: 0
+      CARGO_PROFILE_TEST_DEBUG: 0
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: ./.github/actions/restore-build-cache
+        id: build-cache
+        with:
+          profile: browser
       - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
-      - run: cargo install trunk --version 0.21.14 --locked
+      - run: python3 scripts/setup_ci_tools.py
+      - run: echo "$GITHUB_WORKSPACE/.tools" >> "$GITHUB_PATH"
       - run: python3 scripts/setup_frontend.py
       - run: /usr/bin/google-chrome --version
       - run: cargo fetch --locked
       - run: .tools/tailwindcss -i styles/input.css -o styles/generated.css --minify
       - run: python3 scripts/check_css.py
+      - run: python3 scripts/check_design_profile.py
       - run: trunk build --release --locked
       - run: trunk build --release --locked --public-url /sub/ --dist dist/sub
       - run: cargo run -p browser-tests --locked --offline
         env:
           CHROMIUM_PATH: /usr/bin/google-chrome
       - run: git diff --exit-code && test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: browser-ui-evidence
+          path: artifacts/
+          retention-days: 7
+          if-no-files-found: ignore
+      - uses: ./.github/actions/save-build-cache
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/develop' && steps.build-cache.outputs.hit != 'true'
+        with:
+          key: ${{ steps.build-cache.outputs.key }}

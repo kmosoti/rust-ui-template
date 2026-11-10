@@ -16,25 +16,39 @@ jobs:
     timeout-minutes: 40
     env:
       CARGO_BUILD_JOBS: 2
+      CARGO_INCREMENTAL: 0
+      CARGO_PROFILE_DEV_DEBUG: 0
+      CARGO_PROFILE_TEST_DEBUG: 0
       NO_COLOR: 'false'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Install Linux build and launch dependencies
+        id: sdk
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf webkit2gtk-driver xvfb
           pkg-config --modversion gtk+-3.0 webkit2gtk-4.1
           dpkg-query -W webkit2gtk-driver libwebkit2gtk-4.1-0
+          echo "version=$(pkg-config --modversion gtk+-3.0 webkit2gtk-4.1 | tr '\n' '-')" >> "$GITHUB_OUTPUT"
+      - uses: ./.github/actions/restore-build-cache
+        id: build-cache
+        with:
+          profile: native
+          sdk: ${{ steps.sdk.outputs.version }}
       - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
-      - run: cargo install trunk --version 0.21.14 --locked
-      - run: cargo install tauri-driver --version 2.1.0 --locked
+      - run: python3 scripts/setup_ci_tools.py
+      - run: echo "$GITHUB_WORKSPACE/.tools" >> "$GITHUB_PATH"
+      - run: cargo install tauri-driver --version 2.1.0 --locked --root .tools/driver
+      - run: echo "$GITHUB_WORKSPACE/.tools/driver/bin" >> "$GITHUB_PATH"
       - run: python3 scripts/setup_frontend.py && python3 scripts/setup_native_cli.py
       - run: cargo fetch --locked && cargo fetch --manifest-path apps/native/Cargo.toml --locked
       - run: .tools/tailwindcss -i styles/input.css -o styles/generated.css --minify
       - run: trunk build --release --locked
       - run: cargo fmt --manifest-path apps/native/Cargo.toml -- --check
+      - name: Rebuild package-owned assets against cached dependencies
+        run: cargo clean --manifest-path apps/native/Cargo.toml -p rust-ui-native --release
       - name: Build Debian package
         working-directory: apps/native
         run: ../../.tools/cargo-tauri tauri build --bundles deb -- --locked
@@ -60,3 +74,7 @@ jobs:
           path: artifacts/
           retention-days: 7
           if-no-files-found: ignore
+      - uses: ./.github/actions/save-build-cache
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/develop' && steps.build-cache.outputs.hit != 'true'
+        with:
+          key: ${{ steps.build-cache.outputs.key }}

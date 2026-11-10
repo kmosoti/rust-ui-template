@@ -1,5 +1,8 @@
 use chromiumoxide::{
     browser::{Browser, BrowserConfig},
+    cdp::browser_protocol::{
+        emulation::SetDeviceMetricsOverrideParams, page::Viewport as CaptureViewport,
+    },
     handler::viewport::Viewport,
     page::{Page, ScreenshotParams},
 };
@@ -130,10 +133,27 @@ async fn input(page: &Page, value: i64) -> Result<()> {
 async fn capture(page: &Page, name: &str) -> Result<()> {
     // Wait for CSS and fonts before taking actual production-page captures.
     page.evaluate_function("async () => { await document.fonts.ready; await new Promise(requestAnimationFrame); return true; }").await?;
+    let width: f64 = page.evaluate("innerWidth").await?.into_value()?;
+    let height: f64 = page
+        .evaluate("document.documentElement.scrollHeight")
+        .await?
+        .into_value()?;
     fs::write(
         format!("artifacts/{name}.png"),
-        page.screenshot(ScreenshotParams::builder().full_page(false).build())
-            .await?,
+        page.screenshot(
+            ScreenshotParams::builder()
+                .full_page(false)
+                .capture_beyond_viewport(true)
+                .clip(CaptureViewport {
+                    x: 0.0,
+                    y: 0.0,
+                    width,
+                    height,
+                    scale: 1.0,
+                })
+                .build(),
+        )
+        .await?,
     )?;
     Ok(())
 }
@@ -276,6 +296,58 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
         }
         capture(page, name).await?;
     }
+    for (width, height) in [(1440, 1000), (390, 844), (320, 812)] {
+        for (link, name, heading) in [
+            ("Latest response", "response", "Latest response"),
+            ("Overview", "overview", "A little more clarity."),
+            ("Preferences", "preferences", "Your space, your pace."),
+            ("About", "about", "About"),
+        ] {
+            page.execute(SetDeviceMetricsOverrideParams::new(
+                width, height, 1.0, false,
+            ))
+            .await?;
+            click(page, link).await?;
+            check(
+                page,
+                &format!(
+                    "document.querySelector('h1')?.textContent === {}",
+                    serde_json::to_string(heading)?
+                ),
+            )
+            .await?;
+            if name == "about" {
+                check(page, "document.querySelector('[data-testid=host-info]')?.textContent.includes('unavailable in browser mode')").await?;
+            }
+            page.evaluate_function("async () => { await document.fonts.ready; await new Promise(requestAnimationFrame); return true; }").await?;
+            let metrics: serde_json::Value = page
+                .evaluate_function(include_str!("../../../tests/layout-audit.js"))
+                .await?
+                .into_value()?;
+            fs::write(
+                format!("artifacts/layout-{name}-{width}.json"),
+                serde_json::to_vec_pretty(&metrics)?,
+            )?;
+            capture(page, &format!("layout-{name}-{width}")).await?;
+            if metrics["horizontalOverflow"] == true
+                || metrics["clippedText"] != serde_json::json!([])
+                || metrics["overlaps"] != serde_json::json!([])
+                || metrics["escapedControls"] != serde_json::json!([])
+            {
+                return Err(format!("Layout defect at {width}px on {name}: {metrics}").into());
+            }
+            let violations: serde_json::Value = page
+                .evaluate_function("async () => (await axe.run()).violations.map(v => v.id)")
+                .await?
+                .into_value()?;
+            if violations != serde_json::json!([]) {
+                return Err(format!("Accessibility at {width}px on {name}: {violations}").into());
+            }
+        }
+    }
+    page.execute(SetDeviceMetricsOverrideParams::new(1440, 1000, 1.0, false))
+        .await?;
+    println!("PASS: desktop/390px/320px layout metrics, captures and axe smoke");
     check(page, "window.__errors.length === 0").await?;
     page.goto(format!("{url}sub/#/about")).await?;
     check(
@@ -324,6 +396,19 @@ async fn main() -> Result<()> {
         }
     });
     let result = async {
+        let probe = browser.new_page("about:blank").await?;
+        js(&probe, r#"document.body.innerHTML='<div style="width:2200px;height:20px">overflow sentinel</div><div style="width:12px;height:12px;overflow:hidden;white-space:nowrap">clipped sentinel text</div><div data-layout-region="a" style="position:absolute;left:0;top:100px;width:100px;height:100px"></div><div data-layout-region="b" style="position:absolute;left:20px;top:120px;width:100px;height:100px"></div>'"#).await?;
+        let detected: serde_json::Value = probe.evaluate_function(include_str!("../../../tests/layout-audit.js")).await?.into_value()?;
+        if detected["horizontalOverflow"] != true || detected["clippedText"] == serde_json::json!([]) || detected["overlaps"] == serde_json::json!([]) {
+            return Err("Layout audit failed to detect the deliberate defect fixture".into());
+        }
+        js(&probe, r#"document.body.innerHTML='<div style="width:120px"><input style="width:250px" aria-label="probe"></div>'"#).await?;
+        let contained: serde_json::Value = probe.evaluate_function(include_str!("../../../tests/layout-audit.js")).await?.into_value()?;
+        if contained["horizontalOverflow"] != false || contained["escapedControls"] == serde_json::json!([]) {
+            return Err("Layout audit failed to detect a control escaping its parent inside the viewport".into());
+        }
+        probe.close().await?;
+        println!("PASS: deliberate overflow, clipping and region-overlap fixture rejected");
         let page = browser.new_page("about:blank").await?;
         suite(&page, &format!("{}/", assets.url)).await
     }
