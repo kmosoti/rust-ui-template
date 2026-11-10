@@ -6,7 +6,7 @@ WASM UI does not by itself establish native platform support.
 | Target | Build / package | Launch / behavior |
 | --- | --- | --- |
 | Browser, Linux Chromium 156 | Production Trunk root and subpath bundles passed | Interaction, navigation, cancellation and axe smoke passed |
-| Linux Tauri / WebKitGTK | Ubuntu 24.04 Debian package built and installed | Launch/valid IPC observed; full smoke retry pending |
+| Linux Tauri / WebKitGTK | Ubuntu 24.04 x86_64 Debian package built and installed | Xvfb/WebKitGTK 2.52.6 launch, UI, IPC validation, CSP and real permission denial passed |
 | Windows / WebView2 | Not built | Not launched |
 | macOS / WKWebView | Not built | Not launched |
 | Android / Android WebView | Not built | Not launched |
