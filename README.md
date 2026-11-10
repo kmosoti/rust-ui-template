@@ -1,6 +1,6 @@
 # rust-ui-template
 
-**Status: CSR browser slice; not a complete UI template.** A Leptos browser example uses the dependency-free core. The first Tauri Linux host is being validated; other native platforms remain future work.
+**Status: browser and Linux desktop slices; not a complete cross-platform release.** The shared Leptos UI uses the dependency-free core. An Ubuntu 24.04 Debian package has build, installation and WebKit launch evidence; other native platforms remain future work.
 
 A minimal Rust-first UI foundation for browser, desktop, and mobile clients. The template will be implemented incrementally through the repository's GitHub issues.
 

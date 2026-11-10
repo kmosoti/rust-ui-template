@@ -26,5 +26,7 @@ with no matching window permission. Both use the same shared CSR assets and CSP.
 
 Unsigned package build/install/launch checks do not establish reproducible signed
 releases, signing, notarization, broad accessibility conformance or formal proof.
+Final native [CI run 42908982231](https://github.com/kmosoti/rust-ui-template/actions/runs/42908982231)
+passed on the exact source tree landed by PR #10, including the source-drift gate.
 See [D-0005](../knowledge/decisions/D-0005-linux-native-host.md) and
 [O-0005](../knowledge/observations/O-0005-linux-native-host.md) for exact evidence.
