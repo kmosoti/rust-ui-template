@@ -65,6 +65,21 @@ same develop source can then demonstrate warm reuse. Do not label a fast local
 build or a cold prebuilt-tool run as a measured warm CI speedup. Results and
 limitations are tracked in [O-0006](../knowledge/observations/O-0006-design-ci.md).
 
+## Observed results (2026-11-10)
+
+| Job | Prior baseline | New cold PR | Warm exact-hit rerun |
+| --- | ---: | ---: | ---: |
+| Browser | 8m51s | 2m15s | 44s |
+| Core | Not compared | 3m28s | 26s |
+| Linux native | 14m20s | 9m06s | 3m00s |
+
+Warm runs used the same develop source after a successful push seeded each cache.
+Times include cache transfer and all applicable checks. Native warm restore cost
+20s for ~880 MiB; installed production/CSP and restricted-window denial tests
+passed. These are single observed runs with runner variability, not guarantees.
+Run/attempt links, image/SDK/key, seed costs and commands are in
+[O-0006](../knowledge/observations/O-0006-design-ci.md).
+
 ## Human review
 
 [Overall architecture](architecture.md) and the [change diagrams](design-ci-change.md)
