@@ -10,10 +10,11 @@
 6. No platform is labeled supported without building, launching, and exercising it on the actual platform. iOS requires macOS/Xcode.
 7. All toolchain/component versions and feature flags used for releases must be pinned and verified together.
 
-## Minimal workspace (native host remains future work)
+## Workspace and native host
 
 ```text
 crates/
+  app-contract/   # Versioned host boundary, no platform authority
   app-core/       # Pure domain state, transitions, DTOs where appropriate
   app-ui/         # Leptos views and shared presentation logic
   client/         # CSR/WASM entrypoint and browser/Tauri adapter boundary
@@ -23,6 +24,10 @@ styles/           # Tailwind 4 source
 proofs/           # Optional extracted Rust definitions and checked Lean theorems
 tests/            # Core, browser, and platform integration tests
 ```
+
+The Linux Tauri host is an isolated Cargo workspace with its own lockfile;
+browser-only checks do not require GTK/WebKit development libraries. Both
+clients use the same CSR component tree and production stylesheet.
 
 Workspace boundaries are justified by different target compilation and verification concerns, not by automatically creating a crate for every concept.
 

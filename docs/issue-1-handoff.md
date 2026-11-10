@@ -1,3 +1,5 @@
+> Current native work and exact evidence: [D-0005](../knowledge/decisions/D-0005-linux-native-host.md) and [O-0005](../knowledge/observations/O-0005-linux-native-host.md). Other platforms remain open.
+
 > Historical foundation handoff: the browser slice is now implemented; see [O-0003](../knowledge/observations/O-0003-csr-browser.md) for current evidence and the README for build commands. The subsequent native and verification slices remain open.
 
 # Issue #1: implementation handoff

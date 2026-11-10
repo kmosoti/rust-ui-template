@@ -1,6 +1,6 @@
 # rust-ui-template
 
-**Status: CSR browser slice; not a complete UI template.** A Leptos browser example uses the dependency-free core. Native packaging and platform validation remain future work.
+**Status: CSR browser slice; not a complete UI template.** A Leptos browser example uses the dependency-free core. The first Tauri Linux host is being validated; other native platforms remain future work.
 
 A minimal Rust-first UI foundation for browser, desktop, and mobile clients. The template will be implemented incrementally through the repository's GitHub issues.
 
@@ -52,6 +52,40 @@ Example routes are `#/` (response lab), `#/overview` (sample dashboard), and
 are local component state and reset on navigation; no persistence or network API
 is implemented. Browser binaries come from the environment; their versions must
 be recorded with test results. Other system browsers/WebViews remain unverified.
+
+## Linux desktop host
+
+The Tauri 2 host embeds the same production `dist/` as the browser and has an
+isolated Cargo workspace/lockfile in `apps/native` so GTK dependencies do not
+enter browser-only checks. Its only application command is a versioned,
+read-only `app_info`, granted to the local `main` window on Linux. About shows
+the native result or an explicit unavailable message in a browser.
+
+On Ubuntu 24.04, install `libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`,
+`librsvg2-dev`, and `patchelf`. Build the root production assets as above, then:
+
+```sh
+python3 scripts/setup_native_cli.py
+cargo fetch --manifest-path apps/native/Cargo.toml --locked
+(cd apps/native && ../../.tools/cargo-tauri tauri build --bundles deb -- --locked)
+```
+
+The CLI setup script pins the official Linux x86_64 Tauri 2.12.4 binary and hash;
+other development platforms can install the same version with
+`cargo install tauri-cli --version 2.12.4 --locked` but are untested here.
+Linux CI installs the Debian package and launches it under Xvfb using
+`tauri-driver` 2.1.0 and `WebKitWebDriver` (`webkit2gtk-driver` package):
+
+```sh
+cargo install tauri-driver --version 2.1.0 --locked
+xvfb-run -a python3 scripts/native_smoke.py
+```
+
+The separate `tauri.e2e.conf.json` adds a restricted window for a real permission
+denial test; its bundle is a test fixture, not the production package. Production
+CSP allows the bundled scripts and WASM while blocking arbitrary inline scripts.
+No signing/notarization, persistence, mobile build or general platform support
+claim is made. See the knowledge records for exact execution evidence.
 
 ## Selected architecture
 
