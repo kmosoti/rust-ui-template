@@ -45,3 +45,12 @@ screen-reader claim is made.
 
 A new compositor/font/inset may expose an incomplete sample criterion. DOM geometry
 alone does not prove displayed pixels.
+
+## Exact-head repeat exposed an early callback deadline
+
+Run42977352876 passed production but denial startup hit the PixelCopy callback
+wait's three-second cap before the overall ten-second capture budget elapsed.
+The reviewed fix waits for the remaining capture budget for visual/copy callbacks
+instead of failing early. It does not replay functional tests or increase the
+capture loop budget. Fresh CI is required; the earlier inspected passing images
+remain historical evidence, not proof that this head passed.
