@@ -209,6 +209,17 @@ class NativeAppTest {
     }
 
     private fun capture(name: String) {
+        // DOM resize precedes compositor presentation during device rotation.
+        val painted = CountDownLatch(1)
+        instrumentation.runOnMainSync {
+            web.postVisualStateCallback(0L, object : WebView.VisualStateCallback() {
+                override fun onComplete(requestId: Long) {
+                    web.postOnAnimation { web.postOnAnimation { painted.countDown() } }
+                }
+            })
+        }
+        assertTrue("WebView did not paint $name", painted.await(10, TimeUnit.SECONDS))
+        instrumentation.waitForIdleSync()
         val directory = File(instrumentation.targetContext.filesDir, "evidence").apply { mkdirs() }
         instrumentation.uiAutomation.takeScreenshot()?.let { bitmap -> File(directory, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }
     }
@@ -218,7 +229,7 @@ class NativeAppTest {
             val directory = File(instrumentation.targetContext.filesDir, "evidence").apply { mkdirs() }
             File(directory, "phase.txt").writeText(phase)
             File(directory, "runtime.json").writeText(js("({userAgent:navigator.userAgent, width:innerWidth,height:innerHeight,scrollY,focused:document.activeElement?.id,focusedBounds:document.activeElement?.getBoundingClientRect().toJSON(),webview:${JSONObject.quote(WebView.getCurrentWebViewPackage()?.versionName ?: "unknown")}})"))
-            instrumentation.uiAutomation.takeScreenshot()?.let { bitmap -> File(directory, "screen.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }
+            capture("screen")
         } catch (error: Throwable) { android.util.Log.e("RustUiE2E", "Diagnostic capture unavailable", error) }
         // Closing the last Tauri Activity exits this instrumentation process.
         // The host force-stops the owned package after JUnit reports and evidence is collected.

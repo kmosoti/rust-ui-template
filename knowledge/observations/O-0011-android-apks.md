@@ -197,3 +197,15 @@ a previously successful run if cleanup itself fails. Two meaningful regressions
 reject a crashed report and cover cleanup error precedence; all22 Python tests
 passed. Strict offline AndroidTest compilation passed1s. Device final result,
 including the separate real denial APK, remains CI-pending.
+
+## Completed device reports
+
+Head63eb6f23 passed Android run42953564848, including normal JUnit result reporting
+and the real restricted-window denial APK; all other source checks passed too.
+No app assertion was replayed. Current production UI is verified on API36/x86_64;
+ARM64 is build-only. Final source also synchronizes captures with WebView's
+visual-state callback and two presentation frames: earlier rotation snapshots
+were taken during compositor transition even though DOM geometry was settled.
+The capture helper compiled with strict verified dependencies (1s); final
+capture-synchronized CI remains pending. This changes test capture timing, not
+application behavior or assertion criteria.
