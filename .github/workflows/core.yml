@@ -58,6 +58,7 @@ jobs:
         run: |
           cargo test --manifest-path apps/native/Cargo.toml -p tauri-utils --features html-manipulation,html-manipulation-2,isolation --locked --lib html
           cargo test --manifest-path apps/native/Cargo.toml -p native-html-tests -p dirs-sys --locked
+          cargo clippy --manifest-path apps/native/Cargo.toml -p native-html-tests --no-deps --all-targets --locked --offline -- -D warnings
       - name: Reject deliberate freshness and overflow defects
         run: python3 scripts/check_core_mutations.py
       - name: No generated source or lockfile drift
