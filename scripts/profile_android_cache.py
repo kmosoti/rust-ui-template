@@ -38,6 +38,15 @@ def measure(directory):
     return totals
 
 
+def profile_bucket(directory):
+    directory = Path(directory)
+    summary = measure(directory)
+    # A symlink root must not be followed for the child breakdown either.
+    children = sorted(directory.iterdir()) if not directory.is_symlink() and directory.is_dir() else []
+    summary['children'] = {child.name: measure(child) for child in children}
+    return summary
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--phase', choices=['restored', 'ready-to-save'], required=True)
@@ -57,9 +66,7 @@ def main():
     started = time.monotonic()
     buckets = {}
     for name, directory in roots.items():
-        summary = measure(directory)
-        summary['children'] = {child.name: measure(child) for child in sorted(directory.iterdir())} if directory.is_dir() else {}
-        buckets[name] = summary
+        buckets[name] = profile_bucket(directory)
     output = ROOT/'artifacts/android-cache'
     output.mkdir(parents=True, exist_ok=True)
     result = {

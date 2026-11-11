@@ -45,3 +45,13 @@ Local filesystem sizes are not substituted for hosted-runner cache measurements.
 Implements the observation stage of #31, informed by [O-0017](O-0017-issue1-completion.md).
 Keep or reject later cache candidates using total runtime, transfer and storage
 measurements while preserving every applicable verification/trust boundary.
+
+## Independent review corrections
+
+An unrelated label's skipped job could still cancel active validation through the
+workflow concurrency group. Unrelated label events now use a separate group;
+only the deliberate cold control shares the validation group. Review also caught
+a root symlink followed by the child-breakdown code; a no-follow bucket helper and
+root-symlink regression now cover that path. Child breakdowns are informational,
+not additive: cross-child hardlinks can appear in more than one child while the
+parent counts file data once. All29 Python tests pass after these corrections.
