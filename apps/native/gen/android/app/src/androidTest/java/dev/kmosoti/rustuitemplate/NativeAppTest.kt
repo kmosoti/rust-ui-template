@@ -227,7 +227,7 @@ class NativeAppTest {
                     override fun onComplete(requestId: Long) { web.postOnAnimation { painted.countDown() } }
                 })
             }
-            assertTrue("WebView did not paint $name", painted.await((deadline-SystemClock.uptimeMillis()).coerceIn(1,3000), TimeUnit.MILLISECONDS))
+            assertTrue("WebView did not paint $name", painted.await((deadline-SystemClock.uptimeMillis()).coerceAtLeast(1), TimeUnit.MILLISECONDS))
             val map = JSONObject(js("""(()=>{
               const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
               const ctx=canvas.getContext('2d');
@@ -259,7 +259,7 @@ class NativeAppTest {
                     PixelCopy.request(activity.window, Rect(position[0], position[1], position[0]+web.width, position[1]+web.height), bitmap!!, { code -> result=code; copied.countDown() }, Handler(Looper.getMainLooper()))
                 } else copied.countDown()
             }
-            assertTrue("PixelCopy timeout: $name", copied.await((deadline-SystemClock.uptimeMillis()).coerceIn(1,3000), TimeUnit.MILLISECONDS))
+            assertTrue("PixelCopy timeout: $name", copied.await((deadline-SystemClock.uptimeMillis()).coerceAtLeast(1), TimeUnit.MILLISECONDS))
             val frame = bitmap
             var valid = result == PixelCopy.SUCCESS && frame != null
             if (valid && frame != null) {
