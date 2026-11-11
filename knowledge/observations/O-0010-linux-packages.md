@@ -1,7 +1,7 @@
 ---
 id: O-0010
 type: observation
-status: implementation-ci-pending
+status: verified-ci
 updated: 2026-11-11
 added_by: agent
 human_ratified: false
@@ -25,7 +25,7 @@ WebKitWebDriver at /usr/sbin. Source-native GTK headers are absent on the outer
 host. GitHub artifact redirect returned403, so the earlier CI-built binary could
 not be downloaded for this local probe; no local installed-app pass is claimed.
 
-`python3 -m unittest discover -s scripts -p 'test_*.py' -q`:16 passed, including
+`python3 -m unittest discover -s scripts -p 'test_*.py' -q`:18 passed, including
 new diagnostic-capture failure cases. `bash -n scripts/fedora_package_smoke.sh`
 and diff checks passed. CI installed-package evidence remains required.
 
@@ -56,3 +56,20 @@ No support/denial pass inferred from earlier production success. Driver log is
 uploaded; local artifact redirects403, so added a best-effort tail to the CI log
 on failure for direct diagnosis while preserving the original exception. No
 automatic retry or graphics/sandbox workaround was added.
+
+## Final executed CI
+
+Head95aea05 passed all checks: Linux run42942195249 (3m19s), browser
+run42942195172 (57s), core run42942195317 (26s). The Linux job installed,
+reinstalled, launched and removed actual production DEB/RPM packages, validated
+metadata, exercised Ubuntu and Fedora permission-denial fixtures, verified
+production SHA256s were unchanged and passed source drift. Logs report Fedora
+WebKitGTK2.54.2. Prior startup disconnect remains an observed intermittent
+limitation; this was a new diagnostics-source run, not an automatic retry.
+
+Caches were optional restored dependencies; PR jobs did not save caches. Fedora
+runtime-image build adds an isolated install cost rather than caching system
+snapshots. A single warm run is not a reliable speedup estimate; cold Fedora
+image transfer/build remains unmeasured. Wayland and hardware GPU remain untested.
+
+[Executed Linux run](https://github.com/kmosoti/rust-ui-template/actions/runs/42942195249).
