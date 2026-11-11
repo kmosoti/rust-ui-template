@@ -110,3 +110,5 @@ The index is curated, not automatically generated. Start with Markdown and versi
 - [O-0018 · Android cache decomposition](observations/O-0018-android-cache-observation.md): metadata measurements and cold/warm controls (`agent`, `human_ratified: false`).
 
 - [O-0020: Android cache partition trial](observations/O-0020-android-cache-partition-trial.md) — measured v1 baseline and explicit candidate adoption gate.
+
+- [O-0021: Android lifecycle stall and bounded correction](observations/O-0021-android-lifecycle-stall.md) — canceled benchmark preserved; actual process/signal regressions and hosted validation boundary.

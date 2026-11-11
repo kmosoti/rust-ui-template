@@ -17,6 +17,8 @@ import time
 import urllib.error
 
 
+from owned_process import stop
+
 DRIVER_PORT = 4444
 
 
@@ -85,13 +87,7 @@ def record_failure(directory, name, phase, error, session, driver=None):
 def cleanup_driver(driver, log, preserve_error):
     errors = []
     try:
-        if driver is not None and driver.poll() is None:
-            os.killpg(driver.pid, signal.SIGTERM)
-            try:
-                driver.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                os.killpg(driver.pid, signal.SIGKILL)
-                driver.wait(timeout=5)
+        stop(driver, timeout=5)
     except Exception as error:
         errors.append(error)
     try:

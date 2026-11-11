@@ -127,3 +127,18 @@ without bypassing strict lock/metadata checks. Use the update commands above to
 regenerate actual locks and verification data, then run the
 [dependency policy checks](security.md) and full emulator/ABI CI. Local compilation
 with a skipped Rust task is not runtime validation.
+
+
+## Bounded emulator lifecycle
+
+The shell entry bounds AVD creation and delegates one owned emulator session to
+`scripts/android_emulator_runner.py`. It retains600s boot readiness and the
+existing240s instrumentation deadline, adds explicit bounds to device setup and
+case supervision, and records `artifacts/android-lifecycle/state.json` plus phase
+markers. Production and restricted assertions are unchanged and never replayed.
+Shutdown asks only the owned serial to exit, then uses bounded TERM/KILL and wait
+on owned process groups. Cleanup errors fail an otherwise successful run and do
+not replace an original assertion error. SIGKILL cannot run Python cleanup; the
+runner remains the final backstop. A stopped group leader is not proof that all
+detached/reparented services are gone; the harness never kills global adb or
+unrelated process groups. O-0021 records the real shutdown stall and limits.

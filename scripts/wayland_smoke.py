@@ -4,33 +4,13 @@ import json
 import os
 from pathlib import Path
 import signal
-import socket
 import subprocess
 import sys
 import tempfile
 import time
 
 
-def free_ports():
-    sockets = [socket.socket(), socket.socket()]
-    try:
-        for item in sockets:
-            item.bind(('127.0.0.1', 0))
-        return [item.getsockname()[1] for item in sockets]
-    finally:
-        for item in sockets:
-            item.close()
-
-
-def stop(process, timeout=10):
-    if process is not None and process.poll() is None:
-        os.killpg(process.pid, signal.SIGTERM)
-        try:
-            process.wait(timeout=timeout)
-        except subprocess.TimeoutExpired:
-            os.killpg(process.pid, signal.SIGKILL)
-            process.wait(timeout=5)
-
+from owned_process import free_ports, stop
 
 def main():
     parser = argparse.ArgumentParser()

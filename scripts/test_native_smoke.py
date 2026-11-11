@@ -98,7 +98,7 @@ class NativeCleanupTests(unittest.TestCase):
         driver.poll.return_value = None
         log = Mock()
         log.close.side_effect = OSError('close failed')
-        with patch('native_smoke.os.killpg', side_effect=OSError('kill failed')):
+        with patch('owned_process.os.killpg', side_effect=OSError('kill failed')):
             with self.assertRaisesRegex(ValueError, 'original'):
                 try:
                     raise ValueError('original')

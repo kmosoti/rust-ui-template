@@ -3,7 +3,7 @@ import signal
 import subprocess
 import unittest
 from unittest.mock import Mock, patch
-from wayland_smoke import stop, free_ports
+from owned_process import stop, free_ports
 from native_smoke import reserve_check
 
 
@@ -12,13 +12,13 @@ class OwnedSessionTests(unittest.TestCase):
         child = Mock(pid=123)
         child.poll.return_value = None
         child.wait.side_effect = [subprocess.TimeoutExpired('owned', 1), 0]
-        with patch('wayland_smoke.os.killpg') as kill:
+        with patch('owned_process.os.killpg') as kill:
             stop(child, timeout=1)
         self.assertEqual(kill.call_args_list, [unittest.mock.call(123, signal.SIGTERM), unittest.mock.call(123, signal.SIGKILL)])
 
     def test_already_exited_process_is_not_signaled(self):
         child = Mock(); child.poll.return_value = 0
-        with patch('wayland_smoke.os.killpg') as kill:
+        with patch('owned_process.os.killpg') as kill:
             stop(child)
         kill.assert_not_called()
 
