@@ -365,3 +365,23 @@ flowchart LR
 The observer does not read file contents or alter cached inputs. Layout changes
 require separate measured comparison; [O-0018](../knowledge/observations/O-0018-android-cache-observation.md)
 records outcomes and remaining evidence.
+
+
+## Android cache partition trial
+
+```mermaid
+flowchart LR
+  S[Image + verified Android assets/setup hash] --> SDK[SDK partition]
+  L[Image + locks + tool pins + Gradle configuration] --> D[Source/tool/Gradle partition]
+  B[Image + Rust/JDK/NDK + locks + vendor/build inputs] --> T[Compiled targets partition]
+  SDK --> V[Full setup verification and all existing tests]
+  D --> V
+  T --> V
+  V --> P[Successful develop push only saves missing partitions]
+  C[PR cold label] --> N[Skip every restore; no PR save]
+  N --> V
+```
+
+The three roots are disjoint. No old monolithic restore overlaps them. Exact
+keys are conservative: no partial compatibility fallback. The SDK key excludes
+Rust/Gradle locks so an unrelated dependency update need not duplicate it.

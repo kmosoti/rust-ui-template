@@ -75,6 +75,7 @@ def main():
         'cache_hit': os.environ.get('ANDROID_CACHE_HIT', ''),
         'cache_matched_key': os.environ.get('ANDROID_CACHE_MATCHED_KEY', ''),
         'cache_key': os.environ.get('ANDROID_CACHE_KEY', ''),
+        'components': json.loads(os.environ.get('ANDROID_CACHE_COMPONENTS', '{}')),
         'forced_cold': os.environ.get('ANDROID_CACHE_COLD') == 'true',
         'measurement_seconds': time.monotonic()-started, 'buckets': buckets,
         'apparent_bytes': sum(b['apparent_bytes'] for b in buckets.values()),

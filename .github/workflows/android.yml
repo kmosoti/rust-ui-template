@@ -34,7 +34,14 @@ jobs:
         id: image
         run: echo "version=${ImageOS}-${ImageVersion:-uncached-${GITHUB_RUN_ID}}" >> "$GITHUB_OUTPUT"
       - uses: actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
-        id: cache
+        id: sdk-cache
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
+        with:
+          path: |
+            .tools/android-sdk
+          key: android-sdk-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-${{ hashFiles('scripts/android-assets.json', 'scripts/setup_android.py') }}
+      - uses: actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
+        id: dependency-cache
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
         with:
           path: |
@@ -43,18 +50,25 @@ jobs:
             ~/.cache/trunk
             ~/.gradle/caches
             ~/.gradle/wrapper/dists
-            .tools/android-sdk
             .tools/downloads
+          key: android-deps-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-jdk21-${{ hashFiles('Cargo.lock', 'apps/native/Cargo.lock', 'scripts/*setup*.py', 'scripts/tool-assets.json', 'scripts/android-assets.json', 'apps/native/gen/android/**/*.lockfile', 'apps/native/gen/android/gradle/**', 'apps/native/gen/android/gradle.properties', 'apps/native/gen/android/**/build.gradle.kts', 'apps/native/gen/android/**/verification-metadata.xml') }}
+      - uses: actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
+        id: target-cache
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
+        with:
+          path: |
             target
             apps/native/target
-          key: android-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-${{ hashFiles('Cargo.lock', 'apps/native/Cargo.lock', 'scripts/android-assets.json', 'scripts/*setup*.py', 'scripts/setup_android.py', 'apps/native/gen/android/**/*.lockfile', 'apps/native/gen/android/gradle/**', 'apps/native/gen/android/gradle.properties', 'apps/native/gen/android/**/build.gradle.kts') }}
-          restore-keys: android-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-
+          key: android-targets-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-${{ hashFiles('.github/workflows/android.yml', 'scripts/*setup*.py', 'scripts/tool-assets.json', 'rust-toolchain.toml', 'Cargo.lock', 'apps/native/Cargo.lock', 'scripts/android-assets.json', 'apps/native/Cargo.toml', 'Cargo.toml', 'vendor/**', 'apps/native/gen/android/gradle.properties') }}
       - name: Profile restored cache without reading file contents
         run: python3 scripts/profile_android_cache.py --phase restored
         env:
-          ANDROID_CACHE_HIT: ${{ steps.cache.outputs.cache-hit }}
-          ANDROID_CACHE_MATCHED_KEY: ${{ steps.cache.outputs.cache-matched-key }}
-          ANDROID_CACHE_KEY: ${{ steps.cache.outputs.cache-primary-key }}
+          ANDROID_CACHE_HIT: ${{ steps.sdk-cache.outputs.cache-hit == 'true' && steps.dependency-cache.outputs.cache-hit == 'true' && steps.target-cache.outputs.cache-hit == 'true' }}
+          ANDROID_CACHE_KEY: android-partitions-v2
+          ANDROID_CACHE_COMPONENTS: >-
+            {"sdk":{"key":"${{ steps.sdk-cache.outputs.cache-primary-key }}","hit":"${{ steps.sdk-cache.outputs.cache-hit }}"},
+            "dependencies":{"key":"${{ steps.dependency-cache.outputs.cache-primary-key }}","hit":"${{ steps.dependency-cache.outputs.cache-hit }}"},
+            "targets":{"key":"${{ steps.target-cache.outputs.cache-primary-key }}","hit":"${{ steps.target-cache.outputs.cache-hit }}"}}
           ANDROID_CACHE_COLD: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
       - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown --target aarch64-linux-android --target x86_64-linux-android
       - run: python3 scripts/setup_ci_tools.py && python3 scripts/setup_frontend.py && python3 scripts/setup_native_cli.py
@@ -130,9 +144,12 @@ jobs:
       - name: Profile cache after successful validation
         run: python3 scripts/profile_android_cache.py --phase ready-to-save
         env:
-          ANDROID_CACHE_HIT: ${{ steps.cache.outputs.cache-hit }}
-          ANDROID_CACHE_MATCHED_KEY: ${{ steps.cache.outputs.cache-matched-key }}
-          ANDROID_CACHE_KEY: ${{ steps.cache.outputs.cache-primary-key }}
+          ANDROID_CACHE_HIT: ${{ steps.sdk-cache.outputs.cache-hit == 'true' && steps.dependency-cache.outputs.cache-hit == 'true' && steps.target-cache.outputs.cache-hit == 'true' }}
+          ANDROID_CACHE_KEY: android-partitions-v2
+          ANDROID_CACHE_COMPONENTS: >-
+            {"sdk":{"key":"${{ steps.sdk-cache.outputs.cache-primary-key }}","hit":"${{ steps.sdk-cache.outputs.cache-hit }}"},
+            "dependencies":{"key":"${{ steps.dependency-cache.outputs.cache-primary-key }}","hit":"${{ steps.dependency-cache.outputs.cache-hit }}"},
+            "targets":{"key":"${{ steps.target-cache.outputs.cache-primary-key }}","hit":"${{ steps.target-cache.outputs.cache-hit }}"}}
           ANDROID_CACHE_COLD: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
@@ -142,7 +159,13 @@ jobs:
           retention-days: 14
           if-no-files-found: error
       - uses: actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
-        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/develop' && steps.cache.outputs.cache-hit != 'true'
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/develop' && steps.sdk-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            .tools/android-sdk
+          key: ${{ steps.sdk-cache.outputs.cache-primary-key }}
+      - uses: actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/develop' && steps.dependency-cache.outputs.cache-hit != 'true'
         with:
           path: |
             ~/.cargo/registry
@@ -150,8 +173,12 @@ jobs:
             ~/.cache/trunk
             ~/.gradle/caches
             ~/.gradle/wrapper/dists
-            .tools/android-sdk
             .tools/downloads
+          key: ${{ steps.dependency-cache.outputs.cache-primary-key }}
+      - uses: actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/develop' && steps.target-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
             target
             apps/native/target
-          key: ${{ steps.cache.outputs.cache-primary-key }}
+          key: ${{ steps.target-cache.outputs.cache-primary-key }}

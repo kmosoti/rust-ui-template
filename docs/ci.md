@@ -201,3 +201,21 @@ flowchart LR
 
 This isolates observed index/configuration inconsistency; it does not establish
 its underlying cause. O-0018 retains failed runs and fresh/repeated evidence.
+### Android partition experiment
+
+The v2 trial separates `.tools/android-sdk`, dependency/tool/Gradle state and
+compiled frontend/native targets. Exact keys include runner image and relevant
+input fingerprints. Targets additionally hash vendored sources and workflow
+build flags. Full SDK byte verification, source-drift checks, strict Gradle
+verification, both ABIs and real production/denial emulator checks remain.
+PRs cannot save any partition; the cold label skips all restores. A successful
+develop push seeds only missing components, then exact-source reruns measure warm
+behavior. Profiles retain each component key/hit. No AVD, signing keys or system
+directories are cached.
+
+This is a trial, not a performance claim. Compare a cold run, trusted seed and
+three warm runs with v1 observations, separating image/source changes and
+transfer from build/emulator variance. Keep v2 only if repeat measurements show
+a practical transfer/runtime or cache-duplication benefit without a meaningful
+whole-job regression. Otherwise revert the partition layout and preserve the
+measurement tooling and unsuccessful experiment evidence in #31.
