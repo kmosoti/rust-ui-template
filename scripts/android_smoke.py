@@ -3,6 +3,7 @@ import argparse
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 PACKAGE = 'dev.kmosoti.rustuitemplate'
 
@@ -41,13 +42,14 @@ def main():
             ('shell', 'dumpsys', 'connectivity'),
         ])
         (directory / 'runtime.txt').write_text(runtime)
-        output = adb('shell', 'am', 'instrument', '-w', '-r', '-e', 'denial',
+        output = adb('shell', 'am', 'instrument', '-w', '-r', '-e', 'waitForActivitiesToComplete', 'false', '-e', 'denial',
                      str(args.denial).lower(), PACKAGE + '.test/androidx.test.runner.AndroidJUnitRunner', timeout=240)
         (directory / 'instrumentation.txt').write_text(output)
         print(output)
         if not re.search(r'OK \(1 test\)', output) or 'FAILURES!!!' in output or 'INSTRUMENTATION_FAILED' in output:
             raise RuntimeError('Android instrumentation did not report one passing test')
     finally:
+        preserve_error = sys.exc_info()[0] is not None
         # Collection errors cannot replace the original assertion/transport error.
         for name, command in [
             ('logcat.txt', ('logcat', '-d', '-v', 'threadtime')),
@@ -71,6 +73,13 @@ def main():
                 archive.extractall(directory, filter='data')
         except Exception as error:
             print('WebView evidence unavailable:', type(error).__name__)
+        try:
+            adb('shell', 'am', 'force-stop', PACKAGE)
+        except Exception as error:
+            if preserve_error:
+                print('Cleanup failed after original failure:', type(error).__name__)
+            else:
+                raise
 
 
 if __name__ == '__main__':

@@ -174,3 +174,26 @@ then passed with the corrected production root/subpath builds. Full browser suit
 passed all56 palette/viewport audits plus interactions/assets/axe. CSR WASM
 Clippy passed; strict offline AndroidTest compilation passed2s. Cargo locks are
 unchanged: only declared web-sys features changed. Device correction pending CI.
+
+
+## Production test body and instrumentation teardown
+
+Run42951822691 passed current core/browser/Linux checks and booted Android.
+Saved production screenshots/phase/axe/layout artifacts show the keyboard fix,
+portrait/landscape cutout geometry, palette/Back and background recovery reached
+CSP completion. Final axe violations=[] and final geometry had no overflow,
+clipped text, escaped controls or overlaps. Viewed the corrected keyboard capture:
+complete field and its actions are above the IME. The overall Android job still
+failed: ActivityScenario.close in @After destroyed Tauri's final Activity, which
+exited its process cleanly before JUnit reported (runner says Process crashed).
+No production application-crash conclusion is inferred from that harness result.
+
+Inspected actual AndroidX monitor1.8.0 bytecode: MonitoringInstrumentation.finish
+calls its ActivityFinisher before reporting unless waitForActivitiesToComplete
+is false. Pass that documented argument, retain @After evidence, and defer owned
+package teardown to host ADB after results/collection. Do not alter Tauri's
+production exit behavior. Host cleanup preserves an active failure and fails
+a previously successful run if cleanup itself fails. Two meaningful regressions
+reject a crashed report and cover cleanup error precedence; all22 Python tests
+passed. Strict offline AndroidTest compilation passed1s. Device final result,
+including the separate real denial APK, remains CI-pending.
