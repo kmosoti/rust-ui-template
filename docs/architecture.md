@@ -260,3 +260,19 @@ DOM owns layout and its focused-field scrolling adapter. No Node or embedded aut
 Current Android build and runtime evidence/limits are recorded in
 [O-0011](../knowledge/observations/O-0011-android-apks.md), not inferred from the
 diagram. Linux packages are already validated separately.
+
+## Permissive native build dependencies
+
+```mermaid
+flowchart LR
+ Source[Shared production HTML] --> Utils[Patched Tauri utilities]
+ Utils --> Parser[html5ever + rcdom]
+ Parser --> Traversal[Explicit nonce / script traversal]
+ Traversal --> Codegen[Patched Tauri codegen: CSP hashes]
+ Codegen --> Bundle[Unchanged Tauri IPC and packaged CSR]
+ Android[Wry Android fallback] --> Parser
+ Directories[dirs-sys] --> Std[Standard Rust Option comparison]
+```
+
+Reviewed source patches and licenses are documented in [vendor ownership](../vendor/README.md).
+These transform packaged HTML; Leptos remains the sole owner of the live UI DOM.

@@ -54,6 +54,10 @@ jobs:
           cargo metadata --format-version 1 --locked --offline > "$RUNNER_TEMP/core-metadata.json"
           python3 scripts/check_core_boundary.py "$RUNNER_TEMP/core-metadata.json"
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Patched native HTML and directory regression tests (no GTK)
+        run: |
+          cargo test --manifest-path apps/native/Cargo.toml -p tauri-utils --features html-manipulation,html-manipulation-2,isolation --locked --lib html
+          cargo test --manifest-path apps/native/Cargo.toml -p native-html-tests -p dirs-sys --locked
       - name: Reject deliberate freshness and overflow defects
         run: python3 scripts/check_core_mutations.py
       - name: No generated source or lockfile drift

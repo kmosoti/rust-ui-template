@@ -1,0 +1,108 @@
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -160,10 +160,6 @@
+ [dev-dependencies.base64]
+ version = "0.23"
+ 
+-[dev-dependencies.dom_query]
+-version = "0.29.0"
+-default-features = false
+-
+ [dev-dependencies.getrandom]
+ version = "0.3"
+ 
+@@ -239,9 +235,11 @@
+ [target.'cfg(target_os = "android")'.dependencies.crossbeam-channel]
+ version = "0.5"
+ 
+-[target.'cfg(target_os = "android")'.dependencies.dom_query]
+-version = "0.29.0"
+-default-features = false
++[target.'cfg(target_os = "android")'.dependencies.html5ever]
++version = "=0.40.1"
++
++[target.'cfg(target_os = "android")'.dependencies.markup5ever_rcdom]
++version = "=0.40.1"
+ 
+ [target.'cfg(target_os = "android")'.dependencies.jni]
+ version = "0.21"
+--- a/src/inject_initialization_scripts.rs
++++ b/src/inject_initialization_scripts.rs
+@@ -6,13 +6,15 @@
+ //! initialization scripts when `addDocumentStartJavaScript` is not supported.
+ 
+ use base64::{Engine, prelude::BASE64_STANDARD};
+-use dom_query::Document;
++use html5ever::{QualName, ns, tendril::TendrilSink};
+ use http::{
+   Response as HttpResponse,
+   header::{CONTENT_SECURITY_POLICY, CONTENT_TYPE, HeaderValue},
+ };
++use markup5ever_rcdom::{Node, NodeData, RcDom, SerializableHandle};
+ use sha2::{Digest, Sha256};
+ use std::borrow::Cow;
++use std::{cell::RefCell, rc::Rc};
+ 
+ use crate::InitializationScript;
+ 
+@@ -39,23 +41,33 @@
+     return response;
+   }
+ 
+-  let document = Document::from(String::from_utf8_lossy(response.body()).as_ref());
++  let document = html5ever::parse_document(RcDom::default(), Default::default())
++    .one(String::from_utf8_lossy(response.body()).as_ref());
+   let csp = response.headers_mut().get_mut(CONTENT_SECURITY_POLICY);
+ 
+-  // Get or create head element
+-  let head = document.head().unwrap_or_else(|| {
+-    let html = document.html_root();
+-    let head = document.tree.new_element("head");
+-    html.prepend_child(&head);
+-    head
+-  });
++  // HTML5 parsing inserts the head even when omitted in source markup.
++  let head = document.document.children.borrow().iter().find_map(|node| {
++    if matches!(&node.data, NodeData::Element { name, .. } if name.ns == ns!(html) && &*name.local == "html") {
++      node.children.borrow().iter().find(|child| matches!(&child.data, NodeData::Element { name, .. } if name.ns == ns!(html) && &*name.local == "head")).cloned()
++    } else { None }
++  }).expect("HTML5 document head");
+ 
+   // Iterate in reverse order since we are prepending each script to the head tag
+   let mut hashes = Vec::new();
+   for script in scripts.iter().rev().map(|s| &s.script) {
+-    let script_tag = document.tree.new_element("script");
+-    script_tag.set_text(script.as_str());
+-    head.prepend_child(&script_tag);
++    let script_tag = Node::new(NodeData::Element {
++      name: QualName::new(None, ns!(html), "script".into()),
++      attrs: RefCell::new(vec![]),
++      template_contents: RefCell::new(None),
++      mathml_annotation_xml_integration_point: false,
++    });
++    let text = Node::new(NodeData::Text {
++      contents: RefCell::new(script.as_str().into()),
++    });
++    text.parent.set(Some(Rc::downgrade(&script_tag)));
++    script_tag.children.borrow_mut().push(text);
++    script_tag.parent.set(Some(Rc::downgrade(&head)));
++    head.children.borrow_mut().insert(0, script_tag);
+     if csp.is_some() {
+       hashes.push(hash_script(script));
+     }
+@@ -71,7 +83,14 @@
+     *csp = HeaderValue::from_str(&csp_string).unwrap();
+   }
+ 
+-  *response.body_mut() = Cow::Owned(document.html().as_bytes().to_vec());
++  let mut bytes = Vec::new();
++  html5ever::serialize(
++    &mut bytes,
++    &SerializableHandle::from(document.document.clone()),
++    Default::default(),
++  )
++  .expect("serialize HTML to memory");
++  *response.body_mut() = Cow::Owned(bytes);
+   response
+ }
+ 
