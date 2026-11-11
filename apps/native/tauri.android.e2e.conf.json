@@ -1,0 +1,5 @@
+{
+  "app": {
+    "windows": [{ "label": "restricted", "title": "Rust UI permission denial fixture", "url": "index.html", "useHttpsScheme": true }]
+  }
+}

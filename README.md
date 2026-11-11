@@ -161,3 +161,10 @@ The template should state only what its tests and proofs establish. A Lean proof
 ## Licenses and platform support
 
 Licensed under the [MIT License](LICENSE) (Copyright 2026 Kennedy Mosoti). The validated platform-support matrix remains a release decision; public repository visibility alone does not establish platform support.
+
+## Android test APK workflow
+
+The generated Tauri Android host reuses the same UI/core and production assets.
+See [Android build/instrumentation guide](docs/android.md) and the
+[platform evidence matrix](docs/platforms.md) for current validation and limits.
+APKs are debug/test-signed; store signing, iOS and other desktop ports are deferred.

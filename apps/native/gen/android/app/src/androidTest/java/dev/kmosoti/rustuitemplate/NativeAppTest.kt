@@ -1,0 +1,171 @@
+package dev.kmosoti.rustuitemplate
+
+import android.graphics.Bitmap
+import android.content.pm.ActivityInfo
+import android.view.View
+import android.view.ViewGroup
+import android.webkit.WebView
+import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.web.sugar.Web.onWebView
+import androidx.test.espresso.web.webdriver.DriverAtoms.findElement
+import androidx.test.espresso.web.webdriver.DriverAtoms.webClick
+import androidx.test.espresso.web.webdriver.Locator
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import org.json.JSONObject
+import org.junit.After
+import org.junit.Assert.*
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReference
+
+@RunWith(AndroidJUnit4::class)
+class NativeAppTest {
+    private lateinit var scenario: ActivityScenario<MainActivity>
+    private lateinit var web: WebView
+    private var phase = "startup"
+    private val instrumentation get() = InstrumentationRegistry.getInstrumentation()
+
+    private fun findWeb(view: View): WebView? {
+        if (view is WebView) return view
+        if (view is ViewGroup) for (i in 0 until view.childCount) {
+            val found = findWeb(view.getChildAt(i)); if (found != null) return found
+        }
+        return null
+    }
+
+    @Before fun launch() {
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        val deadline = System.currentTimeMillis() + 60000
+        while (!::web.isInitialized && System.currentTimeMillis() < deadline) {
+            scenario.onActivity { activity -> findWeb(activity.findViewById(android.R.id.content))?.let { web = it } }
+            if (!::web.isInitialized) Thread.sleep(100)
+        }
+        assertTrue("WebView did not initialize", ::web.isInitialized)
+        waitFor("document.querySelector('h1')?.textContent === 'Your library'", 60000)
+        waitFor("document.querySelector('[data-testid=featured-art]')?.naturalWidth > 0")
+        js("window.__nativeErrors=[]; addEventListener('error',e=>window.__nativeErrors.push(e.message)); addEventListener('unhandledrejection',e=>window.__nativeErrors.push(String(e.reason))); true")
+    }
+
+    private fun js(script: String): String {
+        val value = AtomicReference<String>()
+        val ready = CountDownLatch(1)
+        instrumentation.runOnMainSync { web.evaluateJavascript(script) { value.set(it); ready.countDown() } }
+        assertTrue("JS timeout in $phase", ready.await(10, TimeUnit.SECONDS))
+        return value.get()
+    }
+
+    private fun waitFor(predicate: String, timeout: Long = 15000) {
+        val deadline = System.currentTimeMillis() + timeout
+        while (js("Boolean($predicate)") != "true") {
+            if (System.currentTimeMillis() > deadline) fail("$phase: timed out: $predicate")
+            Thread.sleep(50)
+        }
+    }
+
+    private fun click(selector: String) {
+        onWebView().withElement(findElement(Locator.CSS_SELECTOR, selector)).perform(webClick())
+    }
+
+    private fun route(hash: String, heading: String) {
+        click("nav[aria-label='Main navigation'] a[href='$hash']")
+        waitFor("document.querySelector('h1')?.textContent === ${JSONObject.quote(heading)}")
+    }
+
+    private fun invoke(payload: String): JSONObject {
+        js("window.__probe=null; window.__TAURI_INTERNALS__.invoke('app_info',{request:$payload}).then(value=>window.__probe={ok:true,value}).catch(error=>window.__probe={ok:false,error:String(error)}); true")
+        waitFor("window.__probe !== null")
+        return JSONObject(js("window.__probe"))
+    }
+
+    private fun input(number: Int) {
+        js("document.querySelector('#number').value='$number'; document.querySelector('#number').dispatchEvent(new Event('input',{bubbles:true})); true")
+    }
+
+    private fun layout() {
+        val audit = instrumentation.context.assets.open("layout-audit.js").bufferedReader().use { it.readText() }
+        val result = JSONObject(js("($audit)()"))
+        assertFalse(result.toString(), result.getBoolean("horizontalOverflow"))
+        for (key in listOf("clippedText", "escapedControls", "overlaps")) assertEquals(result.toString(), 0, result.getJSONArray(key).length())
+    }
+
+    @Test fun bundledUiAndNativeBoundary() {
+        phase = "native command"
+        val response = invoke("{schema_version:1}")
+        val denial = InstrumentationRegistry.getArguments().getString("denial") == "true"
+        if (denial) {
+            assertFalse(response.toString(), response.getBoolean("ok"))
+            assertTrue(response.toString(), response.getString("error").lowercase().let { "not allowed" in it || "denied" in it })
+            route("#/about", "About")
+            waitFor("document.querySelector('[data-testid=host-info]')?.textContent === 'Application information could not be read.'")
+            return
+        }
+        assertTrue(response.toString(), response.getBoolean("ok"))
+        val info = response.getJSONObject("value")
+        assertEquals(1, info.getInt("schema_version")); assertEquals("android", info.getString("platform"))
+        assertEquals("rust-ui-template", info.getString("name"))
+        for (payload in listOf("{}", "{schema_version:0}", "{schema_version:1,path:'/etc/passwd'}")) {
+            val invalid = invoke(payload)
+            assertFalse(invalid.toString(), invalid.getBoolean("ok"))
+        }
+        phase = "stale result and cancellation"
+        route("#/", "Latest response")
+        input(11); click("button[type=button]:nth-child(1)")
+        input(22); click("button[type=button]:nth-child(2)")
+        waitFor("document.querySelector('[role=status]')?.textContent.includes('Latest result: 22')")
+        Thread.sleep(1700)
+        waitFor("document.querySelector('[role=status]')?.textContent.includes('Latest result: 22')")
+        input(33); click("button[type=button]:nth-child(1)"); click("button[type=button]:nth-child(3)")
+        Thread.sleep(1700)
+        waitFor("document.querySelector('[role=status]')?.textContent.includes('cancelled') && document.querySelector('[role=status]').textContent.includes('Latest result: 22')")
+        click("button[type=button]:nth-child(1)"); route("#/about", "About")
+        Thread.sleep(1700); route("#/", "Latest response")
+        waitFor("document.querySelector('[role=status]')?.textContent.includes('No result yet')")
+        phase = "IME and layout"
+        click("#number"); layout(); capture("keyboard")
+        Espresso.closeSoftKeyboard(); layout()
+        phase = "palette navigation"
+        route("#/settings", "Preferences")
+        js("const e=document.querySelector('#color-scheme'); e.value='signal-blue'; e.dispatchEvent(new Event('change',{bubbles:true})); true")
+        waitFor("document.querySelector('[data-palette]')?.dataset.palette === 'signal-blue'")
+        layout()
+        route("#/about", "About")
+        waitFor("document.querySelector('[data-testid=host-info]')?.textContent.includes('android')")
+        waitFor("document.querySelector('[data-palette]')?.dataset.palette === 'signal-blue'")
+        phase = "rotation"
+        scenario.onActivity { it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+        waitFor("innerWidth > innerHeight"); layout(); capture("landscape")
+        scenario.onActivity { it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT }
+        waitFor("innerHeight > innerWidth"); layout(); capture("portrait")
+        phase = "back and lifecycle"
+        Espresso.pressBack()
+        waitFor("document.querySelector('h1')?.textContent === 'Preferences'")
+        scenario.moveToState(Lifecycle.State.CREATED); scenario.moveToState(Lifecycle.State.RESUMED)
+        waitFor("document.querySelector('[data-palette]')?.dataset.palette === 'signal-blue'")
+        phase = "CSP"
+        js("window.__inlineProbe=false; window.__cspEvents=0; addEventListener('securitypolicyviolation',()=>window.__cspEvents++); const s=document.createElement('script'); s.textContent='window.__inlineProbe=true'; document.head.append(s); true")
+        waitFor("window.__cspEvents>0"); assertEquals("false", js("window.__inlineProbe"))
+        assertEquals("[]", js("window.__nativeErrors")); layout()
+    }
+
+    private fun capture(name: String) {
+        val directory = File(instrumentation.targetContext.filesDir, "evidence").apply { mkdirs() }
+        instrumentation.uiAutomation.takeScreenshot()?.let { bitmap -> File(directory, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }
+    }
+
+    @After fun evidenceAndClose() {
+        try {
+            val directory = File(instrumentation.targetContext.filesDir, "evidence").apply { mkdirs() }
+            File(directory, "phase.txt").writeText(phase)
+            File(directory, "runtime.json").writeText(js("({userAgent:navigator.userAgent, width:innerWidth,height:innerHeight,webview:${JSONObject.quote(WebView.getCurrentWebViewPackage()?.versionName ?: "unknown")}})"))
+            instrumentation.uiAutomation.takeScreenshot()?.let { bitmap -> File(directory, "screen.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }
+        } catch (error: Throwable) { android.util.Log.e("RustUiE2E", "Diagnostic capture unavailable", error) }
+        try { if (::scenario.isInitialized) scenario.close() } catch (error: Throwable) { android.util.Log.e("RustUiE2E", "Cleanup unavailable", error) }
+    }
+}

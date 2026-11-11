@@ -1,0 +1,121 @@
+name: Android test APKs
+on:
+  pull_request:
+    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
+  push:
+    branches: [develop]
+    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
+permissions:
+  contents: read
+concurrency:
+  group: android-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CARGO_BUILD_JOBS: 2
+      CARGO_INCREMENTAL: 0
+      CARGO_PROFILE_DEV_DEBUG: 0
+      NO_COLOR: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '21.0.13+9'
+      - name: Identify runner image
+        id: image
+        run: echo "version=${ImageOS}-${ImageVersion:-uncached-${GITHUB_RUN_ID}}" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
+        id: cache
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git/db
+            ~/.cache/trunk
+            ~/.gradle/caches
+            ~/.gradle/wrapper/dists
+            .tools/android-sdk
+            .tools/downloads
+            target
+            apps/native/target
+          key: android-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-${{ hashFiles('Cargo.lock', 'apps/native/Cargo.lock', 'scripts/android-assets.json', 'scripts/*setup*.py', 'scripts/setup_android.py', 'apps/native/gen/android/**/*.lockfile', 'apps/native/gen/android/gradle/**', 'apps/native/gen/android/gradle.properties', 'apps/native/gen/android/**/build.gradle.kts') }}
+          restore-keys: android-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-
+      - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown --target aarch64-linux-android --target x86_64-linux-android
+      - run: python3 scripts/setup_ci_tools.py && python3 scripts/setup_frontend.py && python3 scripts/setup_native_cli.py
+      - run: echo "$GITHUB_WORKSPACE/.tools" >> "$GITHUB_PATH"
+      - name: Verified pinned SDK, NDK and emulator
+        run: python3 scripts/setup_android.py --emulator
+      - name: Accept SDK licenses and verify JDK
+        run: |
+          javac -version
+          python3 - <<'PY'
+          import subprocess
+          subprocess.run(['sdkmanager', '--licenses'], input='y\n'*1000, text=True, check=True)
+          PY
+      - run: cargo fetch --locked && cargo fetch --manifest-path apps/native/Cargo.toml --locked
+      - name: Build shared production assets once
+        run: |
+          .tools/tailwindcss -i styles/input.css -o styles/generated.css --minify
+          python3 scripts/check_css.py
+          trunk build --release --locked
+      - name: Build test-signed ARM64 and x86_64 APKs
+        working-directory: apps/native
+        run: ../../.tools/cargo-tauri tauri android build --debug --target aarch64 x86_64 --split-per-abi --apk --ci -- --locked
+      - name: Preserve application APKs before denial build
+        run: |
+          mkdir -p artifacts
+          cp apps/native/gen/android/app/build/outputs/apk/arm64/debug/*.apk artifacts/rust-ui-android-arm64-debug.apk
+          cp apps/native/gen/android/app/build/outputs/apk/x86_64/debug/*.apk artifacts/rust-ui-android-x86_64-debug.apk
+          sha256sum artifacts/rust-ui-android-*-debug.apk > artifacts/android-apks.sha256
+      - name: Compile AndroidX instrumentation with locked verified dependencies
+        working-directory: apps/native/gen/android
+        run: ./gradlew :app:assembleUniversalDebugAndroidTest -PabiList=x86_64 -PtargetList=x86_64 -ParchList=x86_64 --dependency-verification=strict
+      - name: Preserve instrumentation APK
+        run: cp apps/native/gen/android/app/build/outputs/apk/androidTest/universal/debug/*.apk artifacts/android-instrumentation.apk
+      - name: Build real restricted-window fixture
+        working-directory: apps/native
+        run: ../../.tools/cargo-tauri tauri android build --debug --target x86_64 --apk --ci --config tauri.android.e2e.conf.json -- --locked
+      - run: cp apps/native/gen/android/app/build/outputs/apk/universal/debug/*.apk artifacts/android-restricted-fixture.apk
+      - name: Allow runner KVM access
+        run: sudo setfacl -m "u:$(id -un):rw" /dev/kvm
+      - name: Launch offline bundled app and real denial fixture
+        run: bash scripts/android_emulator_smoke.sh
+      - run: sha256sum --check artifacts/android-apks.sha256
+      - name: Source drift gate
+        run: git diff --exit-code && test -z "$(git ls-files --others --exclude-standard)"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: android-device-evidence
+          path: |
+            artifacts/android-*/
+            artifacts/android-emulator.log
+          retention-days: 7
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: android-test-signed-apks
+          path: |
+            artifacts/rust-ui-android-*-debug.apk
+            artifacts/android-apks.sha256
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/develop' && steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git/db
+            ~/.cache/trunk
+            ~/.gradle/caches
+            ~/.gradle/wrapper/dists
+            .tools/android-sdk
+            .tools/downloads
+            target
+            apps/native/target
+          key: ${{ steps.cache.outputs.cache-primary-key }}

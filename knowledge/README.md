@@ -89,3 +89,5 @@ Provenance tracking **must never slow down agentic work**:
 5. Before doing research, walk the index and relevant outgoing links. Independent checks should record their own methods and observations, then link to the claim they corroborate or challenge.
 
 The index is curated, not automatically generated. Start with Markdown and version control; introduce graph tooling only after an actual retrieval or integrity failure justifies it.
+
+| [O-0011 · Android APK evidence](observations/O-0011-android-apks.md) | `agent` | `false` | Actual APK/Gradle lock generation, pinned SDK setup and emulator limits |
