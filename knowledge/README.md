@@ -107,3 +107,4 @@ The index is curated, not automatically generated. Start with Markdown and versi
 
 - [R-0008: Maintenance and release readiness](research/R-0008-maintenance-release-readiness.md) — stable upstream blockers, reassessment date and inactive weekly-monitor handoff.
 - [O-0019: Linux Wayland and native accessibility](observations/O-0019-linux-wayland-accessibility.md) — software display evidence and real-desktop handoff.
+- [O-0018 · Android cache decomposition](observations/O-0018-android-cache-observation.md): metadata measurements and cold/warm controls (`agent`, `human_ratified: false`).

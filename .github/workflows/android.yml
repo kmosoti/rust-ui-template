@@ -1,6 +1,7 @@
 name: Android test APKs
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
     paths-ignore: ["README.md", "docs/**", "knowledge/**"]
   push:
     branches: [develop]
@@ -12,6 +13,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   android:
+    # Label events only rerun this job for the explicit nonprivileged benchmark control.
+    if: github.event_name != 'pull_request' || (github.event.action != 'labeled' && github.event.action != 'unlabeled') || github.event.label.name == 'ci-cache-cold'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -32,6 +35,7 @@ jobs:
         run: echo "version=${ImageOS}-${ImageVersion:-uncached-${GITHUB_RUN_ID}}" >> "$GITHUB_OUTPUT"
       - uses: actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
         id: cache
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
         with:
           path: |
             ~/.cargo/registry
@@ -45,6 +49,12 @@ jobs:
             apps/native/target
           key: android-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-${{ hashFiles('Cargo.lock', 'apps/native/Cargo.lock', 'scripts/android-assets.json', 'scripts/*setup*.py', 'scripts/setup_android.py', 'apps/native/gen/android/**/*.lockfile', 'apps/native/gen/android/gradle/**', 'apps/native/gen/android/gradle.properties', 'apps/native/gen/android/**/build.gradle.kts') }}
           restore-keys: android-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-
+      - name: Profile restored cache without reading file contents
+        run: python3 scripts/profile_android_cache.py --phase restored
+        env:
+          ANDROID_CACHE_HIT: ${{ steps.cache.outputs.cache-hit }}
+          ANDROID_CACHE_KEY: ${{ steps.cache.outputs.cache-primary-key }}
+          ANDROID_CACHE_COLD: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
       - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown --target aarch64-linux-android --target x86_64-linux-android
       - run: python3 scripts/setup_ci_tools.py && python3 scripts/setup_frontend.py && python3 scripts/setup_native_cli.py
       - run: echo "$GITHUB_WORKSPACE/.tools" >> "$GITHUB_PATH"
@@ -115,6 +125,19 @@ jobs:
             artifacts/rust-ui-android-*-debug.apk
             artifacts/android-apks.sha256
           retention-days: 7
+          if-no-files-found: error
+      - name: Profile cache after successful validation
+        run: python3 scripts/profile_android_cache.py --phase ready-to-save
+        env:
+          ANDROID_CACHE_HIT: ${{ steps.cache.outputs.cache-hit }}
+          ANDROID_CACHE_KEY: ${{ steps.cache.outputs.cache-primary-key }}
+          ANDROID_CACHE_COLD: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: android-cache-profile
+          path: artifacts/android-cache/
+          retention-days: 14
           if-no-files-found: error
       - uses: actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/develop' && steps.cache.outputs.cache-hit != 'true'
