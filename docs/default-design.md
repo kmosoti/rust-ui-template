@@ -42,8 +42,8 @@ this default through a reviewed complete migration.
 | --- | --- |
 | canvas / sidebar / panel / raised | Ground, workspace, feature surface, active navigation |
 | ink / muted | Primary text and readable secondary text |
-| brand | Lavender primary action and current-workspace accents |
-| ready | Readiness and result information, paired with text |
+| brand / action-ink | Selected primary action and its readable foreground (lavender in Nocturne) |
+| info / success / warning / danger | Feedback roles paired with explicit text |
 | hairline / control | Decorative separators / visible control boundaries |
 | radius-control / radius-art | Small control corners / artwork clipping |
 
@@ -59,6 +59,12 @@ the same static bundle as CSS/WASM. Relative URLs work at root and a deployment
 subpath. Art and feature text occupy separate areas, keeping text contrast
 independent of the artwork. Preserve image dimensions/alternative text and test
 actual production loading when changing it.
+
+## Selectable colors
+
+Six additional [color schemes](color-palettes.md) are available in Preferences.
+They reuse the Nocturne layout and semantic recipes; the app-session choice
+survives navigation and resets on reload. Nocturne remains the default.
 
 ## Working with the default
 

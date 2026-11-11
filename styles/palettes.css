@@ -1,0 +1,65 @@
+/* Runtime semantic overrides; compiled into the one production stylesheet. */
+@layer base {
+  [data-palette="nocturne"] { color-scheme: dark; }
+  [data-palette="signal-blue"] {
+    color-scheme: light;
+    --color-canvas: #f8f7f4; --color-sidebar: #efede8;
+    --color-panel: #ffffff; --color-raised: #e9edf5;
+    --color-ink: #17213a; --color-muted: #4f586c;
+    --color-brand: #0057ff; --color-brand-hover: #0047d6; --color-action-ink: #ffffff;
+    --color-info: #0057ff; --color-success: #24633d;
+    --color-warning: #855000; --color-danger: #a72335;
+    --color-control: #70788a; --color-hairline: #d1d3d8;
+  }
+  [data-palette="butter-iris"] {
+    color-scheme: dark;
+    --color-canvas: #3a0ca3; --color-sidebar: #300a85;
+    --color-panel: #4616b3; --color-raised: #5224bd;
+    --color-ink: #fff9df; --color-muted: #e0d7ef;
+    --color-brand: #fff275; --color-brand-hover: #fff8ad; --color-action-ink: #3a0ca3;
+    --color-info: #bdddff; --color-success: #b7f2bd;
+    --color-warning: #ffe3a1; --color-danger: #ffc3cf;
+    --color-control: #b49bd7; --color-hairline: #7753b7;
+  }
+  [data-palette="lime-graphite"] {
+    color-scheme: dark;
+    --color-canvas: #23262f; --color-sidebar: #1c1f27;
+    --color-panel: #2b2f3a; --color-raised: #363b48;
+    --color-ink: #f4f5ed; --color-muted: #bfc4cb;
+    --color-brand: #b6ff2e; --color-brand-hover: #d0ff7a; --color-action-ink: #23262f;
+    --color-info: #b0d1ff; --color-success: #a1e4bb;
+    --color-warning: #ffdb8f; --color-danger: #ffb1b5;
+    --color-control: #8c93a1; --color-hairline: #505662;
+  }
+  [data-palette="sulu-fir"] {
+    color-scheme: dark;
+    --color-canvas: #163300; --color-sidebar: #102800;
+    --color-panel: #20440b; --color-raised: #2c5216;
+    --color-ink: #f0f6e8; --color-muted: #c4d4b5;
+    --color-brand: #9fe870; --color-brand-hover: #b9f397; --color-action-ink: #163300;
+    --color-info: #bedcff; --color-success: #b7f5ca;
+    --color-warning: #ffe09a; --color-danger: #ffbdc1;
+    --color-control: #96af82; --color-hairline: #506c39;
+  }
+  /* Project interpretations: the user supplied descriptive hues, not hexes. */
+  [data-palette="blooming-romance"] {
+    color-scheme: light;
+    --color-canvas: #f8e7ed; --color-sidebar: #eed9e3;
+    --color-panel: #fff4f7; --color-raised: #e6cedc;
+    --color-ink: #382133; --color-muted: #655064;
+    --color-brand: #7a2849; --color-brand-hover: #62203b; --color-action-ink: #fff4f7;
+    --color-info: #594477; --color-success: #285d43;
+    --color-warning: #805100; --color-danger: #a11c35;
+    --color-control: #8c6c83; --color-hairline: #c9afbf;
+  }
+  [data-palette="desert-dusk"] {
+    color-scheme: dark;
+    --color-canvas: #261b29; --color-sidebar: #201622;
+    --color-panel: #332335; --color-raised: #433044;
+    --color-ink: #fff0e5; --color-muted: #d8bdc5;
+    --color-brand: #e6a16f; --color-brand-hover: #f2bb92; --color-action-ink: #261b29;
+    --color-info: #d6b8ff; --color-success: #b0ddb8;
+    --color-warning: #ffdb94; --color-danger: #ffb5b5;
+    --color-control: #a18a9c; --color-hairline: #a46542;
+  }
+}

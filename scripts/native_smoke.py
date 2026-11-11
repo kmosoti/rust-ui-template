@@ -96,8 +96,14 @@ def main():
         execute("window.__inlineProbe=false; window.__cspEvents=0; addEventListener('securitypolicyviolation',()=>window.__cspEvents++); const script=document.createElement('script'); script.textContent='window.__inlineProbe=true'; document.head.append(script);")
         wait('window.__cspEvents > 0')
         assert execute('return window.__inlineProbe') is False
+        execute("location.hash='#/settings'")
+        wait("!!document.querySelector('#color-scheme')")
+        execute("const scheme=document.querySelector('#color-scheme'); scheme.value='signal-blue'; scheme.dispatchEvent(new Event('change',{bubbles:true}));")
+        wait("document.querySelector('[data-palette]')?.dataset.palette === 'signal-blue'")
+        assert execute("return getComputedStyle(document.querySelector('#color-scheme')).colorScheme") == 'light'
         execute("location.hash='#/about'")
         wait("document.querySelector('[data-testid=host-info]')?.textContent.includes('rust-ui-template 0.1.0')")
+        assert execute("return getComputedStyle(document.querySelector('[data-palette]')).backgroundColor") == 'rgb(248, 247, 244)'
         assert execute('return window.__nativeErrors') == []
         Path('artifacts').mkdir(exist_ok=True)
         Path('artifacts/native-linux.png').write_bytes(base64.b64decode(request('GET', prefix + '/screenshot')))

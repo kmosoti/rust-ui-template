@@ -9,6 +9,7 @@ use gloo_timers::future::TimeoutFuture;
 use leptos::{prelude::*, task::spawn_local};
 
 mod examples;
+mod palettes;
 
 fn current_route() -> String {
     web_sys::window()
@@ -27,6 +28,8 @@ struct HostReader(HostInfoReader);
 #[component]
 pub fn App(read_host_info: HostInfoReader) -> impl IntoView {
     provide_context(HostReader(read_host_info));
+    let appearance = RwSignal::new("nocturne");
+    provide_context(palettes::Appearance(appearance));
     let route = RwSignal::new(current_route());
     let main_ref = NodeRef::<leptos::html::Main>::new();
     let listener = gloo_events::EventListener::new(
@@ -36,6 +39,7 @@ pub fn App(read_host_info: HostInfoReader) -> impl IntoView {
     );
     let _listener = StoredValue::new_local(listener);
     view! {
+        <div data-palette=move || appearance.get() class="min-h-screen bg-canvas text-ink">
         <a class="skip-link" data-ui-overflow="allow" data-ui-reason="Visually hidden skip link expands on keyboard focus; tested before activation." href="#workspace-content" on:click=move |ev| {
             ev.prevent_default();
             if let Some(main) = main_ref.get() { let _ = main.focus(); }
@@ -54,7 +58,7 @@ pub fn App(read_host_info: HostInfoReader) -> impl IntoView {
                 <p class="rail-note"><span class="block text-ink">"A place to make things."</span>"Local examples. No account needed."</p>
             </aside>
             <div data-layout-region="workspace-body" class="workspace-body">
-                <header data-layout-region="header" class="context-bar"><span>"Personal workspace"<span aria-hidden="true" class="mx-3">"/"</span>"Examples"</span><span class="font-mono text-ready">"CSR · LOCAL DEMO"</span></header>
+                <header data-layout-region="header" class="context-bar"><span>"Personal workspace"<span aria-hidden="true" class="mx-3">"/"</span>"Examples"</span><span class="font-mono text-success">"CSR · LOCAL DEMO"</span></header>
                 <main node_ref=main_ref id="workspace-content" tabindex="-1" data-layout-region="main" class="workspace-main">
                     {move || match route.get().as_str() {
                         "#/about" => view! { <About /> }.into_any(),
@@ -65,6 +69,7 @@ pub fn App(read_host_info: HostInfoReader) -> impl IntoView {
                 </main>
                 <footer data-layout-region="footer" class="workspace-footer"><span>"NOCTURNE / Rust UI Template"</span><span>"Leptos · Tailwind · Rust"</span></footer>
             </div>
+        </div>
         </div>
     }
 }
@@ -105,6 +110,7 @@ fn LatestResponse() -> impl IntoView {
     let tracker = RwSignal::new(LatestRequest::<i64>::new());
     let input = RwSignal::new(String::from("1"));
     let message = RwSignal::new(String::new());
+    let message_tone = RwSignal::new("info");
     let tasks: Arc<Mutex<HashMap<u64, AbortHandle>>> = Arc::new(Mutex::new(HashMap::new()));
     let cleanup = Arc::clone(&tasks);
     on_cleanup(move || {
@@ -117,12 +123,14 @@ fn LatestResponse() -> impl IntoView {
         move |delay: u32| {
             let Ok(value) = input.get_untracked().parse::<i64>() else {
                 message.set("Enter a whole number.".into());
+                message_tone.set("danger");
                 return;
             };
             let id = match tracker.try_update(|state| state.begin()) {
                 Some(Ok(id)) => id,
                 Some(Err(_)) => {
                     message.set("Request IDs exhausted.".into());
+                    message_tone.set("danger");
                     return;
                 }
                 None => return,
@@ -157,10 +165,17 @@ fn LatestResponse() -> impl IntoView {
                         tracker.update(|state| state.cancel());
                         for (_, task) in cancel_tasks.lock().expect("task lock").drain() { task.abort(); }
                         message.set("Request cancelled.".into());
+                        message_tone.set("warning");
                     }>"Cancel"</button>
                 </div>
             </form>
-            <p class="border-t border-hairline py-6 font-medium leading-relaxed text-ready" role="status" aria-live="polite">{move || {
+            <p class="feedback border-t border-hairline py-6 font-medium leading-relaxed" data-tone=move || {
+                let state = tracker.get();
+                if !message.get().is_empty() { message_tone.get() }
+                else if state.active().is_some() { "info" }
+                else if state.value().is_some() { "success" }
+                else { "neutral" }
+            } role="status" aria-live="polite">{move || {
                 let state = tracker.get();
                 let result = state.value().map_or_else(|| "No result yet.".to_string(), |value| format!("Latest result: {value}"));
                 let pending = if state.active().is_some() { " Request pending." } else { "" };
