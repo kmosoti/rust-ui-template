@@ -21,6 +21,13 @@ class NativeTransportTests(unittest.TestCase):
             with self.assertRaises(HTTPError):
                 request('POST', '/session', {})
 
+    def test_transport_rejection_retains_bounded_response(self):
+        failure = HTTPError('http://127.0.0.1:4444/session', 500, 'session not created', {}, io.BytesIO(b'{"value":{"error":"session not created"}}'))
+        with patch('native_smoke.urllib.request.urlopen', side_effect=failure):
+            with self.assertRaises(HTTPError) as raised:
+                request('POST', '/session', {})
+        self.assertIn('session not created', raised.exception.webdriver_response)
+
 
 class NativeDiagnosticsTests(unittest.TestCase):
     def test_disconnected_screenshot_does_not_hide_failure_details(self):

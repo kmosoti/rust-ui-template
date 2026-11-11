@@ -326,3 +326,25 @@ flowchart LR
 
 The successful extraction is observed; the dotted proof stages are follow-up #27.
 It does not verify Leptos, accessibility, cancellation I/O or native permissions.
+
+
+## Linux display and accessibility validation
+
+```mermaid
+flowchart LR
+  P[One production and one restricted DEB/RPM] --> X[Forced X11 / Xvfb]
+  P --> W[Owned private bus / headless Weston]
+  W --> C[Forced Wayland client / software Mesa]
+  X --> N[Installed-app WebDriver assertions]
+  C --> N
+  C --> A[Native AT-SPI roles and names]
+  W --> E[Protocol / compositor / runtime evidence]
+  N --> E
+  A --> E
+  H[Existing human desktop] --> D[Desktop evidence harness]
+  D --> M[Pending GPU attribution and manual Orca review]
+```
+
+The software CI compositor owns its runtime, bus and process groups; the human
+harness preserves the existing session/settings. Hardware and Orca results are
+separate evidence, never inferred from software CI or device enumeration.

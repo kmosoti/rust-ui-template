@@ -1,0 +1,69 @@
+---
+id: O-0019
+type: observation
+status: local-validated-ci-pending
+updated: 2026-11-11
+added_by: agent
+human_ratified: false
+---
+
+# Installed Linux Wayland and native accessibility checks
+
+Informed by [O-0017](O-0017-issue1-completion.md), D-0009 and #23. This slice
+adds software Wayland and native AT-SPI coverage, plus a real-desktop handoff;
+it does not establish hardware rendering or manual Orca behavior.
+
+## Executed observations
+
+- `python3 -m unittest discover -s scripts -p 'test_*.py'`:30 tests passed.
+  `python3 -m py_compile scripts/inspect_atspi.py scripts/wayland_smoke.py
+  scripts/desktop_evidence.py`, `bash -n scripts/fedora_package_smoke.sh` and
+  `git diff --check` passed. Cleanup escalation, busy ports and original HTTP
+  failure evidence have focused regressions.
+- Installed source-locked tauri-driver2.1.0 with `cargo install --locked`, using
+  two build jobs. No --version flag exists; inspected its actual CLI help.
+- Downloaded the previously validated develop323167e3 production RPM from Linux
+  run42982373186, artifact13837539899. Ran the source's complete Fedora package
+  script against it in a task-local Fedora44 container: install/reinstall,
+  package ownership/desktop/icon checks, forced X11, actual software Wayland,
+  native AT-SPI roles/names and remove all passed. This exercises a previously
+  built real package; current-source packages and Ubuntu remain CI-pending.
+- Fedora44 digest15da97ed9aa94dd3d92c3925eb89520f6c80e07ea7ee24cba848d1f8b6912b3e,
+  Weston15.0.1, GTK3.24.52, WebKitGTK/WebKitWebDriver2.54.2. Owned Weston uses
+  headless/pixman/kiosk-shell; client uses explicit Mesa software overrides.
+  DISPLAY absent and actual wl_surface/xdg_toplevel messages observed. WebKit
+  nevertheless reports X11 in userAgent: never infer display backend from it.
+- `docker run --rm ... rust-ui-wayland-atspi bash
+  scripts/fedora_package_smoke.sh /packages/rust-ui-native-linux.rpm` passed.
+  Mounts were this worktree, read-only driver and production package directory;
+  no privileged container or blanket WebKit sandbox bypass. Fedora image builds
+  used the environment CA as a BuildKit secret, not a TLS verification bypass.
+- Initial Docker run failed creating its VFS rootfs due to disk pressure; no test
+  ran. `cargo clean --manifest-path /workspace/rust-ui-template/Cargo.toml
+  --profile dev` reclaimed only generated artifacts (4.5GiB). Initial AT-SPI run
+  failed importing missing DBus typelib. `dnf provides '*/DBus-1.0.typelib'`
+  identified gobject-introspection; added explicitly and reran successfully.
+  The minimal-image decorative glyphs prompted an explicit symbol-font package.
+- Package-local DNF operations formerly refreshed unrelated repositories (over
+  one minute, mirror503s). Disable repositories for install/reinstall/remove;
+  dependencies must already exist in the runtime image and missing ones fail.
+- PR32 Linux run43052897797 stalled in apt before any tests, was canceled once
+  and rerun; the rerun also stalled. This slice replaces only the exact hosted
+  Azure Ubuntu mirror URL with Ubuntu's official HTTPS archive, retains signed
+  suites/components, and bounds transport and overall setup time. No test
+  assertion is retried or skipped. Current-source CI must validate this change.
+
+## Ownership and limitations
+
+The software wrapper owns a private bus before enabling accessibility, a0700
+runtime, compositor/test process groups and socket. Readiness/commands/cleanup
+are bounded. The real-desktop harness preserves the existing session/settings,
+whitelists metadata and labels DRM presence as capability only. Native AT-SPI
+checks exposed main heading/navigation roles/names; they do not test spoken
+announcements, keyboard flow or WCAG conformance. Hardware GPU attribution,
+100/200% desktop scaling and actual Orca remain pending. No /dev/dri device is
+available on this cloud host. See [desktop validation](../../docs/linux-desktop-validation.md).
+
+Revisit when current-source Ubuntu/Fedora CI artifacts and real hardware/Orca
+observations are available. Update this record with failures as well as passes;
+keep #23 open for missing dimensions.

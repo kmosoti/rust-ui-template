@@ -3,14 +3,17 @@ set -euo pipefail
 package=$(realpath "$1")
 mode=${2:-production}
 # Root installs packages; the actual UI/driver always run as the ordinary app user.
-dnf -y --setopt=install_weak_deps=False install "$package"
-dnf -y reinstall "$package"
+dnf -y --disablerepo='*' --setopt=install_weak_deps=False install "$package"
+dnf -y --disablerepo='*' reinstall "$package"
 rpm -q gtk3 webkit2gtk4.1 webkitgtk6.0
 runuser -u app -- python3 scripts/check_linux_package.py --format rpm
+fixture=()
+prefix=fedora-production
 if [[ "$mode" == restricted ]]; then
-  runuser -u app -- dbus-run-session -- xvfb-run -a python3 scripts/native_smoke.py --artifact-prefix fedora-denied --denial-fixture
-else
-  runuser -u app -- dbus-run-session -- xvfb-run -a python3 scripts/native_smoke.py --artifact-prefix fedora-production
+  fixture=(--denial-fixture)
+  prefix=fedora-denied
 fi
-dnf -y remove rust-ui-template
+runuser -u app -- dbus-run-session -- env -u WAYLAND_DISPLAY GDK_BACKEND=x11 xvfb-run -a python3 scripts/native_smoke.py --display-backend x11 --artifact-prefix "$prefix-x11" "${fixture[@]}"
+runuser -u app -- python3 scripts/wayland_smoke.py --atspi --artifact-prefix "$prefix-wayland-software" "${fixture[@]}"
+dnf -y --disablerepo='*' remove rust-ui-template
 test ! -e /usr/bin/rust-ui-native
