@@ -84,14 +84,19 @@ def main():
         raise SystemExit("Pinned Android build tools require Linux x86_64")
     parser = argparse.ArgumentParser()
     parser.add_argument('--emulator', action='store_true')
+    parser.add_argument('--discard-downloads', action='store_true', help='Release verified archive disk space after all selected installs succeed')
     args = parser.parse_args()
     manifest = json.loads((ROOT / 'scripts/android-assets.json').read_text())
     sdk = ROOT / '.tools/android-sdk'
     downloads = ROOT / '.tools/android-downloads'
     downloads.mkdir(parents=True, exist_ok=True)
-    for identifier, asset in manifest.items():
-        if not asset['emulator_only'] or args.emulator:
-            install(identifier, asset, sdk, downloads)
+    selected = {name: asset for name, asset in manifest.items() if not asset['emulator_only'] or args.emulator}
+    for identifier, asset in selected.items():
+        install(identifier, asset, sdk, downloads)
+    if args.discard_downloads:
+        for asset in selected.values():
+            (downloads / asset['url'].rsplit('/', 1)[1]).unlink(missing_ok=True)
+        print('Released selected SDK ZIPs; verified installed trees remain reusable')
     variables = {'ANDROID_HOME': str(sdk), 'ANDROID_SDK_ROOT': str(sdk), 'NDK_HOME': str(sdk / 'ndk/29.0.14206865')}
     for name, value in variables.items():
         print(f'{name}={value}')

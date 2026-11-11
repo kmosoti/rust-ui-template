@@ -67,7 +67,9 @@ ARM64 is build-only until a physical-device test is recorded.
 
 `python3 scripts/setup_android.py --emulator` also installs checksum-pinned
 Emulator37.2.13 and API36 Google APIs x86_64 revision7. CI creates a fresh Pixel7
-AVD using KVM and SwiftShader, without saved writable device state/snapshots.
+AVD using KVM and SwiftShader, with explicit ANDROID_USER_HOME,
+ANDROID_EMULATOR_HOME and ANDROID_AVD_HOME under ignored `.tools/android-user`.
+Each launch wipes fixture data; no writable device state/snapshots are cached.
 AndroidX instrumentation talks to the real WebView; no Node or automation server
 is embedded. Build test APK using `:app:assembleUniversalDebugAndroidTest` with
 `-PabiList=x86_64 -PtargetList=x86_64 -ParchList=x86_64 -x :app:rustBuildX86_64Debug` after the CLI build. This skips only the already-built Rust task; the standalone Gradle invocation has no live Tauri CLI bridge.
@@ -93,4 +95,7 @@ Caches are optional and keyed by runner, Rust/JDK, SDK manifest, Gradle scripts,
 locks and verification metadata. Trusted develop pushes alone save them. They
 exclude `.android` (debug key/AVD state), signing material and downloaded SDK ZIPs;
 installed SDK trees are checked against verified-install fingerprints on reuse.
-Cold/warm transfer/runtime effects must be measured before claiming improvement.
+CI discards verified SDK ZIPs after successful setup to release about3.3GB before
+emulator startup; warm installed-tree reuse still needs no archive download.
+Emulator early exit fails promptly with its log tail, rather than consuming the
+entire boot deadline. Cold/warm transfer/runtime effects must be measured before claiming improvement.

@@ -118,3 +118,37 @@ Issue1 checklist updated for completed browser/Linux foundations; stays open
 with Android launch pending and Windows/macOS/iOS explicitly deferred.
 
 After this expansion, strict offline application/AndroidTest build passed2s (95tasks); all20 Python tests and actionlint/diff checks passed.
+
+
+## Emulator startup and setup costs
+
+Run42946216855 passed both ABI APK builds and strict dependency verification,
+then failed the10min emulator boot deadline before instrumentation. Downloaded
+artifact13822844385 via the GitHub connector; its emulator log says Unknown AVD
+name rust-ui-api36 / no matching INI in the emulator lookup path. An environment
+location mismatch is inferred; it is not a UI assertion failure or Android pass.
+Locally, avdmanager ignores ANDROID_AVD_HOME for its INI location unless the Java
+SDK user home is explicit too. Setting ANDROID_USER_HOME, ANDROID_EMULATOR_HOME
+and ANDROID_AVD_HOME together created the actual INI, and emulator -list-avds
+returned rust-ui-api36. No local VM launch (/dev/kvm absent) is claimed.
+
+`python3 scripts/setup_android.py --emulator --discard-downloads` installed the
+full pinned image locally and passed, including package XML recognition and AVD
+creation. The actual emulator37.2.13 -help-gpu confirms swiftshader is supported.
+CI now checks emulator liveness/log tail while polling boot, uses an explicit
+serial and graceful bounded cleanup, and wipes owned fixture data per launch.
+No automatic rerun of app assertions was added.
+
+Verified SDK setup measured6.09s locally; after discarding retained archives,
+repeated setup measured4.92s with no new downloads. These are local hot-filesystem
+measurements, not CI warm-cache speedup claims. CI discards about3.3GB of verified
+SDK ZIPs after installation and records available disk before launching the VM.
+All20 Python tests, actionlint/bash/diff checks passed. Local tauri-driver install
+was blocked by registry503, so no local controlled native transport test occurred.
+
+Linux run42946216732 first failed after navigation with a proxy connection reset;
+its failure screenshot showed the application alive on the response page.
+DRI3 warnings are also present in passing runs, so no GPU cause is inferred.
+One explicit failed-job rerun passed all DEB/RPM production and denial checks;
+the failure and known transport limitation are retained, not hidden by automatic
+retry. Browser/core source checks passed on the same c74f7786 head.
