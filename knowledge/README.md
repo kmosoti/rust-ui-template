@@ -98,3 +98,7 @@ The index is curated, not automatically generated. Start with Markdown and versi
 - [O-0014 · Security and setup evidence](observations/O-0014-security-ci.md) (`agent`, `human_ratified: false`).
 
 - [O-0015 · Clean frontend gate](observations/O-0015-clean-frontend.md) (`agent`, `human_ratified: false`).
+
+- [O-0016 · Actual core extraction assessment](observations/O-0016-core-extraction.md) (`agent`, `human_ratified: false`; no proof claim).
+
+- [D-0011 · Scoped CSR milestone completion](decisions/D-0011-scoped-csr-milestone.md) (`agent`, `human_ratified: false`).

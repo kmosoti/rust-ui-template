@@ -84,3 +84,14 @@ warnings only for vendor/patches/*.patch; source checks remain unchanged and
 patch bytes are preserved. `git diff --check` passes with that format-specific
 attribute. The combined branch is rebased on reviewed native/capture develop
 8b45f560, retaining both sides of the knowledge-index append conflict.
+## Initial exact-head security CI
+
+PR29 source149da44 security run42978968153 passed in26s. Downloaded artifact
+13835739364 and inspected lock-manifest, OSV output and license inventory:
+zero vulnerable package records,388 distinct versions. The four UNKNOWN entries
+are appcompat1.7.1, appcompat-resources1.7.1, webkit1.14.0 and material1.12.0;
+UNKNOWN means absent scanner license metadata, not a legal conclusion.
+Tool setup took0.788s with no initial archive entries and0.507s on repeated
+verified setup. This is one job's cold/hot archive observation, not a controlled
+cross-run cache speedup or native build timing claim. Same-source warm cache
+transfer/seed measurements remain to be recorded after develop landing.

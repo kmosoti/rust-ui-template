@@ -60,8 +60,8 @@ Workspace boundaries are justified by different target compilation and verificat
 ## Verification strategy
 
 - Default CI: formatting, Clippy, unit/property tests, target builds, browser E2E, and platform packaging smoke tests.
-- First formal candidate: a small pure reducer with a real invariant (for example, stale responses cannot overwrite the active request). Evaluate a pinned Charon/Aeneas-to-Lean workflow on supported source functions first, optionally managed by hax's current `cargo hax into lean` and `cargo hax tools` commands. Pin hax, extraction tools, and prover versions together and check the supported Rust subset rather than assuming arbitrary application code is extractable.
-- CI must regenerate extracted definitions, check theorems with Lake, audit axiom dependencies and non-vacuity, and test a deliberately broken implementation to establish proof sensitivity.
+- The actual pure core transition has a [source-linked extraction assessment](proof-feasibility.md). Charon's compatible Aeneas preset produces the real generic `complete` body without reported extraction errors; no Lean proof is claimed.
+- Before claiming formal proof coverage, CI must regenerate extracted definitions, check theorems with Lake, audit axiom dependencies/non-vacuity and show the deliberate freshness defect breaks the linked proof. The optional continuation is #27, not an existing default-CI proof gate.
 - Browser DOM/hydration correctness, accessibility, IPC permissions, offline behavior, and release assets require integration testing. Proofs about a separate model do not establish those properties.
 
 ## Non-goals
@@ -313,3 +313,16 @@ flowchart LR
 
 The gate restores no compiled caches. Registry downloads may be reused; signed
 native package reproducibility is a separate release concern.
+
+## Core extraction evidence boundary
+
+```mermaid
+flowchart LR
+ Core[Actual app-core source and hash] --> Charon[Pinned compatible Charon / Aeneas preset]
+ Charon --> LLBC[Extracted complete body / no reported errors]
+ LLBC -. not yet validated .-> Aeneas[Optional pinned Aeneas to Lean]
+ Aeneas -. future .-> Lake[Theorem / axiom audit / mutation sensitivity]
+```
+
+The successful extraction is observed; the dotted proof stages are follow-up #27.
+It does not verify Leptos, accessibility, cancellation I/O or native permissions.

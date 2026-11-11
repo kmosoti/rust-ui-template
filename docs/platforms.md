@@ -35,7 +35,10 @@ DEB/RPM delivery: [O-0010](../knowledge/observations/O-0010-linux-packages.md) a
 
 Android execution: [run 42953564848](https://github.com/kmosoti/rust-ui-template/actions/runs/42953564848), [O-0011](../knowledge/observations/O-0011-android-apks.md). Minimum API 29 and WebView 111+ are prerequisites, not lower-bound runtime evidence. Physical devices and TalkBack remain untested.
 
-Final Android develop run 42960500792 passed functional DOM, IPC, accessibility
-smoke and keyboard/rotation geometry assertions. Downloaded library and landscape
-screenshots remain blank/partially presented; visual capture evidence is not
-complete. See O-0011 for the distinction and pending capture validation.
+Historical Android develop run42960500792 passed functional checks but had blank /
+partially presented library/landscape screenshots. PR #25 corrected the capture
+path with bounded PixelCopy validation. Its combined dependency/capture run
+42979819097 passed all checks; an independent medium reviewer inspected complete
+library/landscape and whole-display keyboard/IME captures before develop landing.
+See [O-0012](../knowledge/observations/O-0012-presented-captures.md) for failed runs,
+fixes, exact-head artifacts and the difference between DOM and pixel evidence.
