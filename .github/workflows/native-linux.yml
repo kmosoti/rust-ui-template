@@ -61,7 +61,7 @@ jobs:
           sudo dpkg -i artifacts/rust-ui-native-linux.deb
           sudo dpkg -i artifacts/rust-ui-native-linux.deb
           python3 scripts/check_linux_package.py --format deb
-          dbus-run-session -- env -u WAYLAND_DISPLAY GDK_BACKEND=x11 xvfb-run -a python3 scripts/native_smoke.py --display-backend x11 --artifact-prefix ubuntu-production
+          dbus-run-session -- env -u WAYLAND_DISPLAY GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe WEBKIT_DISABLE_DMABUF_RENDERER=1 xvfb-run -a python3 scripts/native_smoke.py --display-backend x11 --artifact-prefix ubuntu-production
           python3 scripts/wayland_smoke.py --atspi --artifact-prefix ubuntu-wayland-software-production
           sudo dpkg --remove rust-ui-template
           test ! -e /usr/bin/rust-ui-native
@@ -70,12 +70,21 @@ jobs:
       - name: Install, reinstall and launch production RPM
         run: docker run --rm -v "$GITHUB_WORKSPACE:/work" -v "$GITHUB_WORKSPACE/.tools/driver/bin/tauri-driver:/usr/local/bin/tauri-driver:ro" rust-ui-fedora44 bash scripts/fedora_package_smoke.sh artifacts/rust-ui-native-linux.rpm
       - name: Build restricted-window DEB and RPM fixtures
+        id: restricted-build
         working-directory: apps/native
         run: ../../.tools/cargo-tauri tauri build --bundles deb,rpm --config tauri.e2e.conf.json -- --locked
+      - name: Preserve restricted RPM for diagnostic reproduction only
+        if: steps.restricted-build.outcome == 'success'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: linux-restricted-test-fixture
+          path: apps/native/target/release/bundle/rpm/*.rpm
+          retention-days: 1
+          if-no-files-found: error
       - name: Verify denied command in installed restricted DEB
         run: |
           sudo dpkg -i apps/native/target/release/bundle/deb/*.deb
-          dbus-run-session -- env -u WAYLAND_DISPLAY GDK_BACKEND=x11 xvfb-run -a python3 scripts/native_smoke.py --display-backend x11 --artifact-prefix ubuntu-denied --denial-fixture
+          dbus-run-session -- env -u WAYLAND_DISPLAY GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe WEBKIT_DISABLE_DMABUF_RENDERER=1 xvfb-run -a python3 scripts/native_smoke.py --display-backend x11 --artifact-prefix ubuntu-denied --denial-fixture
           python3 scripts/wayland_smoke.py --atspi --artifact-prefix ubuntu-wayland-software-denied --denial-fixture
           cp apps/native/target/release/bundle/rpm/*.rpm artifacts/restricted-fixture.rpm
       - name: Verify denied command in installed restricted RPM

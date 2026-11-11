@@ -3,7 +3,7 @@
 set -euo pipefail
 elevate=(sudo)
 if [[ $(id -u) == 0 ]]; then elevate=(); fi
-apt_directory=$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/rust-ui-apt.XXXXXX")
+apt_directory=$(mktemp -d /tmp/rust-ui-apt.XXXXXX)
 cleanup() {
   result=$?
   trap - EXIT

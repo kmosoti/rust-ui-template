@@ -74,3 +74,25 @@ available on this cloud host. See [desktop validation](../../docs/linux-desktop-
 Revisit when current-source Ubuntu/Fedora CI artifacts and real hardware/Orca
 observations are available. Update this record with failures as well as passes;
 keep #23 open for missing dimensions.
+
+
+## Subsequent transport investigation
+
+PR35 Linux43064819211 failed in Fedora production X11 while switching the actual
+WebDriver window: RemoteDisconnected/connection reset after session creation.
+Artifact13874274853 retains the failure and complete driver log. It contains an
+unsupported DRI3 warning but no conclusive crash cause. No assertion was replayed.
+Xvfb now uses the same explicit Mesa software/DMABUF-off client configuration as
+Wayland. A bounded owned-process snapshot and driver return code improve future
+failure evidence; tests enforce descendant-only capture, field whitelisting,
+limits and process-exit tolerance. This does not prove the warning caused the
+reset or that intermittent resets are eliminated.
+
+An actual one-day `linux-restricted-test-fixture` RPM artifact is separate from
+production packages, uploaded only after a successful restricted build with
+missing-output failure. It supports genuine local denial reproduction without
+fake IPC responses, recompiling packages or distributing the fixture as production.
+Local current-source production/denial and new-head hosted results remain pending
+until executed. Ubuntu metadata now lives in an owned /tmp directory so _apt can
+traverse the parent; RUNNER_TEMP had caused a root-download fallback warning.
+The prior fresh/repeated Ubuntu probe already used /tmp with no such warning.

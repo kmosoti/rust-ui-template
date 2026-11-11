@@ -60,3 +60,15 @@ and install/reinstall/remove no longer refresh unrelated mirrors.
 For real compositor/GPU/scaling and manual Orca evidence, follow
 [the desktop handoff](linux-desktop-validation.md). These observations remain
 pending in #23. See D-0009 and O-0019 for executed results and limits.
+
+
+Xvfb clients also receive explicit Mesa software and DMABUF-disable flags, matching
+Wayland's intended software scope. A DRI3 warning accompanied a transport reset;
+that is not proof of its cause. Failure evidence now records a bounded tree of
+owned driver descendants and whitelisted process state/return code, never a
+system-wide process/environment dump. Assertions are not automatically replayed.
+
+After the restricted build succeeds, `linux-restricted-test-fixture` retains only
+its test RPM for one day to support local reproduction. Missing output fails the
+upload. This is separate from `unsigned-linux-packages`, which remains production
+only; the restricted fixture must never enter a production/release path.

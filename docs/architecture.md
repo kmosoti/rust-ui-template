@@ -333,6 +333,7 @@ It does not verify Leptos, accessibility, cancellation I/O or native permissions
 ```mermaid
 flowchart LR
   A[Owned Ubuntu source and signed index set] --> P[One production and one restricted DEB/RPM]
+  P --> F[Restricted RPM only / one-day diagnostic artifact]
   P --> X[Forced X11 / Xvfb]
   P --> W[Owned private bus / headless Weston]
   W --> C[Forced Wayland client / software Mesa]

@@ -73,5 +73,31 @@ class NativeCleanupTests(unittest.TestCase):
             cleanup_driver(None, log, preserve_error=False)
 
 
+class OwnedProcessDiagnosticsTests(unittest.TestCase):
+    def test_only_descendants_and_whitelisted_fields_are_recorded(self):
+        import tempfile
+        from pathlib import Path
+        from native_smoke import owned_process_snapshot
+        with tempfile.TemporaryDirectory() as directory:
+            proc = Path(directory)
+            for pid, children in ((10, '11'), (11, ''), (99, '')):
+                root = proc/str(pid); (root/'task'/str(pid)).mkdir(parents=True)
+                (root/'status').write_text('Name: driver\nState: S\nPPid: 1\nThreads: 1\nSecretField: exclude\n')
+                (root/'task'/str(pid)/'children').write_text(children)
+            result = owned_process_snapshot(10, proc)
+            self.assertEqual([p['pid'] for p in result['processes']], [10, 11])
+            self.assertNotIn('SecretField', str(result))
+            self.assertFalse(result['truncated'])
+            self.assertTrue(owned_process_snapshot(10, proc, limit=1)['truncated'])
+
+    def test_process_exit_during_capture_is_diagnostic_only(self):
+        import tempfile
+        from pathlib import Path
+        from native_smoke import owned_process_snapshot
+        with tempfile.TemporaryDirectory() as directory:
+            result = owned_process_snapshot(123, Path(directory))
+            self.assertIn('unavailable', result['processes'][0]['capture'])
+
+
 if __name__ == '__main__':
     unittest.main()
