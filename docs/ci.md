@@ -93,3 +93,32 @@ mutation, browser, native permission/CSP and source-drift checks remain. Browser
 CI also uploads `browser-ui-evidence` with screenshots and geometry JSON; native
 CI retains its separate unsigned package/screenshot artifact. The template's
 reviewers use standard/medium effort; max and ultra are prohibited for review.
+
+
+## Linux and Android delivery profiles
+
+Linux packaging now builds DEB/RPM once, preserves production copies/hashes, and
+validates install/reinstall/metadata/launch/removal on Ubuntu 24.04 and Fedora 44.
+Separate restricted fixtures must pass real denial without overwriting production
+artifacts. Fedora runtime dependencies are installed in a digest-pinned container;
+no system package-database snapshot is restored.
+
+Android has an isolated cache profile for Cargo/Gradle dependencies, wrapper
+archives, verified installed SDK/NDK/emulator trees and target builds. Keys include
+runner/Rust/JDK, SDK manifest, Gradle scripts, generated locks and checksum metadata.
+Normal builds verify dependencies strictly; the update-only metadata helper never
+runs in CI. Mutable AVD/user homes, debug keys and SDK ZIP staging are excluded.
+SDK ZIPs are discarded after verified installation, saving about 3.3 GB of staging
+space before the VM starts. Each ABI's own native package is cleaned before
+embedding current production frontend assets; dependency compilation stays cached.
+
+The API 36 VM uses explicit SDK-user/emulator/AVD homes, an owned serial, fresh
+fixture data, KVM and SwiftShader. Early process exit prints bounded diagnostics
+and fails promptly. Assertions are never automatically replayed. Browser/native
+checks, artifact hashes and source-drift checks remain required; unsigned/test-
+signed build evidence is separate from production release signing.
+
+Local repeated SDK-tree verification measured 6.09 s and 4.92 s without downloads;
+these hot-filesystem samples are not CI warm-cache speedup measurements. Exact
+runs, failures and pending measurements live in [O-0010](../knowledge/observations/O-0010-linux-packages.md)
+and [O-0011](../knowledge/observations/O-0011-android-apks.md).

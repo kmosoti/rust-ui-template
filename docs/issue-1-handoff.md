@@ -1,4 +1,6 @@
-> The Linux Tauri slice is implemented and verified by package-launch CI. Exact evidence: [D-0005](../knowledge/decisions/D-0005-linux-native-host.md) and [O-0005](../knowledge/observations/O-0005-linux-native-host.md). Remaining slices include Windows/macOS package and launch checks, Android/iOS prerequisites and validation, and the remaining security/release and proof work. Issue #1 remains open.
+> Current handoff: browser/Nocturne/seven palettes, the shared native entry and Ubuntu 24.04 DEB/Fedora 44 RPM checks are implemented. Android APK/device work is tracked in [O-0011](../knowledge/observations/O-0011-android-apks.md) and the [platform matrix](platforms.md). Desktop work remains Linux-focused; Windows/macOS and iOS are deferred. Security/release checks and source-linked proof feasibility remain open. Issue #1 stays open.
+>
+> The foundation notes below are historical, not instructions to repeat already-landed browser/native work.
 
 > Historical foundation handoff: the browser slice is now implemented; see [O-0003](../knowledge/observations/O-0003-csr-browser.md) for current evidence and the README for build commands. The subsequent native and verification slices remain open.
 
