@@ -30,3 +30,5 @@ hide, navigation and background/foreground preserve palette, no horizontal
 page overflow/clipped text/escaped controls. Existing browser screenshot/axe/
 text-zoom suite must pass after shared CSS. Local emulator unavailable (/dev/kvm
 absent); actual device critique remains pending CI evidence, never assumed.
+
+System-bar surround stays Nocturne canvas with light native system icons across palettes; it does not attempt to mirror app-session palette state. Browser production desktop and320px captures were viewed: rail, feature and rows retain clear hierarchy, no clipping or overflow. Actual Android geometry critique pending emulator evidence.

@@ -1,7 +1,14 @@
 buildscript {
     configurations.classpath { resolutionStrategy.activateDependencyLocking() }
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com[.]android.*")
+                includeGroupByRegex("androidx[.].*")
+                includeGroupByRegex("com[.]google[.]android.*")
+                includeGroupByRegex("com[.]google[.]testing[.]platform.*")
+            }
+        }
         mavenCentral()
     }
     dependencies {
@@ -16,7 +23,14 @@ allprojects {
         lockFile = rootProject.layout.projectDirectory.file("gradle/locks/${project.name}.lockfile")
     }
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com[.]android.*")
+                includeGroupByRegex("androidx[.].*")
+                includeGroupByRegex("com[.]google[.]android.*")
+                includeGroupByRegex("com[.]google[.]testing[.]platform.*")
+            }
+        }
         mavenCentral()
     }
 }

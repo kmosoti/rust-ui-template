@@ -72,9 +72,13 @@ jobs:
           cp apps/native/gen/android/app/build/outputs/apk/arm64/debug/*.apk artifacts/rust-ui-android-arm64-debug.apk
           cp apps/native/gen/android/app/build/outputs/apk/x86_64/debug/*.apk artifacts/rust-ui-android-x86_64-debug.apk
           sha256sum artifacts/rust-ui-android-*-debug.apk > artifacts/android-apks.sha256
+      - name: Stage verified accessibility test asset
+        run: |
+          mkdir -p apps/native/gen/android/app/src/androidTest/assets
+          cp .tools/axe.min.js apps/native/gen/android/app/src/androidTest/assets/axe.min.js
       - name: Compile AndroidX instrumentation with locked verified dependencies
         working-directory: apps/native/gen/android
-        run: ./gradlew :app:assembleUniversalDebugAndroidTest -PabiList=x86_64 -PtargetList=x86_64 -ParchList=x86_64 --dependency-verification=strict
+        run: ./gradlew :app:assembleUniversalDebugAndroidTest -PabiList=x86_64 -PtargetList=x86_64 -ParchList=x86_64 -x :app:rustBuildX86_64Debug --dependency-verification=strict
       - name: Preserve instrumentation APK
         run: cp apps/native/gen/android/app/build/outputs/apk/androidTest/universal/debug/*.apk artifacts/android-instrumentation.apk
       - name: Build real restricted-window fixture
@@ -95,6 +99,8 @@ jobs:
           path: |
             artifacts/android-*/
             artifacts/android-emulator.log
+            apps/native/gen/android/build/reports/
+            apps/native/gen/android/app/build/reports/
           retention-days: 7
           if-no-files-found: ignore
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

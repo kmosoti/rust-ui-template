@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import platform
 from pathlib import Path
 import shutil
 import subprocess
@@ -39,7 +40,10 @@ def install(identifier, asset, sdk, downloads):
     marker = destination / '.verified.json'
     metadata = asset['metadata_xml'].replace('<localPackage ', (ROOT / 'scripts/android-sdk-license.xml').read_text() + '<localPackage ', 1)
     if marker.exists():
-        saved = json.loads(marker.read_text())
+        try:
+            saved = json.loads(marker.read_text())
+        except (OSError, ValueError):
+            saved = {}
         if saved.get('archive') == asset['sha256'] and saved.get('tree') == installed_digest(destination):
             (destination / 'package.xml').write_text(metadata)
             print('Verified installed', identifier, flush=True)
@@ -74,6 +78,8 @@ def install(identifier, asset, sdk, downloads):
 
 
 def main():
+    if platform.system() != "Linux" or platform.machine() not in ("x86_64", "AMD64"):
+        raise SystemExit("Pinned Android build tools require Linux x86_64")
     parser = argparse.ArgumentParser()
     parser.add_argument('--emulator', action='store_true')
     args = parser.parse_args()

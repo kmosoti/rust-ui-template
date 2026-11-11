@@ -10,7 +10,7 @@ APK tests denial. No remote origin receives IPC permission.
 ## Build on Linux x86_64
 
 Use Rust1.99.1, a full JDK21 (CI21.0.13+9), unzip and the existing Node-free
-frontend setup. SDK37/target37, minimum29, NDK29.0.14206865, Gradle9.6.1,
+frontend setup. SDK37/target37, minimum29 with Chromium/WebView111+ (OS API alone is insufficient), NDK29.0.14206865, Gradle9.6.1,
 AGP9.3.1 and Kotlin2.2.10 are pinned. The Tauri Android library also compiles
 against SDK36/build-tools36; these are explicit installer inputs, not hidden
 floating SDK downloads. The generated Tauri Gradle bridge still uses legacy
@@ -58,7 +58,7 @@ Emulator37.2.13 and API36 Google APIs x86_64 revision7. CI creates a fresh Pixel
 AVD using KVM and SwiftShader, without saved writable device state/snapshots.
 AndroidX instrumentation talks to the real WebView; no Node or automation server
 is embedded. Build test APK using `:app:assembleUniversalDebugAndroidTest` with
-`-PabiList=x86_64 -PtargetList=x86_64 -ParchList=x86_64` after the CLI build.
+`-PabiList=x86_64 -PtargetList=x86_64 -ParchList=x86_64 -x :app:rustBuildX86_64Debug` after the CLI build. This skips only the already-built Rust task; the standalone Gradle invocation has no live Tauri CLI bridge.
 See `.github/workflows/android.yml` for the complete ordered production/fixture
 build and `scripts/android_emulator_smoke.sh` for the launch sequence.
 
@@ -66,6 +66,7 @@ The device suite covers bundled art/assets with Wi-Fi/data disabled, validated
 native IPC and malformed input, real ACL denial, CSP inline-script denial,
 slow/fast stale retention, cancel, navigation cleanup, palette continuity,
 Back, portrait/landscape, background/foreground, IME and geometry smoke.
+System chrome retains the dark Nocturne canvas with light system icons across palettes.
 Insets have one owner: host root padding accounts for system bars/IME; the shared
 DOM scrolls normally. Coarse-pointer controls are at least48CSSpx high.
 This does not prove TalkBack usability or full accessibility conformance.

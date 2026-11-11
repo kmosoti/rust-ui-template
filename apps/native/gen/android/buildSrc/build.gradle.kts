@@ -12,7 +12,14 @@ gradlePlugin {
 }
 
 repositories {
-    google()
+    google {
+            content {
+                includeGroupByRegex("com[.]android.*")
+                includeGroupByRegex("androidx[.].*")
+                includeGroupByRegex("com[.]google[.]android.*")
+                includeGroupByRegex("com[.]google[.]testing[.]platform.*")
+            }
+        }
     mavenCentral()
 }
 

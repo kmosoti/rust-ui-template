@@ -63,3 +63,34 @@ artifact hash gates retain the security/functional checks.
 
 Revisit on CI runtime failure, upstream Tauri Gradle-template migration, changed
 SDK/WebView versions, release signing or physical-device support requests.
+
+## Follow-up local checks
+
+After rebasing onto reviewed PR19, all20 Python tests passed. Normal Gradle builds
+with `--dependency-verification=strict` passed (95tasks,53s), without lock writes.
+Browser production root/subpath tests passed all seven palettes/56 route-viewport
+axe-layout cases plus stale/cancel/navigation/asset checks. Viewed actual desktop
+and320px screenshots: existing rail/feature/rows remain legible and unclipped;
+this is browser visual evidence, not Android evidence.
+
+Review identified Kotlin cache directories not covered by generated ignores;
+added a precise `.kotlin/` output ignore. A standalone test-build attempt invoked
+Tauri's Rust bridge with no running CLI and failed; the corrected Gradle test
+step excludes only the already-built x86_64 Rust task. Device tests now stage the
+checksum-verified axe asset into the test APK only, assert HTTPS/single loaded
+CSS, run WCAG-tag smoke and wait for real IME visibility using native insets.
+
+First Android CI run42943799945 failed4m0s in Gradle buildSrc verification: a
+transient Kotlin coroutines BOM1.8.0 POM was absent from warm-generated metadata.
+Both native Rust ABIs compiled before Gradle failed. Browser1m3s/core30s/Linux
+3m15s passed. Regenerating verification with a fresh GRADLE_USER_HOME exercises
+cold resolution rather than trusting only the warm cache. No verification bypass.
+
+Cold Gradle resolution generated the missing BOM checksum via Gradle, but local
+Google Maven returned HTTP503 for EE4J lookup and then Android tools common.
+No full cold-local pass is claimed. Scoped Google repository content to Android/
+AndroidX/material/test-platform groups, avoiding unrelated Central POM lookups;
+normal CI remains strict. Corrected test/insets/axe code compiled locally with
+strict verification (74tasks/1s), and all20 Python tests still pass. Actual
+Android screenshots remain inaccessible locally (artifact redirect403 persists,
+including a cache-busting request); no device visual pass is claimed.
