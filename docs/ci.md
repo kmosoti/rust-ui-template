@@ -139,3 +139,11 @@ The dedicated security workflow caches only registry sources and verified tool
 archives, avoiding compiled native/browser targets that it does not use.
 Successful develop pushes alone save those caches. Its evidence records initial
 and repeated actual tool-setup durations; archive hits still reverify bytes.
+
+The clean frontend gate is conditional: prose and isolated `apps/native/**` /
+`vendor/**` changes do not rebuild unchanged browser assets. All other paths,
+including scripts, workflows, toolchain pins and browser fixtures, conservatively
+trigger it. A coverage guard checks actual tracked frontend inputs against both
+PR/push ignore lists. If the browser workspace ever consumes native/vendor code,
+remove those ignores as part of that architecture change. Dependency-security
+coverage remains independent and is not narrowed by this optimization.

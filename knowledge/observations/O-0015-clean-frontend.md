@@ -31,3 +31,20 @@ measured before changing the gate's caching/frequency.
 
 Actual clean-build reports pass/fail or the build pipeline gains generated time,
 absolute paths or additional assets. See [CI contract](../../docs/ci.md).
+
+## Initial clean CI and measured trigger refinement
+
+Run42978968198 passed in6m10s. Inspected artifact13837315617: tested synthetic
+merge b0dfac19eb6ab58bb03c08c1b97b153776724460, both manifests identical across
+six production files (HTML, JS, WASM, CSS, original SVG and Rust inline snippet).
+Every recorded command exited0. Production builds took86.55s/85.33s; fresh
+workspace tests96.36s, subpath build1.73s, production browser run75.47s.
+Both targets were initially empty; only registry source downloads were reused.
+
+Because this deliberate cold gate costs370s, native-workspace/vendor-only changes
+now join prose in its ignore list. Root crate/style/public/test/runner inputs,
+manifests, setup/download scripts and the workflow still trigger it. A guard
+checks actual tracked frontend inputs against both event filters. Security checks
+are not narrowed. This avoids unrelated cold builds without omitting a frontend
+input; future cross-workspace/vendor consumption requires revisiting the boundary.
+Fresh CI on the changed workflow/integrated base remains required.
