@@ -382,6 +382,7 @@ flowchart LR
   N --> V
 ```
 
-The three roots are disjoint. No old monolithic restore overlaps them. Exact
-keys are conservative: no partial compatibility fallback. The SDK key excludes
+The three roots are disjoint. No old monolithic restore overlaps them. SDK uses an exact key. Dependency/target fallback retains the same
+tool/setup/vendor/build compatibility tuple; only lock/verification identities
+vary after that prefix. The SDK key excludes
 Rust/Gradle locks so an unrelated dependency update need not duplicate it.
