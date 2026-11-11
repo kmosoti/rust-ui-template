@@ -31,6 +31,8 @@ class AndroidSetupTests(unittest.TestCase):
                 self.assertEqual('expected', (root / 'sdk/example/bin/tool').read_text())
                 (root / 'sdk/example/.verified.json').write_text('broken JSON')
                 setup_android.install('example', asset, root / 'sdk', downloads)
+                (root / 'sdk/example/.verified.json').write_text('[]')
+                setup_android.install('example', asset, root / 'sdk', downloads)
                 (downloads / 'sdk.zip').write_bytes(b'corrupt archive')
                 (root / 'sdk/example/bin/tool').write_text('tampered')
                 setup_android.install('example', asset, root / 'sdk', downloads)

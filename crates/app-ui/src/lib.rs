@@ -93,7 +93,7 @@ fn About() -> impl IntoView {
     let reader = expect_context::<HostReader>().0;
     let info = LocalResource::new(reader);
     view! {
-        <section class="max-w-3xl"><p class="eyebrow mb-3">"Workspace / System"</p><h1 class="page-heading">"About"</h1><p class="page-summary">"Requests are simulated in your browser or desktop WebView."</p>
+        <section class="max-w-3xl"><p class="eyebrow mb-3">"Workspace / System"</p><h1 class="page-heading">"About"</h1><p class="page-summary">"Requests are simulated in your browser or native WebView."</p>
         <h2 class="mt-8 border-t border-hairline pt-6 text-xl font-semibold">"Application information"</h2>
         <Suspense fallback=move || view! { <p role="status">"Reading application information…"</p> }>
         <p class="mt-3 text-muted" role="status" data-testid="host-info">{move || info.get().map(|result| match result {

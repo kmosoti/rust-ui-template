@@ -44,6 +44,8 @@ def install(identifier, asset, sdk, downloads):
             saved = json.loads(marker.read_text())
         except (OSError, ValueError):
             saved = {}
+        if not isinstance(saved, dict):
+            saved = {}
         if saved.get('archive') == asset['sha256'] and saved.get('tree') == installed_digest(destination):
             (destination / 'package.xml').write_text(metadata)
             print('Verified installed', identifier, flush=True)

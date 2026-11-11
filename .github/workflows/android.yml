@@ -63,6 +63,10 @@ jobs:
           .tools/tailwindcss -i styles/input.css -o styles/generated.css --minify
           python3 scripts/check_css.py
           trunk build --release --locked
+      - name: Rebuild package-owned embedded assets against cached dependencies
+        run: |
+          cargo clean --manifest-path apps/native/Cargo.toml -p rust-ui-native --target aarch64-linux-android
+          cargo clean --manifest-path apps/native/Cargo.toml -p rust-ui-native --target x86_64-linux-android
       - name: Build test-signed ARM64 and x86_64 APKs
         working-directory: apps/native
         run: ../../.tools/cargo-tauri tauri android build --debug --target aarch64 x86_64 --split-per-abi --apk --ci -- --locked
