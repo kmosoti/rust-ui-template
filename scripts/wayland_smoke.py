@@ -11,6 +11,7 @@ import time
 
 
 from owned_process import free_ports, stop
+from native_smoke import NATIVE_STOP_TIMEOUT
 
 def main():
     parser = argparse.ArgumentParser()
@@ -91,7 +92,7 @@ def main():
                 failures = []
                 for process in (test, compositor):
                     try:
-                        stop(process, timeout=15 if process is test else 5)
+                        stop(process, timeout=NATIVE_STOP_TIMEOUT if process is test else 5)
                     except Exception as error:
                         failures.append(str(error))
                 try:

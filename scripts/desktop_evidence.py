@@ -9,6 +9,7 @@ import subprocess
 import sys
 
 from owned_process import free_ports, stop
+from native_smoke import NATIVE_STOP_TIMEOUT
 
 
 def main():
@@ -49,7 +50,7 @@ def main():
         if child.wait(timeout=240):
             raise RuntimeError('Installed desktop checks failed; inspect native evidence')
     finally:
-        stop(child, timeout=15)
+        stop(child, timeout=NATIVE_STOP_TIMEOUT)
 
 
 if __name__ == '__main__':

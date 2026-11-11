@@ -37,6 +37,7 @@ class KeyboardTests(unittest.TestCase):
             k.run()
         self.assertIs(caught.exception, original)
         self.assertEqual([call.args[0] for call in k.request.call_args_list], ['POST','DELETE'])
+        self.assertEqual(k.request.call_args_list[-1].kwargs['timeout'], 3)
         self.assertEqual(k.report['failed_checkpoint'], 'fresh-window-skip-link')
 
     def test_release_and_artifact_errors_preserve_original(self):
@@ -48,7 +49,7 @@ class KeyboardTests(unittest.TestCase):
             with self.assertRaisesRegex(AssertionError, 'original checkpoint') as caught:
                 k.run()
         self.assertIs(caught.exception, original)
-        k.request.assert_called_once_with('DELETE', '/session/example/actions')
+        k.request.assert_called_once_with('DELETE', '/session/example/actions', timeout=3)
 
     def test_release_failure_after_success_is_a_failure(self):
         k = self.keyboard(); k.checkpoint = Mock()
@@ -63,3 +64,12 @@ class KeyboardTests(unittest.TestCase):
         assert_dpr(1, None)
         with self.assertRaisesRegex(AssertionError, 'DPR mismatch'):
             assert_dpr(1, 2)
+
+
+class NativeShutdownBudgetTests(unittest.TestCase):
+    def test_outer_grace_covers_all_native_shutdown_waits(self):
+        from native_keyboard import RELEASE_TIMEOUT
+        from native_smoke import NATIVE_STOP_TIMEOUT, SESSION_DELETE_TIMEOUT, DRIVER_STOP_TIMEOUT
+        from owned_process import KILL_WAIT_TIMEOUT
+        self.assertEqual(RELEASE_TIMEOUT, 3)
+        self.assertGreaterEqual(NATIVE_STOP_TIMEOUT, RELEASE_TIMEOUT + SESSION_DELETE_TIMEOUT + DRIVER_STOP_TIMEOUT + KILL_WAIT_TIMEOUT + 5)

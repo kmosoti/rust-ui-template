@@ -62,9 +62,11 @@ class DisplayArgumentTests(unittest.TestCase):
                 os.chdir(directory)
                 Path('artifacts').mkdir()
                 Path('artifacts/probe-driver.log').write_text('wl_surface xdg_toplevel')
+                compositor_process = Mock()
                 process = Mock(); process.wait.return_value = 0
-                with patch.dict(os.environ, {'DISPLAY':':99','XAUTHORITY':'private'}), patch('sys.argv', ['wayland_smoke.py','--artifact-prefix','probe','--compositor-backend','x11','--scale','2','--keyboard']), patch('wayland_smoke.Path.is_socket', return_value=True), patch('wayland_smoke.subprocess.check_output', side_effect=['--scale=SCALE','weston 13.0.0']), patch('wayland_smoke.subprocess.run'), patch('wayland_smoke.subprocess.Popen', return_value=process) as spawn, patch('wayland_smoke.stop'):
+                with patch.dict(os.environ, {'DISPLAY':':99','XAUTHORITY':'private'}), patch('sys.argv', ['wayland_smoke.py','--artifact-prefix','probe','--compositor-backend','x11','--scale','2','--keyboard']), patch('wayland_smoke.Path.is_socket', return_value=True), patch('wayland_smoke.subprocess.check_output', side_effect=['--scale=SCALE','weston 13.0.0']), patch('wayland_smoke.subprocess.run'), patch('wayland_smoke.subprocess.Popen', side_effect=[compositor_process, process]) as spawn, patch('wayland_smoke.stop') as stop_owned:
                     wayland_smoke.main()
+                self.assertEqual([call.kwargs['timeout'] for call in stop_owned.call_args_list], [wayland_smoke.NATIVE_STOP_TIMEOUT, 5])
                 compositor, native = spawn.call_args_list
                 self.assertEqual(compositor.args[0][0], 'xvfb-run')
                 self.assertIn('--backend=x11-backend.so', compositor.args[0])
@@ -105,3 +107,22 @@ class DisplayArgumentTests(unittest.TestCase):
                 self.assertEqual(len(writes), 3)
             finally:
                 os.chdir(original_directory)
+
+
+class DesktopShutdownTests(unittest.TestCase):
+    def test_desktop_uses_native_grace_for_keyboard_cleanup(self):
+        import os
+        from pathlib import Path
+        import tempfile
+        import desktop_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            original = Path.cwd()
+            try:
+                os.chdir(directory)
+                process = Mock(); process.wait.return_value = 0
+                with patch.dict(os.environ, {'GDK_BACKEND':'x11'}, clear=True), patch('sys.argv', ['desktop_evidence.py','--keyboard']), patch('desktop_evidence.subprocess.Popen', return_value=process) as spawn, patch('desktop_evidence.stop') as stop_owned:
+                    desktop_evidence.main()
+                self.assertIn('--keyboard', spawn.call_args.args[0])
+                stop_owned.assert_called_once_with(process, timeout=desktop_evidence.NATIVE_STOP_TIMEOUT)
+            finally:
+                os.chdir(original)
