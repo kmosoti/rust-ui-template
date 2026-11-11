@@ -1,0 +1,3 @@
+# Unified patch context lines intentionally contain one space on blank lines.
+# Keep ordinary source whitespace checks; do not corrupt reproducible patch text.
+vendor/patches/*.patch -whitespace
