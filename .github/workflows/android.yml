@@ -9,7 +9,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: android-${{ github.event.pull_request.number || github.ref }}
+  group: android-${{ github.event.pull_request.number || github.ref }}-${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'ci-cache-cold' && 'unrelated-label' || 'validation' }}
   cancel-in-progress: true
 jobs:
   android:
