@@ -6,7 +6,7 @@ WASM UI does not by itself establish native platform support.
 | Target | Build / package | Launch / behavior |
 | --- | --- | --- |
 | Browser, Linux Chromium 156 | Production Trunk root and subpath bundles passed | Interaction, navigation, cancellation and axe smoke passed |
-| Linux Tauri / WebKitGTK | Ubuntu 24.04 x86_64 Debian package built and installed | Xvfb/WebKitGTK 2.52.6 launch, UI, IPC validation, CSP and real permission denial passed |
+| Linux Tauri / WebKitGTK | Ubuntu 24.04 DEB and Fedora 44 RPM, x86_64 built/installed/reinstalled/removed | Xvfb: Ubuntu WebKitGTK 2.52.6 / Fedora 2.54.2; shared UI, IPC validation, CSP and real permission denial passed |
 | Windows / WebView2 | Not built | Not launched |
 | macOS / WKWebView | Not built | Not launched |
 | Android / Android WebView | Not built | Not launched |
@@ -30,3 +30,5 @@ Final native [CI run 42908982231](https://github.com/kmosoti/rust-ui-template/ac
 passed on the exact source tree landed by PR #10, including the source-drift gate.
 See [D-0005](../knowledge/decisions/D-0005-linux-native-host.md) and
 [O-0005](../knowledge/observations/O-0005-linux-native-host.md) for exact evidence.
+
+DEB/RPM delivery: [O-0010](../knowledge/observations/O-0010-linux-packages.md) and [package workflow](linux-packages.md). X11 CI does not establish Wayland or hardware GPU behavior.
