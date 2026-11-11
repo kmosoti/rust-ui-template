@@ -25,7 +25,10 @@ viewport (including its right side), and visible text-region color variation.
 Two consecutive valid captures are required within ten seconds. Copy timeouts,
 missing frames and failed PNG compression fail explicitly; failed images and
 sample diagnostics are retained. Only captures are polled, not functional tests.
-No production UI behavior changes.
+No production UI behavior changes. `keyboard.png` is the validated WebView crop;
+`keyboard-display.png` separately preserves the entire display and IME for manual
+inspection. It is not covered by the crop's pixel checks. PixelCopy bitmaps are
+released on unsuccessful attempts too; callback waits use the remaining deadline.
 
 ## Execution and limits
 
