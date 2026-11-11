@@ -48,3 +48,11 @@ packages never overwrite production copies and a final SHA256 check guards them.
 Added both explicit denial flags/modes. Reviewer also identified cleanup OSError
 or close failures masking an active exception; cleanup now preserves an earlier
 failure but propagates cleanup failure after success. Two regression cases added.
+
+
+CI run42941486301 passed production DEB/RPM and Ubuntu denial, but Fedora's
+restricted-window startup disconnected in WebDriver before permission assertion.
+No support/denial pass inferred from earlier production success. Driver log is
+uploaded; local artifact redirects403, so added a best-effort tail to the CI log
+on failure for direct diagnosis while preserving the original exception. No
+automatic retry or graphics/sandbox workaround was added.
