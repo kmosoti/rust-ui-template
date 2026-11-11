@@ -182,7 +182,7 @@ class NativeAppTest {
         Thread.sleep(1700); route("#/", "Latest response")
         waitFor("document.querySelector('[role=status]')?.textContent.includes('No result yet')")
         phase = "IME and layout"
-        tapInput(); waitForIme(true); layout(); capture("keyboard")
+        tapInput(); waitForIme(true); waitFor("(()=>{const r=document.querySelector('#number').getBoundingClientRect();return r.top>=0 && r.bottom<=innerHeight})()"); layout(); capture("keyboard")
         Espresso.closeSoftKeyboard(); waitForIme(false); layout()
         phase = "palette navigation"
         route("#/settings", "Preferences")

@@ -3,15 +3,18 @@ import argparse
 from pathlib import Path
 import re
 import subprocess
-import sys
 
 PACKAGE = 'dev.kmosoti.rustuitemplate'
 
 
 def adb(*args, timeout=60):
-    result = subprocess.run(['adb', *args], text=True, stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT, timeout=timeout, check=True)
-    return result.stdout
+    try:
+        result = subprocess.run(['adb', *args], text=True, stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT, timeout=timeout, check=True)
+        return result.stdout
+    except subprocess.CalledProcessError as error:
+        print(error.stdout)
+        raise
 
 
 def main():
@@ -55,6 +58,11 @@ def main():
                 (directory / name).write_text(adb(*command, timeout=20))
             except Exception as error:
                 print('Diagnostic unavailable:', name, type(error).__name__)
+        try:
+            screen = subprocess.run(['adb', 'exec-out', 'screencap', '-p'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=20, check=True)
+            (directory / 'device.png').write_bytes(screen.stdout)
+        except Exception as error:
+            print('Device screenshot unavailable:', type(error).__name__)
         try:
             result = subprocess.run(['adb', 'exec-out', 'run-as', PACKAGE, 'tar', '-cf', '-', '-C', 'files', 'evidence'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=20, check=True)
             (directory / 'webview-evidence.tar').write_bytes(result.stdout)

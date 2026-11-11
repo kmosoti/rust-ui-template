@@ -94,3 +94,27 @@ normal CI remains strict. Corrected test/insets/axe code compiled locally with
 strict verification (74tasks/1s), and all20 Python tests still pass. Actual
 Android screenshots remain inaccessible locally (artifact redirect403 persists,
 including a cache-busting request); no device visual pass is claimed.
+
+
+Run42944940860 reached ARM64 runtime-classpath verification but failed for two
+Jackson2.15.3 parent POMs, still before device tests. The update-only Gradle init
+helper now records transient POM artifacts from the original project cache,
+validates their SHA1 content-address directories (Gradle omits leading zeros),
+and resolves the exact bytes through a temporary local Maven repository. Actual
+`recordResolvedPomChecksums --offline --write-verification-metadata sha256
+--no-configuration-cache` passed2s, adding158 POM artifacts via Gradle, including
+both reported Jackson parents. No checksum values were hand-written and normal
+CI verification stays strict. Cold network resolution remained blocked by503.
+
+Added package-only per-ABI clean before Android production builds, preserving
+cached dependencies while ensuring cached denial/embedded assets cannot replace
+current application output. Improved ADB failure output and independent native
+screenshots, plus a visible-input check with the actual keyboard open. Corrupt
+JSON marker shapes now converge safely too. The GitHub connector successfully
+retrieved Linux evidence despite workspace artifact403; viewed Fedora About
+capture shows intact layout/text but missing decorative-symbol fallback in the
+minimal container fonts. No physical Fedora font-uniformity claim is made.
+Issue1 checklist updated for completed browser/Linux foundations; stays open
+with Android launch pending and Windows/macOS/iOS explicitly deferred.
+
+After this expansion, strict offline application/AndroidTest build passed2s (95tasks); all20 Python tests and actionlint/diff checks passed.
