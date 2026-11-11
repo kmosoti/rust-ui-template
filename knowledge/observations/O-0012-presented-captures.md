@@ -1,7 +1,7 @@
 ---
 id: O-0012
 type: observation
-status: validation-pending
+status: observed
 updated: 2026-11-11
 added_by: agent
 human_ratified: false
@@ -32,10 +32,16 @@ released on unsuccessful attempts too; callback waits use the remaining deadline
 
 ## Execution and limits
 
-`git diff --check` passed. Fresh emulator CI and inspection of new captures are
-pending. No physical-device, minimum API or screen-reader claim is made.
+`git diff --check` passed. PR run [42976224567](https://github.com/kmosoti/rust-ui-template/actions/runs/42976224567)
+passed Android instrumentation. Independent review inspected downloaded device
+artifact 13836465371: the production library, landscape and portrait WebView
+captures show the expected content across the viewport; `keyboard-display.png`
+shows both the focused field and keyboard. Capture diagnostics report zero sampled
+background mismatches for each. These are observations of one API 36 emulator run,
+not a guarantee for every compositor or device. No physical-device, minimum API or
+screen-reader claim is made.
 
 ## Revisit when
 
-Fresh CI establishes capture behavior or a new compositor/font/inset exposes an
-incomplete sample criterion. DOM geometry alone does not prove displayed pixels.
+A new compositor/font/inset may expose an incomplete sample criterion. DOM geometry
+alone does not prove displayed pixels.
