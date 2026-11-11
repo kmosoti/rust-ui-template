@@ -41,5 +41,30 @@ class NativeDiagnosticsTests(unittest.TestCase):
             record_failure('/not-used', 'probe', 'startup', RuntimeError('original'), None)
 
 
+class NativeCleanupTests(unittest.TestCase):
+    def test_cleanup_failure_cannot_replace_original_exception(self):
+        from native_smoke import cleanup_driver
+        from unittest.mock import Mock
+        driver = Mock(pid=123)
+        driver.poll.return_value = None
+        log = Mock()
+        log.close.side_effect = OSError('close failed')
+        with patch('native_smoke.os.killpg', side_effect=OSError('kill failed')):
+            with self.assertRaisesRegex(ValueError, 'original'):
+                try:
+                    raise ValueError('original')
+                finally:
+                    cleanup_driver(driver, log, preserve_error=True)
+        log.close.assert_called_once()
+
+    def test_cleanup_failure_after_success_is_a_failure(self):
+        from native_smoke import cleanup_driver
+        from unittest.mock import Mock
+        log = Mock()
+        log.close.side_effect = OSError('close failed')
+        with self.assertRaisesRegex(OSError, 'close failed'):
+            cleanup_driver(None, log, preserve_error=False)
+
+
 if __name__ == '__main__':
     unittest.main()

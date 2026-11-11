@@ -30,7 +30,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf webkit2gtk-driver xvfb desktop-file-utils
           pkg-config --modversion gtk+-3.0 webkit2gtk-4.1
-          dpkg-query -W webkit2gtk-driver libwebkit2gtk-4.1-0
           echo "version=$(pkg-config --modversion gtk+-3.0 webkit2gtk-4.1 | tr '\n' '-')" >> "$GITHUB_OUTPUT"
       - uses: ./.github/actions/restore-build-cache
         id: build-cache
@@ -49,43 +48,38 @@ jobs:
       - run: cargo fmt --manifest-path apps/native/Cargo.toml -- --check
       - name: Rebuild package-owned assets against cached dependencies
         run: cargo clean --manifest-path apps/native/Cargo.toml -p rust-ui-native --release
-      - name: Build Debian package
+      - name: Build production DEB and RPM
         working-directory: apps/native
         run: ../../.tools/cargo-tauri tauri build --bundles deb,rpm -- --locked
       - run: cargo clippy --manifest-path apps/native/Cargo.toml --all-targets --locked --offline -- -D warnings
-      - name: Install and launch production package
+      - name: Install, reinstall and launch production DEB
         run: |
           mkdir -p artifacts
           cp apps/native/target/release/bundle/deb/*.deb artifacts/rust-ui-native-linux.deb
           cp apps/native/target/release/bundle/rpm/*.rpm artifacts/rust-ui-native-linux.rpm
-          sha256sum artifacts/*.deb artifacts/*.rpm > artifacts/linux-packages.sha256
-          sudo dpkg -i apps/native/target/release/bundle/deb/*.deb
-          sudo dpkg -i apps/native/target/release/bundle/deb/*.deb
+          sha256sum artifacts/rust-ui-native-linux.deb artifacts/rust-ui-native-linux.rpm > artifacts/linux-packages.sha256
+          sudo dpkg -i artifacts/rust-ui-native-linux.deb
+          sudo dpkg -i artifacts/rust-ui-native-linux.deb
           python3 scripts/check_linux_package.py --format deb
           dbus-run-session -- xvfb-run -a python3 scripts/native_smoke.py --artifact-prefix ubuntu-production
           sudo dpkg --remove rust-ui-template
           test ! -e /usr/bin/rust-ui-native
       - name: Build Fedora 44 runtime test environment
         run: docker build --build-arg APP_UID="$(id -u)" -f .github/containers/fedora44.Dockerfile -t rust-ui-fedora44 .
-      - name: Install and launch production RPM on Fedora 44
+      - name: Install, reinstall and launch production RPM
         run: docker run --rm -v "$GITHUB_WORKSPACE:/work" -v "$GITHUB_WORKSPACE/.tools/driver/bin/tauri-driver:/usr/local/bin/tauri-driver:ro" rust-ui-fedora44 bash scripts/fedora_package_smoke.sh artifacts/rust-ui-native-linux.rpm
-      - name: Build restricted-window fixture with the same command and ACL
+      - name: Build restricted-window DEB and RPM fixtures
         working-directory: apps/native
         run: ../../.tools/cargo-tauri tauri build --bundles deb,rpm --config tauri.e2e.conf.json -- --locked
-      - name: Verify permission denial from an unprivileged window
+      - name: Verify denied command in installed restricted DEB
         run: |
-          cp apps/native/target/release/bundle/rpm/*.rpm artifacts/rust-ui-native-linux.rpm
-          sha256sum artifacts/*.deb artifacts/*.rpm > artifacts/linux-packages.sha256
           sudo dpkg -i apps/native/target/release/bundle/deb/*.deb
-          sudo dpkg -i apps/native/target/release/bundle/deb/*.deb
-          python3 scripts/check_linux_package.py --format deb
-          dbus-run-session -- xvfb-run -a python3 scripts/native_smoke.py --artifact-prefix ubuntu-production
-          sudo dpkg --remove rust-ui-template
-          test ! -e /usr/bin/rust-ui-native
-      - name: Build Fedora 44 runtime test environment
-        run: docker build --build-arg APP_UID="$(id -u)" -f .github/containers/fedora44.Dockerfile -t rust-ui-fedora44 .
-      - name: Install and launch production RPM on Fedora 44
-        run: docker run --rm -v "$GITHUB_WORKSPACE:/work" -v "$GITHUB_WORKSPACE/.tools/driver/bin/tauri-driver:/usr/local/bin/tauri-driver:ro" rust-ui-fedora44 bash scripts/fedora_package_smoke.sh artifacts/rust-ui-native-linux.rpm --denial-fixture
+          dbus-run-session -- xvfb-run -a python3 scripts/native_smoke.py --artifact-prefix ubuntu-denied --denial-fixture
+          cp apps/native/target/release/bundle/rpm/*.rpm artifacts/restricted-fixture.rpm
+      - name: Verify denied command in installed restricted RPM
+        run: docker run --rm -v "$GITHUB_WORKSPACE:/work" -v "$GITHUB_WORKSPACE/.tools/driver/bin/tauri-driver:/usr/local/bin/tauri-driver:ro" rust-ui-fedora44 bash scripts/fedora_package_smoke.sh artifacts/restricted-fixture.rpm restricted
+      - name: Verify production artifacts remain unchanged
+        run: sha256sum --check artifacts/linux-packages.sha256
       - run: git diff --exit-code && test -z "$(git ls-files --others --exclude-standard)"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()

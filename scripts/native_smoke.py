@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import sys
 import platform
 import traceback
 import subprocess
@@ -40,6 +41,29 @@ def record_failure(directory, name, phase, error, session):
                 pass
     except Exception as capture_error:
         print('Diagnostic capture unavailable:', type(capture_error).__name__)
+
+
+def cleanup_driver(driver, log, preserve_error):
+    errors = []
+    try:
+        if driver is not None and driver.poll() is None:
+            os.killpg(driver.pid, signal.SIGTERM)
+            try:
+                driver.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                os.killpg(driver.pid, signal.SIGKILL)
+                driver.wait(timeout=5)
+    except Exception as error:
+        errors.append(error)
+    try:
+        log.close()
+    except Exception as error:
+        errors.append(error)
+    if errors:
+        if preserve_error:
+            print('Cleanup failed after original failure:', type(errors[0]).__name__)
+        else:
+            raise errors[0]
 
 
 def main():
@@ -150,17 +174,7 @@ def main():
                 request('DELETE', '/session/' + session)
             except Exception:
                 pass
-        try:
-            if driver is not None and driver.poll() is None:
-                os.killpg(driver.pid, signal.SIGTERM)
-                try:
-                    driver.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    os.killpg(driver.pid, signal.SIGKILL)
-                    driver.wait(timeout=5)
-        except (ProcessLookupError, subprocess.TimeoutExpired):
-            pass
-        log.close()
+        cleanup_driver(driver, log, preserve_error=sys.exc_info()[0] is not None)
 
 
 if __name__ == '__main__':
