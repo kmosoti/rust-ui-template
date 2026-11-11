@@ -14,6 +14,7 @@ crate-type = ["lib", "cdylib", "staticlib"]
 
 # Isolate OS dependencies and packaging from browser-only workspace checks.
 [workspace]
+default-members = ["."]
 members = ["html-tests", "../../vendor/tauri-utils-2.10.2", "../../vendor/tauri-codegen-2.7.4", "../../vendor/dirs-sys-0.5.0"]
 
 [features]

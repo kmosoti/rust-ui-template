@@ -27,3 +27,14 @@ record does not claim final platform validation or issue completion.
 
 Implements [D-0010](../decisions/D-0010-permissive-rust-dependencies.md).
 Update with exact reviewed source/run results; retain failed-command history.
+
+## First CI and lint boundary correction
+
+Core/browser passed on PR #26; Linux run42976577638 reached strict Clippy and
+reported the inherited dirs-sys lints because vendored packages were workspace
+default members. The workspace now defaults to the native application and Linux
+Clippy explicitly selects `rust-ui-native --no-deps`, retaining all pre-vendor
+application/test targets. Vendored parents are not claimed to pass strict Clippy.
+The actual Wry injection-source harness additionally passes explicit strict
+Clippy (`-p native-html-tests --no-deps --all-targets --locked --offline -- -D warnings`).
+These boundaries are documented rather than disabling application warnings.

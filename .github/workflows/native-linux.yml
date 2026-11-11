@@ -51,7 +51,7 @@ jobs:
       - name: Build production DEB and RPM
         working-directory: apps/native
         run: ../../.tools/cargo-tauri tauri build --bundles deb,rpm -- --locked
-      - run: cargo clippy --manifest-path apps/native/Cargo.toml --all-targets --locked --offline -- -D warnings
+      - run: cargo clippy --manifest-path apps/native/Cargo.toml -p rust-ui-native --no-deps --all-targets --locked --offline -- -D warnings
       - name: Install, reinstall and launch production DEB
         run: |
           mkdir -p artifacts

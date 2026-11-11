@@ -37,3 +37,9 @@ cargo test --manifest-path apps/native/Cargo.toml -p native-html-tests -p dirs-s
 
 The Wry test crate compiles the actual patched Android injection source; it is not
 a separately rewritten algorithm. Runtime native integration still requires CI.
+
+The native workspace defaults to the application. Native application Clippy uses
+`-p rust-ui-native --no-deps`: the same app/test surface checked before vendoring.
+Vendored parent sources are compiled and covered by the focused actual-source
+regression tests; upstream's existing stylistic Clippy debt is not reclassified as
+application code. No pre-existing application lint is disabled.
