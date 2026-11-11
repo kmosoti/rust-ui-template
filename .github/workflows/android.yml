@@ -53,6 +53,7 @@ jobs:
         run: python3 scripts/profile_android_cache.py --phase restored
         env:
           ANDROID_CACHE_HIT: ${{ steps.cache.outputs.cache-hit }}
+          ANDROID_CACHE_MATCHED_KEY: ${{ steps.cache.outputs.cache-matched-key }}
           ANDROID_CACHE_KEY: ${{ steps.cache.outputs.cache-primary-key }}
           ANDROID_CACHE_COLD: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
       - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown --target aarch64-linux-android --target x86_64-linux-android
@@ -130,6 +131,7 @@ jobs:
         run: python3 scripts/profile_android_cache.py --phase ready-to-save
         env:
           ANDROID_CACHE_HIT: ${{ steps.cache.outputs.cache-hit }}
+          ANDROID_CACHE_MATCHED_KEY: ${{ steps.cache.outputs.cache-matched-key }}
           ANDROID_CACHE_KEY: ${{ steps.cache.outputs.cache-primary-key }}
           ANDROID_CACHE_COLD: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

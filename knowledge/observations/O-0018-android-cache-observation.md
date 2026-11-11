@@ -55,3 +55,10 @@ a root symlink followed by the child-breakdown code; a no-follow bucket helper a
 root-symlink regression now cover that path. Child breakdowns are informational,
 not additive: cross-child hardlinks can appear in more than one child while the
 parent counts file data once. All29 Python tests pass after these corrections.
+
+
+Independent automated review identified an evidence gap: v1 reported primary key
+and exact-hit only, so compatible fallback could look like a cold miss. Both
+profile phases now retain cache-matched-key too; a saved-profile regression
+distinguishes an old compatible key from the requested primary. No cache path,
+key or save policy changed.

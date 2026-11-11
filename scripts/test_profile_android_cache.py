@@ -1,4 +1,7 @@
 import os
+import json
+from unittest.mock import patch
+import profile_android_cache
 from pathlib import Path
 import tempfile
 import unittest
@@ -38,3 +41,16 @@ class CacheSizeTests(unittest.TestCase):
             self.assertEqual(result['apparent_bytes'], 4*1024*1024)
             self.assertLess(result['allocated_bytes'], result['apparent_bytes'])
         self.assertEqual(measure(path)['files'], 0)
+
+
+class CacheMetadataTests(unittest.TestCase):
+    def test_fallback_is_distinct_from_cold_miss_in_saved_profile(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            environment = {'ANDROID_CACHE_HIT':'false', 'ANDROID_CACHE_KEY':'compatible-new-lock', 'ANDROID_CACHE_MATCHED_KEY':'compatible-old-lock'}
+            with patch.object(profile_android_cache, 'ROOT', root), patch('pathlib.Path.home', return_value=root/'home'), patch.dict(os.environ, environment, clear=True), patch('sys.argv', ['profile', '--phase', 'restored']):
+                profile_android_cache.main()
+            result = json.loads((root/'artifacts/android-cache/restored.json').read_text())
+            self.assertEqual(result['cache_hit'], 'false')
+            self.assertNotEqual(result['cache_matched_key'], result['cache_key'])
+            self.assertEqual(result['cache_matched_key'], 'compatible-old-lock')

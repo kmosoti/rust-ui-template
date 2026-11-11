@@ -73,6 +73,7 @@ def main():
         'phase': args.phase, 'source': os.environ.get('GITHUB_SHA'),
         'runner_image': {'os': os.environ.get('ImageOS'), 'version': os.environ.get('ImageVersion')},
         'cache_hit': os.environ.get('ANDROID_CACHE_HIT', ''),
+        'cache_matched_key': os.environ.get('ANDROID_CACHE_MATCHED_KEY', ''),
         'cache_key': os.environ.get('ANDROID_CACHE_KEY', ''),
         'forced_cold': os.environ.get('ANDROID_CACHE_COLD') == 'true',
         'measurement_seconds': time.monotonic()-started, 'buckets': buckets,
