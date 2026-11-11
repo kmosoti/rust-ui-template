@@ -6,7 +6,11 @@ rust-version = "1.99"
 license = "MIT"
 publish = false
 authors = ["Kennedy Mosoti"]
-description = "Shared Leptos CSR UI desktop host"
+description = "Shared Leptos CSR UI native host"
+
+[lib]
+name = "rust_ui_native_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
 
 # Isolate OS dependencies and packaging from browser-only workspace checks.
 [workspace]
@@ -17,7 +21,10 @@ custom-protocol = ["tauri/custom-protocol"]
 
 [dependencies]
 app-contract = { path = "../../crates/app-contract" }
-tauri = { version = "=2.12.5", default-features = false, features = ["wry", "compression", "x11", "dbus"] }
+tauri = { version = "=2.12.5", default-features = false, features = ["wry", "compression"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+tauri = { version = "=2.12.5", default-features = false, features = ["x11", "dbus"] }
 
 [build-dependencies]
 tauri-build = { version = "=2.7.4", features = [] }

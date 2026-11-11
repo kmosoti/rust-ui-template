@@ -194,3 +194,18 @@ flowchart LR
 The signal outlives route owners but not the app; it does not use persistence,
 IPC or app-core. Feedback colors are presentation of existing request states.
 See [color scheme contract](color-palettes.md).
+
+## Shared native entry point
+
+```mermaid
+flowchart LR
+  Desktop[Linux executable] --> Run[Native library run]
+  Android[Android entry macro: integration pending] --> Run
+  Run --> Commands[Same registered app_info and ACL]
+  Run --> Bundle[Same CSR frontend assets]
+```
+
+The isolated native workspace now exposes `rust_ui_native_lib::run()` and keeps
+the Linux executable as a thin caller. Linux-only x11/dbus features are scoped
+to that target. Android project generation and validation are subsequent work;
+this refactor alone is not Android build/launch evidence. Wire schema stays 1.
