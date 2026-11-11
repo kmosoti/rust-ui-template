@@ -83,7 +83,9 @@ logging. All six WebDriver keyboard checkpoints passed. Native AT-SPI then
 failed with `Accessibility snapshot exceeded its node/depth bound`. Original
 [failure JSON](../evidence/O-0023/fedora-desktop-scale1-failure.json), raw compressed
 driver/console logs and GPU samples are retained; the whole run is a failure.
-IPC/CSP/About checks after AT-SPI did not execute in that run.
+IPC/CSP/About checks after AT-SPI did not execute in that run. That first run's
+`wl_surface#38.enter(wl_output#8)` maps to HDMI-1 Sceptre F24; this is
+independent of the successful run's output placement below.
 
 **Causal evidence:** the inspector started at the shared desktop and traversed all
 applications before filtering by title. This physical session had eight top-level
@@ -112,7 +114,7 @@ setup/code observation, not replaying an assertion until it passes.
 | Requested / observed quantity | Result |
 | --- | --- |
 | Desktop setup | Retain current 100%; Mutter output scales independently observed as 1 |
-| Actual app output | Wayland `wl_surface#38.enter(wl_output#8)`; output #8 maps to HDMI-1 Sceptre F24 |
+| Actual app output | Wayland `wl_surface#38.enter(wl_output#10)`; `get_xdg_output` maps #10 to `zxdg_output_v1#15`, named eDP-1 BOE |
 | Logical WebView viewport | 1200×900 |
 | Observed DPR | 1 |
 | WebDriver PNG pixels | 1200×900, agrees with viewport × DPR |
@@ -120,6 +122,11 @@ setup/code observation, not replaying an assertion until it passes.
 | Real W3C keys | Six checkpoints pass: skip/main, Library launch, Slow/Fast freshness, reverse Tab, cancel, palette/persistence |
 | Native AT-SPI | Exactly owned application PID 3507911, 52 nodes, missing roles/names `[]` |
 | Subsequent native checks | Shared CSS/WASM, freshness, typed IPC validation, production CSP and About native result pass |
+
+Independent review caught an initial record error that reused the first run's
+HDMI-1 placement for the successful run. The retained protocol logs establish
+the distinct outputs above; all outputs were scale 1, so the scale conclusion
+survives. A new application launch must have its own output placement verified.
 
 The original first run's Fast result 22 was observed 0.19536s after the
 conservative pre-Slow activation anchor, while Slow was still pending immediately
