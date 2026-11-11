@@ -49,8 +49,10 @@ it does not establish hardware rendering or manual Orca behavior.
   dependencies must already exist in the runtime image and missing ones fail.
 - PR32 Linux run43052897797 stalled in apt before any tests, was canceled once
   and rerun; the rerun also stalled. This slice replaces only the exact hosted
-  Azure Ubuntu mirror URL with Ubuntu's official HTTPS archive, retains signed
-  suites/components, and bounds transport and overall setup time. No test
+  Azure Ubuntu mirror URL and hosted mirror+file lists with Ubuntu's official HTTPS archive, retains signed
+  suites/components, and bounds transport and overall setup time. Independent review found the
+  hosted mirror+file indirection in canceled logs; the initial literal-URL-only
+  replacement was insufficient and corrected before landing. No test
   assertion is retried or skipped. Current-source CI must validate this change.
 
 ## Ownership and limitations
