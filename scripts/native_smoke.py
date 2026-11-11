@@ -166,6 +166,11 @@ def main():
         Path('artifacts/' + args.artifact_prefix + '.png').write_bytes(base64.b64decode(request('GET', prefix + '/screenshot')))
         print('PASS: installed Linux package launch, shared CSS/WASM, stale-response behavior, typed IPC validation, CSP enforcement and UI host information')
     except Exception as error:
+        try:
+            log.flush()
+            print('Native driver log tail:', Path(log.name).read_text(errors='replace')[-8192:])
+        except Exception:
+            pass
         record_failure('artifacts', args.artifact_prefix, phase, error, session)
         raise
     finally:
