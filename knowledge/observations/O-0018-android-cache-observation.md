@@ -73,3 +73,28 @@ index filenames/sizes and critical package policy, compare default/fresh policy,
 and make install recompute metadata from signed lists instead of generated
 binary package caches. This is an unconfirmed cache-state hypothesis until
 new diagnostics provide evidence; retain signatures, timeouts and every check.
+
+
+Further diagnostics on43061916965 disproved the generated-binary-cache theory:
+full main/universe signed lists were present, architecture amd64, and both default
+and cache-disabled policies had no package candidates. Do not describe the
+binary-cache change as a successful root-cause fix.
+
+A controlled setup experiment now copies Ubuntu's source declaration into an
+owned temporary directory, selects the reachable mirror there, and uses identical
+explicit source/list/compression options for update, policy and install. It logs
+active index filenames/suites/components and critical package candidates. Global
+sources/lists are neither edited nor deleted. Cleanup preserves the original
+status; SIGINT/TERM exit through cleanup, SIGKILL relies on runner temp cleanup.
+
+Executed a real fresh/repeated Ubuntu24.04 container test using digest
+fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852:
+`docker run --rm --name rust-ui-ubuntu-apt-probe ... ubuntu:24.04 bash -lc
+'bash /work/setup_linux.sh && bash /work/setup_linux.sh'`. Mounted this source
+script read-only and the environment CA read-only; forwarded proxy variables,
+set RUST_UI_APT_CA to that CA file and DEBIAN_FRONTEND=noninteractive. TLS,
+Ubuntu keyring/signatures and metadata validity checks remained enabled.
+Fresh install resolved all critical candidates and installed543 new packages;
+repeat reported0 upgraded/0 newly installed. Both commands and cleanup exited0.
+Minimal-container timings/size are not hosted CI speed measurements. Hosted
+current-source validation remains required; no underlying root-cause claim.
