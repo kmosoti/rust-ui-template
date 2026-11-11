@@ -30,7 +30,9 @@ compile-time macro dependencies required by Leptos/GTK, not identified security
 vulnerabilities. The policy checker fails at expiry, requires the exact same IDs
 as cargo-deny and rejects an actual MPL-only fixture. Their advisory output is
 retained; no MPL or vulnerability exception is granted. Review upstream options
-before 2027-02-09 rather than silently renewing the records.
+by 2027-01-09, ahead of the 2027-02-09 expiry; never renew automatically.
+[The current assessment](../knowledge/research/R-0008-maintenance-release-readiness.md)
+records the stable upstream compatibility blockers; #28 remains open.
 
 ## Android dependencies
 
@@ -61,3 +63,25 @@ branch. The current default is main, and this work does not change or merge main
 Weekly/manual default-branch activation is a release-promotion prerequisite in
 [#24](https://github.com/kmosoti/rust-ui-template/issues/24); PR/develop checks are
 active independently. Do not claim an operational weekly monitor before that.
+
+
+## Weekly monitor activation checklist
+
+This is a human release prerequisite for #24, not authorization to merge main.
+
+1. Human reviews the develop-to-main release diff, dependency exceptions and
+   current full source CI; confirms the security workflow and pinned tools are
+   included. Recheck default branch and workflow presence through the GitHub API.
+2. A human approves the `main-release` environment gate and merges the release.
+   Agents never approve that gate, merge main, or change the default branch.
+3. After the workflow reaches the actual default branch, execute its manual
+   `workflow_dispatch` there, check the exact source and all security artifacts,
+   and confirm the declared Monday06:23UTC schedule in GitHub Actions.
+4. Confirm a real scheduled event subsequently runs on the expected default
+   source. Record run URL, date, result and artifact inspection in `knowledge/`.
+   Manual dispatch alone does not prove schedule execution; GitHub may delay cron.
+5. If activation, schedule or audit fails, keep the task open, investigate and
+   preserve failures. PR/develop gates continue independently. Do not silently
+   renew exceptions, publish artifacts or describe weekly monitoring as active.
+
+No automatic activation or release action is introduced by this checklist.
