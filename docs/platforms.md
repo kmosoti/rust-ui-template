@@ -6,7 +6,7 @@ WASM UI does not by itself establish native platform support.
 | Target | Build / package | Launch / behavior |
 | --- | --- | --- |
 | Browser, Linux Chromium 156 | Production Trunk root and subpath bundles passed | Interaction, navigation, cancellation and axe smoke passed |
-| Linux Tauri / WebKitGTK | Ubuntu 24.04 DEB and Fedora 44 RPM, x86_64 built/installed/reinstalled/removed | Xvfb: Ubuntu WebKitGTK 2.52.6 / Fedora 2.54.2; shared UI, IPC validation, CSP and real permission denial passed |
+| Linux Tauri / WebKitGTK | Ubuntu 24.04 DEB and Fedora 44 RPM, x86_64 built/installed/reinstalled/removed | Forced X11/Xvfb and software Wayland/Weston13/15: Ubuntu WebKitGTK2.52.6 / Fedora2.54.2; shared UI, IPC validation, CSP, real denial and native AT-SPI names/roles passed |
 | Windows / WebView2 | Not built | Not launched |
 | macOS / WKWebView | Not built | Not launched |
 | Android / Android WebView | Test-signed ARM64 and x86_64 APKs built, strict locked Gradle dependencies | API 36 / Android 16 x86_64 emulator, WebView 133.0.6943.137: offline bundled UI, IPC/CSP/real denial, IME, Back, rotation and lifecycle checks passed; ARM64 build-only |
@@ -31,7 +31,10 @@ passed on the exact source tree landed by PR #10, including the source-drift gat
 See [D-0005](../knowledge/decisions/D-0005-linux-native-host.md) and
 [O-0005](../knowledge/observations/O-0005-linux-native-host.md) for exact evidence.
 
-DEB/RPM delivery: [O-0010](../knowledge/observations/O-0010-linux-packages.md) and [package workflow](linux-packages.md). X11 CI does not establish Wayland or hardware GPU behavior.
+DEB/RPM delivery: [O-0010](../knowledge/observations/O-0010-linux-packages.md) and [package workflow](linux-packages.md). PR33 adds genuine software Wayland and native AT-SPI smoke evidence in
+[O-0019](../knowledge/observations/O-0019-linux-wayland-accessibility.md). Neither
+software backend establishes hardware GPU or manual Orca behavior; follow the
+[desktop handoff](linux-desktop-validation.md).
 
 Android execution: [run 42953564848](https://github.com/kmosoti/rust-ui-template/actions/runs/42953564848), [O-0011](../knowledge/observations/O-0011-android-apks.md). Minimum API 29 and WebView 111+ are prerequisites, not lower-bound runtime evidence. Physical devices and TalkBack remain untested.
 

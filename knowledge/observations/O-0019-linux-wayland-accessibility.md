@@ -1,7 +1,7 @@
 ---
 id: O-0019
 type: observation
-status: local-validated-ci-pending
+status: hosted-software-validated-hardware-pending
 updated: 2026-11-11
 added_by: agent
 human_ratified: false
@@ -117,3 +117,48 @@ remain available; timeout/socket cleanup and wire-level success/non-2xx are
 covered. The same wire probe now observes no Connection header. This is evidence
 for the interoperability hypothesis, not proof of every upstream root cause.
 Local production and fresh hosted verification are required before landing.
+## Hosted current-source validation
+
+PR33 exact head93f5df8e211f3f090b673985b8fee2a057b9d17e passed all six checks;
+independent medium reviewer owned rebase landing into developdabb1479. Linux
+run43058376459 passed289s. Downloaded artifact13873615841 with the GitHub
+artifact connector, extracted it and inspected all runtime/compositor/AT-SPI
+JSON plus Ubuntu production library and Fedora restricted-denial screenshots.
+The independent reviewer separately inspected all four native accessibility trees.
+
+- Ubuntu24.04: GTK3.24.41, WebKitGTK/WebDriver2.52.6, Weston13.0.0.
+- Fedora44: GTK3.24.52, WebKitGTK/WebDriver2.54.2, Weston15.0.1.
+- Production and restricted packages each passed forced X11 and real software
+  Wayland. Four AT-SPI snapshots have52 nodes each and zero missing required
+  roles/names; restricted title correctly differs from production. No failure
+  JSON exists. Wayland reports DISPLAY null, own display/socket and explicit
+  software client overrides, with actual surface/toplevel protocol evidence.
+- The source-drift gate and preserved production package SHA checks passed.
+  Native screenshots show application text, original artwork and symbol glyphs;
+  a viewport screenshot does not by itself prove every scroll/scaling state.
+
+Command families: `gh run view`, `gh api .../actions/runs/RUN/{jobs,artifacts}`,
+artifact connector download, `unzip`, Python JSON inspection and local image
+viewing. No current-source Ubuntu/Fedora software result remains pending.
+Actual GPU/compositor/scaling/manual Orca evidence remains pending in #23.
+The real-desktop harness has not been run; close other template instances before
+its title-based AT-SPI inspection so another matching window cannot confuse it.
+
+A further controlled experiment used the actual pinned tauri-driver2.1 proxy and
+a minimal standard-library HTTP/1.1 backend:300 unique GETs with urllib and300
+with http.client both passed, with0 assertion/request retries. Executed
+`python3 /workspace/scratch/probe_proxy_keepalive.py`; results retained locally.
+This negative result does not reproduce the Fedora/WebKit failure and must not
+be represented as causal proof. The wire-header observation and production
+packaged-app verification are distinct evidence.
+
+The HTTP-client sourcee8bd7f6 passed current Linux run43068162381 (404s), including
+Ubuntu/Fedora production/restricted packages on both software display backends.
+Downloaded its actual restricted RPM artifact13877825330, then executed
+`docker run --rm ... rust-ui-wayland-atspi bash -lc
+'bash scripts/fedora_package_smoke.sh /packages/*.rpm restricted'` using the real
+fixture and current harness. Install/reinstall, real X11 denial, real Wayland
+denial/native AT-SPI and removal passed locally with exit0. An independent medium
+reviewer inspected the actual log. No IPC response was faked. This successful
+configuration is evidence for compatibility, not proof that every intermittent
+upstream transport failure has been eliminated.

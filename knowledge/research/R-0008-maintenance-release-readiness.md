@@ -32,7 +32,7 @@ cargo tree --locked --manifest-path apps/native/Cargo.toml -i proc-macro-error
   gtk0.19 uses glib^0.22 and does not satisfy Tauri's gtk^0.18 requirement.
   Their dependency metadata no longer directly lists proc-macro-error; that
   observation is not a whole-graph audit or a compatible Tauri migration.
-- proc-macro-error2.0.1 exists as a separately named replacement package; it
+- `proc-macro-error2` 2.0.1 exists as a separately named replacement package; it
   cannot replace parent crate imports by simply regenerating the lockfile.
 - `gh api repos/kmosoti/rust-ui-template --jq '{default_branch}'` returned main.
   GET contents/.github/workflows/security.yml?ref=main returned404. The current

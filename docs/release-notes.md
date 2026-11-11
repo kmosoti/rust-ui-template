@@ -16,6 +16,8 @@ from [the handoff](issue-1-handoff.md) and knowledge records.
   and axe accessibility smoke coverage without Node/npm or Superdesign.
 - Linux x86_64 Ubuntu24.04 DEB and Fedora44 RPM installation/reinstallation,
   packaged launch, removal, typed app_info validation, CSP and real ACL denial.
+  Follow-up PR33 adds software Wayland and native AT-SPI heading/navigation smoke
+  on the same production/restricted packages, while preserving X11 checks.
 - Android test-signed ARM64/x86_64 APK builds and API36/Android16 x86_64 emulator
   tests for bundled startup, IPC/denial, keyboard, navigation/Back, rotation and
   lifecycle. ARM64 runtime has not been exercised.
@@ -26,7 +28,7 @@ from [the handoff](issue-1-handoff.md) and knowledge records.
 
 ## Boundaries and open risk
 
-Windows/macOS/iOS are deferred to #22. Wayland, hardware GPU, Linux ARM64,
+Windows/macOS/iOS are deferred to #22. Hardware GPU, desktop scaling/Orca, Linux ARM64,
 physical/minimum-API Android devices, minimum browser/WebView runtime checks and
 manual assistive-technology coverage are #23. Automated accessibility smoke is
 not full conformance testing. A previously observed Linux WebDriver connection
