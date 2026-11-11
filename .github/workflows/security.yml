@@ -1,0 +1,71 @@
+name: Dependency security
+on:
+  pull_request:
+    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
+  push:
+    branches: [develop]
+    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
+  workflow_dispatch:
+  # GitHub activates schedules only once this file is on the default branch.
+  schedule:
+    - cron: '23 6 * * 1'
+permissions:
+  contents: read
+concurrency:
+  group: security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  dependencies:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
+        id: cache
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git/db
+            .tools/downloads/cargo-deny-0.20.2.tar.gz
+            .tools/downloads/osv-scanner-2.7.1
+          key: security-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Cargo.lock', 'apps/native/Cargo.lock', 'scripts/security-assets.json') }}
+          restore-keys: security-v1-${{ runner.os }}-${{ runner.arch }}-
+      - run: rustup toolchain install 1.99.1 --profile minimal
+      - name: Verified security tools and repeated-setup measurement
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, subprocess, time
+          output = pathlib.Path('artifacts/security'); output.mkdir(parents=True, exist_ok=True)
+          results = []
+          for iteration in range(2):
+              before = sorted(p.name for p in pathlib.Path('.tools/downloads').glob('*')) if pathlib.Path('.tools/downloads').exists() else []
+              started = time.monotonic()
+              subprocess.run(['python3', 'scripts/setup_security.py'], check=True)
+              results.append({'iteration': iteration + 1, 'seconds': time.monotonic()-started, 'cache_entries_before': before})
+          (output/'setup-timings.json').write_text(json.dumps(results, indent=2)+'\n')
+          PY
+      - run: python3 scripts/check_security_policy.py
+      - name: Browser Rust dependencies
+        run: .tools/cargo-deny --locked check
+      - name: Native Rust dependencies, including build dependencies
+        run: .tools/cargo-deny --manifest-path apps/native/Cargo.toml --config deny.toml --locked check
+      - name: Gradle advisories and license inventory
+        run: python3 scripts/scan_android_dependencies.py
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: dependency-security-evidence
+          path: artifacts/security/
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/develop' && steps.cache.outputs.cache-hit != 'true'
+        with:
+          key: ${{ steps.cache.outputs.cache-primary-key }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git/db
+            .tools/downloads/cargo-deny-0.20.2.tar.gz
+            .tools/downloads/osv-scanner-2.7.1

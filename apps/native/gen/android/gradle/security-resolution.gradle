@@ -1,0 +1,24 @@
+// Reviewed security updates for AGP/lint/build dependencies. Keep major APIs stable.
+// Applied during settings evaluation, before project buildscript resolution.
+gradle.beforeProject { project ->
+    def patch = { details ->
+        def group = details.requested.group
+        def name = details.requested.name
+        def version = null
+        if (group == 'org.bitbucket.b_c' && name == 'jose4j') version = '0.9.6'
+        if (group == 'org.jdom' && name == 'jdom2') version = '2.0.6.1'
+        if (group == 'org.jetbrains.kotlin' && name == 'kotlin-gradle-plugin') version = '2.4.21'
+        if (group == 'com.fasterxml.jackson.core') version = '2.18.11'
+        if (group == 'com.google.guava' && name == 'guava') version = details.requested.version?.endsWith('-android') ? '33.7.2-android' : '33.7.2-jre'
+        if (group == 'io.netty') version = '4.1.137.Final'
+        if (group == 'org.bouncycastle' && name.endsWith('-jdk18on')) version = '1.85'
+        if (group == 'org.apache.commons' && name == 'commons-lang3') version = '3.18.0'
+        if (group == 'org.apache.httpcomponents' && name == 'httpclient') version = '4.5.14'
+        if (version != null) {
+            details.useVersion(version)
+            details.because('Reviewed advisory remediation; see docs/security.md')
+        }
+    }
+    project.configurations.configureEach { resolutionStrategy.eachDependency(patch) }
+    project.buildscript.configurations.configureEach { resolutionStrategy.eachDependency(patch) }
+}

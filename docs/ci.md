@@ -122,3 +122,20 @@ Local repeated SDK-tree verification measured 6.09 s and 4.92 s without download
 these hot-filesystem samples are not CI warm-cache speedup measurements. Exact
 runs, failures and pending measurements live in [O-0010](../knowledge/observations/O-0010-linux-packages.md)
 and [O-0011](../knowledge/observations/O-0011-android-apks.md).
+
+## Clean frontend reproducibility gate
+
+`python3 scripts/check_frontend_repro.py` builds the exact checked-out commit in
+two independent clean clones/empty Cargo target directories without restoring
+compiled caches. It uses a fixed source epoch and remaps checkout paths, compares
+all production file names/bytes, and executes workspace tests plus root/subpath
+production browser checks from the first fresh clone. Registry source downloads
+may be reused; they are not compiled-build cache evidence. Reports retain source,
+commands, environment policy, timings and SHA-256 manifests. This proves only the
+configured frontend build on the pinned runner; unsigned native package and
+signed-release byte determinism remain separate follow-up work (#24).
+
+The dedicated security workflow caches only registry sources and verified tool
+archives, avoiding compiled native/browser targets that it does not use.
+Successful develop pushes alone save those caches. Its evidence records initial
+and repeated actual tool-setup durations; archive hits still reverify bytes.

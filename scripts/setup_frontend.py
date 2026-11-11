@@ -8,6 +8,7 @@ import platform
 import tarfile
 import urllib.request
 from pathlib import Path
+from verified_download import fetch
 
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / '.tools'
@@ -31,7 +32,7 @@ def main():
         target.write_bytes(data)
     target.chmod(0o755)
     axe = manifest['axe']
-    data = urllib.request.urlopen(axe['url']).read()
+    data = fetch(axe['url'], axe['sha256'], DEST / 'downloads/axe-core-4.10.3.tgz')
     if 'sha512-' + base64.b64encode(hashlib.sha512(data).digest()).decode() != axe['integrity']:
         raise RuntimeError('axe checksum mismatch')
     with tarfile.open(fileobj=io.BytesIO(data), mode='r:gz') as archive:

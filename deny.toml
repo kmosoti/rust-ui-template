@@ -1,0 +1,27 @@
+# All resolved targets are checked; do not hide native build dependencies.
+[graph]
+all-features = false
+
+[advisories]
+ignore = [
+  { id = "RUSTSEC-2024-0436", reason = "paste 1.0.15 compile-time maintenance exception; expiry and rationale in security-exceptions.json" },
+  { id = "RUSTSEC-2024-0370", reason = "proc-macro-error 1.0.4 compile-time maintenance exception; expiry and rationale in security-exceptions.json" },
+]
+git-fetch-with-cli = true
+
+[licenses]
+allow = ["MIT", "MIT-0", "Apache-2.0", "Apache-2.0 WITH LLVM-exception", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "Zlib", "Unlicense", "CC0-1.0", "Unicode-3.0", "BSL-1.0"]
+confidence-threshold = 0.9
+[licenses.private]
+ignore = false
+
+[bans]
+multiple-versions = "allow"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

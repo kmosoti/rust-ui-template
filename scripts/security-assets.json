@@ -1,0 +1,15 @@
+{
+  "cargo-deny": {
+    "version": "0.20.2",
+    "url": "https://github.com/EmbarkStudios/cargo-deny/releases/download/0.20.2/cargo-deny-0.20.2-x86_64-unknown-linux-musl.tar.gz",
+    "sha256": "9f12ed4c49936e09b48bf862b595cde2fe64fcbd9d74dfacac6131ca824c8d5f",
+    "archive": "cargo-deny-0.20.2.tar.gz",
+    "member": "cargo-deny"
+  },
+  "osv-scanner": {
+    "version": "2.7.1",
+    "url": "https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64",
+    "sha256": "fb7dab19a8bd9bbe5c3189f09d4b7ee1820c9553a23bac202648a56efd2f6ee8",
+    "archive": "osv-scanner-2.7.1"
+  }
+}
