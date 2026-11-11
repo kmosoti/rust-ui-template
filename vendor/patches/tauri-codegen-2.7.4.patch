@@ -1,0 +1,28 @@
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -10,6 +10,7 @@
+ # See Cargo.toml.orig for the original contents.
+ 
+ [package]
++workspace = "../../apps/native"
+ edition = "2024"
+ rust-version = "1.90"
+ name = "tauri-codegen"
+--- a/src/context.rs
++++ b/src/context.rs
+@@ -45,12 +45,12 @@
+ }
+ 
+ fn inject_script_hashes(document: &Document, key: &AssetKey, csp_hashes: &mut CspHashes) {
+-  let script_elements = document.select("script:not(:empty)");
++  let script_elements = tauri_utils::html2::inline_script_contents(document);
+ 
+   let scripts = script_elements
+     .iter()
+-    .map(|element| {
+-      let script = tauri_utils::html2::normalize_script_for_csp(element.text().as_bytes());
++    .map(|text| {
++      let script = tauri_utils::html2::normalize_script_for_csp(text.as_bytes());
+       let script_hash = Sha256::digest(script);
+       let hash_base64 = base64::engine::general_purpose::STANDARD.encode(script_hash);
+ 

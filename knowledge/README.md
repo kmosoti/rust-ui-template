@@ -91,3 +91,5 @@ Provenance tracking **must never slow down agentic work**:
 5. Before doing research, walk the index and relevant outgoing links. Independent checks should record their own methods and observations, then link to the claim they corroborate or challenge.
 
 The index is curated, not automatically generated. Start with Markdown and version control; introduce graph tooling only after an actual retrieval or integrity failure justifies it.
+
+- [D-0010 · Permissive Rust dependencies](decisions/D-0010-permissive-rust-dependencies.md) and [O-0013 · Patch evidence](observations/O-0013-permissive-native.md) (`agent`, `human_ratified: false`).

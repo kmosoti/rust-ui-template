@@ -14,6 +14,7 @@ crate-type = ["lib", "cdylib", "staticlib"]
 
 # Isolate OS dependencies and packaging from browser-only workspace checks.
 [workspace]
+members = ["html-tests", "../../vendor/tauri-utils-2.10.2", "../../vendor/tauri-codegen-2.7.4", "../../vendor/dirs-sys-0.5.0"]
 
 [features]
 default = ["custom-protocol"]
@@ -34,3 +35,9 @@ unsafe_code = "forbid"
 
 [lints.clippy]
 all = "warn"
+
+[patch.crates-io]
+tauri-utils = { path = "../../vendor/tauri-utils-2.10.2" }
+tauri-codegen = { path = "../../vendor/tauri-codegen-2.7.4" }
+dirs-sys = { path = "../../vendor/dirs-sys-0.5.0" }
+wry = { path = "../../vendor/wry-0.57.2" }
