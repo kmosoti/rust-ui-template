@@ -75,6 +75,7 @@ def main():
         'cache_hit': os.environ.get('ANDROID_CACHE_HIT', ''),
         'cache_matched_key': os.environ.get('ANDROID_CACHE_MATCHED_KEY', ''),
         'cache_key': os.environ.get('ANDROID_CACHE_KEY', ''),
+        'synthetic_stale_probe': os.environ.get('ANDROID_CACHE_STALE_PROBE') == 'true',
         'components': json.loads(os.environ.get('ANDROID_CACHE_COMPONENTS', '{}')),
         'forced_cold': os.environ.get('ANDROID_CACHE_COLD') == 'true',
         'measurement_seconds': time.monotonic()-started, 'buckets': buckets,

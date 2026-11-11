@@ -41,7 +41,8 @@ contribution. Warm runtime variance includes build/emulator costs, not just I/O.
 ## Candidate and adoption gate
 
 - Disjoint SDK / sources-tools-Gradle / compiled-target partitions. No v1 restore
-  overlaps them and no partial compatibility fallback. SDK key excludes Rust/
+  overlaps them. Dependency/target fallback retains the same compatibility
+  tuple; only lock/verification identities vary after its prefix. SDK key excludes Rust/
   Gradle locks, retaining image/asset/setup identity. Dependency key includes
   actual locks, pinned tools and Gradle configuration/verification metadata.
   Targets include Rust/JDK/NDK, locks, manifests, setup/tool fingerprints, vendor
@@ -65,3 +66,30 @@ contribution. Warm runtime variance includes build/emulator costs, not just I/O.
 No speedup, cache quota increase or eviction reduction is established yet. #31
 remains open until the candidate is measured and retained/rejected explicitly.
 Revisit after trusted seed and three complete warm validations.
+
+
+## Compatible restore and synthetic probe
+
+Author review identified that exact-only target keys would throw away useful
+compilation after lock-only updates. Dependency/target prefixes now fix the
+runner/image, Rust/JDK, relevant SDK/tool/setup/build/vendor identities and vary
+only lock/verification identity. SDK remains exact. Independent medium review
+approved these boundaries; Cargo locked/strict Gradle/SDK-byte checks and own
+native-package clean remain unconditional.
+
+The optional PR-only `ci-cache-stale` label appends a synthetic primary-key
+suffix for dependency/target groups, leaving compatibility prefixes and SDK key
+unchanged. The cold label takes precedence. Profiles retain synthetic-probe
+status plus actual matched/primary keys and exact-hit. This deliberately tests
+backend fallback, not a real changed dependency graph. Neither benchmark label
+can change develop keys or grant PR cache writes. Hosted cold/exact/stale probe
+results must be recorded; prefix-invariance local checks supplement them.
+
+
+Local compatibility property checks against the actual workflow hashFiles path
+selections passed: lock/verification-only fixture changes preserve dependency/
+target prefixes and SDK identity while changing primary identities; SDK/setup,
+vendor, manifest and workflow build-input changes invalidate the relevant
+prefixes. These fixtures do not edit generated repository locks and do not claim
+to implement GitHub's full expression engine. The reusable regression will ship
+with the final evidence PR used for the hosted synthetic fallback probe.
