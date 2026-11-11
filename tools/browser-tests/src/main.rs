@@ -224,6 +224,11 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
     check(page, "window.__cleared === 1").await?;
     tokio::time::sleep(Duration::from_millis(1700)).await;
     check(page, "document.querySelector('[role=status]')?.textContent.includes('Latest result: 22') && document.querySelector('[role=status]')?.textContent.includes('cancelled')").await?;
+    check(
+        page,
+        "document.querySelector('[role=status]')?.dataset.tone === 'warning'",
+    )
+    .await?;
     capture(page, "response-lab").await?;
     println!("PASS: stale result rejection, observed cancellation and result retention");
     js(page, "window.__cleared = 0").await?;
@@ -260,7 +265,10 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
     )
     .await?;
     click(page, "Cancel").await?;
-    println!("PASS: navigation cleanup and keyboard activation");
+    js(page, "document.querySelector('#number').value = ''; document.querySelector('#number').dispatchEvent(new Event('input', {bubbles:true}))").await?;
+    click(page, "Fast request").await?;
+    check(page, "document.querySelector('[role=status]')?.dataset.tone === 'danger' && document.querySelector('[role=status]').textContent.includes('Enter a whole number')").await?;
+    println!("PASS: navigation cleanup, keyboard activation and text-labeled feedback tones");
     let axe = fs::read_to_string(".tools/axe.min.js")?;
     js(page, &axe).await?;
     let violations: serde_json::Value = page.evaluate_function("async () => (await axe.run()).violations.map(v => ({id:v.id, nodes:v.nodes.map(n=>n.target)}))").await?.into_value()?;
@@ -404,6 +412,169 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
     }
     capture(page, "text-zoom-about-320").await?;
     js(page, "document.documentElement.style.fontSize = ''").await?;
+    page.execute(SetDeviceMetricsOverrideParams::new(1440, 1000, 1.0, false))
+        .await?;
+    click(page, "Preferences").await?;
+    check(page, "!!document.querySelector('#color-scheme')").await?;
+    // A real native select keyboard interaction, in addition to exhaustive change events.
+    page.find_element("#color-scheme").await?.click().await?;
+    page.find_element("#color-scheme")
+        .await?
+        .press_key("ArrowDown")
+        .await?;
+    page.find_element("#color-scheme")
+        .await?
+        .press_key("Enter")
+        .await?;
+    check(
+        page,
+        "document.querySelector('[data-palette]')?.dataset.palette === 'signal-blue'",
+    )
+    .await?;
+    for palette in [
+        "nocturne",
+        "signal-blue",
+        "butter-iris",
+        "lime-graphite",
+        "sulu-fir",
+        "blooming-romance",
+        "desert-dusk",
+    ] {
+        for width in [1440, 320] {
+            page.execute(SetDeviceMetricsOverrideParams::new(width, 1000, 1.0, false))
+                .await?;
+            click(page, "Preferences").await?;
+            check(page, "!!document.querySelector('#color-scheme')").await?;
+            js(page, &format!("(() => {{ const e = document.querySelector('#color-scheme'); e.value = {}; e.dispatchEvent(new Event('change', {{bubbles:true}})); }})()", serde_json::to_string(palette)?)).await?;
+            check(
+                page,
+                &format!(
+                    "document.querySelector('[data-palette]')?.dataset.palette === {}",
+                    serde_json::to_string(palette)?
+                ),
+            )
+            .await?;
+            page.find_element("#color-scheme").await?.focus().await?;
+            page.find_element("#color-scheme")
+                .await?
+                .press_key("Tab")
+                .await?;
+            check(page, "document.activeElement.id === 'display-name' && document.activeElement.matches(':focus-visible') && parseFloat(getComputedStyle(document.activeElement).outlineWidth) >= 2").await?;
+            page.find_element("button[type=submit]")
+                .await?
+                .hover()
+                .await?;
+            check(
+                page,
+                "document.querySelector('button[type=submit]').matches(':hover')",
+            )
+            .await?;
+            page.evaluate_function(
+                "async () => { await new Promise(requestAnimationFrame); return true; }",
+            )
+            .await?;
+            let contrast: serde_json::Value = page
+                .evaluate_function(include_str!("../../../tests/palette-contrast.js"))
+                .await?
+                .into_value()?;
+            fs::write(
+                format!("artifacts/contrast-{palette}-{width}.json"),
+                serde_json::to_vec_pretty(&contrast)?,
+            )?;
+            if contrast["failures"] != serde_json::json!([])
+                || contrast["hoverMatches"] != true
+                || contrast["focusMatches"] != true
+            {
+                return Err(format!("Palette contrast defect: {contrast}").into());
+            }
+            for (link, heading) in [
+                ("Preferences", "Preferences"),
+                ("Library", "Your library"),
+                ("Latest response", "Latest response"),
+                ("About", "About"),
+            ] {
+                click(page, link).await?;
+                check(
+                    page,
+                    &format!(
+                        "document.querySelector('h1')?.textContent === {}",
+                        serde_json::to_string(heading)?
+                    ),
+                )
+                .await?;
+                check(
+                    page,
+                    &format!(
+                        "document.querySelector('[data-palette]')?.dataset.palette === {}",
+                        serde_json::to_string(palette)?
+                    ),
+                )
+                .await?;
+                if link == "About" {
+                    check(page, "document.querySelector('[data-testid=host-info]')?.textContent.includes('unavailable in browser mode')").await?;
+                }
+                page.evaluate_function("async () => { await document.fonts.ready; await new Promise(requestAnimationFrame); return true; }").await?;
+                let metrics: serde_json::Value = page
+                    .evaluate_function(include_str!("../../../tests/layout-audit.js"))
+                    .await?
+                    .into_value()?;
+                if metrics["horizontalOverflow"] == true
+                    || metrics["clippedText"] != serde_json::json!([])
+                    || metrics["escapedControls"] != serde_json::json!([])
+                    || metrics["overlaps"] != serde_json::json!([])
+                {
+                    return Err(format!("{palette}/{link}/{width} layout: {metrics}").into());
+                }
+                let violations: serde_json::Value = page
+                    .evaluate_function("async () => (await axe.run()).violations.map(v => v.id)")
+                    .await?
+                    .into_value()?;
+                if violations != serde_json::json!([]) {
+                    return Err(
+                        format!("{palette}/{link}/{width} accessibility: {violations}").into(),
+                    );
+                }
+                if link == "Preferences" {
+                    check(
+                        page,
+                        &format!(
+                            "document.querySelector('#color-scheme')?.value === {}",
+                            serde_json::to_string(palette)?
+                        ),
+                    )
+                    .await?;
+                    capture(page, &format!("palette-settings-{palette}-{width}")).await?;
+                }
+                if link == "Library" {
+                    capture(page, &format!("palette-{palette}-{width}")).await?;
+                }
+            }
+        }
+        click(page, "Preferences").await?;
+        check(page, "!!document.querySelector('#color-scheme')").await?;
+        js(page, "document.documentElement.style.fontSize = '200%'").await?;
+        let metrics: serde_json::Value = page
+            .evaluate_function(include_str!("../../../tests/layout-audit.js"))
+            .await?
+            .into_value()?;
+        if metrics["horizontalOverflow"] == true
+            || metrics["clippedText"] != serde_json::json!([])
+            || metrics["escapedControls"] != serde_json::json!([])
+        {
+            return Err(format!("{palette} 200% text: {metrics}").into());
+        }
+        js(page, "document.documentElement.style.fontSize = ''").await?;
+    }
+    // Reload resets the app-session choice, including the subpath production smoke below.
+    page.goto(url).await?;
+    check(
+        page,
+        "document.querySelector('[data-palette]')?.dataset.palette === 'nocturne'",
+    )
+    .await?;
+    println!(
+        "PASS: seven palettes, rendered contrast, 56 route/viewport axe/layout checks, session navigation and reload reset"
+    );
     page.execute(SetDeviceMetricsOverrideParams::new(1440, 1000, 1.0, false))
         .await?;
     println!("PASS: desktop/390px/320px layout metrics, captures and axe smoke");

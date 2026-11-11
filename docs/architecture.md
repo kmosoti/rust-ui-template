@@ -178,3 +178,19 @@ the library; #/ explicitly opens the response lab. The skip link focuses main
 without navigating the fragment router. No game execution, new IPC or persistent
 library state is implied. Static artwork is bundled locally alongside the one
 production stylesheet and CSR assets.
+
+## App-session color selection
+
+```mermaid
+flowchart LR
+  Select["Preferences: labeled native select"] --> Appearance["App-owned Appearance signal"]
+  Appearance --> Root["Leptos root data-palette"]
+  Root --> CSS["Semantic overrides in one Tailwind stylesheet"]
+  CSS --> Routes["Library / response / preferences / about"]
+  Reload["Full reload"] --> Default["Nocturne default"]
+  Default --> Appearance
+```
+
+The signal outlives route owners but not the app; it does not use persistence,
+IPC or app-core. Feedback colors are presentation of existing request states.
+See [color scheme contract](color-palettes.md).

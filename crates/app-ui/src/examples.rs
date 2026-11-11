@@ -8,7 +8,7 @@ pub fn Overview() -> impl IntoView {
             <div class="flex flex-wrap items-end justify-between gap-4"><div><p class="eyebrow mb-3">"Workspace / Library"</p><h1 class="page-heading">"Your library"</h1><p class="page-summary">"A little space for your next big idea."</p></div><span class="font-mono text-xs text-muted">"03 EXAMPLES"</span></div>
             <section aria-labelledby="featured-title" class="feature-grid">
                 <img data-testid="featured-art" src="public/observatory.svg" alt="A small observatory above a winding trail in a violet mountain landscape." class="feature-art" width="1200" height="900" />
-                <div class="feature-detail"><p class="eyebrow text-brand">"Featured / Interaction lab"</p><h2 id="featured-title" class="feature-title">"Signal & silence"</h2><p class="mt-4 leading-relaxed text-muted">"Keep the latest signal. Leave the noise behind. Explore requests, timing, and cancellation in one small working example."</p><a data-testid="launch-example" class="primary-action mt-7" href="#/">"Open response lab"<span aria-hidden="true">"→"</span></a><div class="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-hairline pt-5 text-xs text-muted"><span class="text-ready">"Ready to explore"</span><span>"Local simulation"</span></div></div>
+                <div class="feature-detail"><p class="eyebrow text-brand">"Featured / Interaction lab"</p><h2 id="featured-title" class="feature-title">"Signal & silence"</h2><p class="mt-4 leading-relaxed text-muted">"Keep the latest signal. Leave the noise behind. Explore requests, timing, and cancellation in one small working example."</p><a data-testid="launch-example" class="primary-action mt-7" href="#/">"Open response lab"<span aria-hidden="true">"→"</span></a><div class="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-hairline pt-5 text-xs text-muted"><span class="text-success">"Ready to explore"</span><span>"Local simulation"</span></div></div>
             </section>
             <div class="mt-10 grid gap-10 xl:grid-cols-[2fr_1fr]">
                 <section data-layout-region="library" aria-labelledby="library-title"><div class="mb-5 flex flex-wrap items-center justify-between gap-3"><h2 id="library-title" class="text-lg font-semibold">"Workspace examples"</h2><span class="text-xs text-muted">"Sample library"</span></div>
@@ -39,15 +39,16 @@ pub fn Preferences() -> impl IntoView {
     let saved = RwSignal::new(false);
     view! {
         <section class="max-w-3xl">
-            <p class="eyebrow mb-3">"Workspace / Personalize"</p><h1 class="page-heading">"Preferences"</h1><p class="page-summary">"A workspace that feels like yours. Changes live in this page only."</p>
-            <form class="mt-8 border-t border-hairline py-8" on:submit=move |ev| { ev.prevent_default(); saved.set(true); }>
+            <p class="eyebrow mb-3">"Workspace / Personalize"</p><h1 class="page-heading">"Preferences"</h1><p class="page-summary">"Choose a session color scheme. Profile changes stay on this page."</p>
+            <super::palettes::AppearanceSettings />
+            <form class="border-t border-hairline py-8" on:submit=move |ev| { ev.prevent_default(); saved.set(true); }>
                 <h2 class="text-xl font-semibold">"Your profile"</h2>
                 <div class="mt-7 max-w-lg"><label for="display-name" class="block text-sm font-medium">"Display name"</label><input id="display-name" value="Alex Morgan" on:input=move |_| saved.set(false) class="field" /></div>
                 <fieldset class="mt-8 border-t border-hairline pt-6"><legend class="pr-4 font-medium">"Workspace options"</legend>
                     <label class="mt-3 flex items-start gap-3"><input type="checkbox" class="mt-1 size-5 shrink-0 accent-brand" prop:checked=move || digest.get() on:change=move |ev| { digest.set(event_target_checked(&ev)); saved.set(false); } /><span><span class="block font-medium">"Weekly digest"</span><span class="text-sm text-muted">"Keep a little perspective on your week."</span></span></label>
                     <label class="mt-6 flex items-start gap-3"><input type="checkbox" class="mt-1 size-5 shrink-0 accent-brand" prop:checked=move || compact.get() on:change=move |ev| { compact.set(event_target_checked(&ev)); saved.set(false); } /><span><span class="block font-medium">"Compact view"</span><span class="text-sm text-muted">"A little more information in a little less space."</span></span></label>
                 </fieldset>
-                <div class="mt-8 flex flex-wrap items-center gap-4 border-t border-hairline pt-6"><button type="submit" class="primary-action">"Apply preferences"</button><p role="status" class="text-sm text-ready">{move || if saved.get() { "Applied for this demo session." } else { "No account or server required." }}</p></div>
+                <div class="mt-8 flex flex-wrap items-center gap-4 border-t border-hairline pt-6"><button type="submit" class="primary-action">"Apply preferences"</button><p role="status" class="text-sm text-success">{move || if saved.get() { "Applied for this demo session." } else { "No account or server required." }}</p></div>
             </form>
         </section>
     }

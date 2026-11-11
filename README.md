@@ -24,6 +24,9 @@ controls and responsive navigation. [Design guide](docs/default-design.md) ·
 
 ![Nocturne default workspace](docs/images/nocturne-desktop.png)
 
+Choose from Nocturne and six additional [color schemes](docs/color-palettes.md)
+in **Preferences → Appearance**. The choice applies across the current session.
+
 ## Browser development
 
 Install Rust 1.99.1 with the `wasm32-unknown-unknown` target, Python 3,

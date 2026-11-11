@@ -58,6 +58,9 @@ Provenance tracking **must never slow down agentic work**:
 | [D-0007 · Default workspace launcher](decisions/D-0007-default-workspace-design.md) | `agent` | `false` | Nocturne default design and ongoing CI contributor discipline |
 | [O-0007 · Workspace launcher evidence](observations/O-0007-workspace-launcher.md) | `agent` | `false` | Rendered design, production assets, accessibility and regression evidence |
 
+| [D-0008 · Semantic color schemes](decisions/D-0008-color-palettes.md) | `agent` | `false` | Six user palettes, session selection and contrast contracts |
+| [O-0008 · Color scheme evidence](observations/O-0008-color-palettes.md) | `agent` | `false` | Rendered contrast, interaction, accessibility and native results |
+
 ## Record protocol
 
 1. Use a stable ID, a descriptive filename, and front matter:
