@@ -106,3 +106,4 @@ The index is curated, not automatically generated. Start with Markdown and versi
 - [O-0017 · Scoped milestone completion](observations/O-0017-issue1-completion.md): final source CI, reviewed artifacts, cold/seed/warm observations and explicit limits (`agent`, `human_ratified: false`).
 
 - [R-0008: Maintenance and release readiness](research/R-0008-maintenance-release-readiness.md) — stable upstream blockers, reassessment date and inactive weekly-monitor handoff.
+- [O-0019: Linux Wayland and native accessibility](observations/O-0019-linux-wayland-accessibility.md) — software display evidence and real-desktop handoff.
