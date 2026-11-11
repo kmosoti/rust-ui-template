@@ -71,7 +71,10 @@ AVD using KVM and SwiftShader, with explicit ANDROID_USER_HOME,
 ANDROID_EMULATOR_HOME and ANDROID_AVD_HOME under ignored `.tools/android-user`.
 Each launch wipes fixture data; no writable device state/snapshots are cached.
 AndroidX instrumentation talks to the real WebView; no Node or automation server
-is embedded. Build test APK using `:app:assembleUniversalDebugAndroidTest` with
+is embedded. AndroidJUnitRunner uses `waitForActivitiesToComplete=false`: Tauri
+exits when its final Activity is destroyed, so teardown must not kill JUnit
+before it reports. The host explicitly force-stops the owned package after
+collecting results/evidence, preserving an earlier failure. Build test APK using `:app:assembleUniversalDebugAndroidTest` with
 `-PabiList=x86_64 -PtargetList=x86_64 -ParchList=x86_64 -x :app:rustBuildX86_64Debug` after the CLI build. This skips only the already-built Rust task; the standalone Gradle invocation has no live Tauri CLI bridge.
 See `.github/workflows/android.yml` for the complete ordered production/fixture
 build and `scripts/android_emulator_smoke.sh` for the launch sequence.

@@ -242,6 +242,8 @@ flowchart LR
   Test[AndroidX instrumentation] --> WebView
   Restricted[Separate restricted-window APK] --> Denied[Real ACL denial]
   Test --> Evidence[Runtime versions / screenshots / geometry / logcat]
+  Test --> Report[JUnit reports before Activity destruction]
+  Report --> Cleanup[Host collects evidence then force-stops owned package]
 ```
 
 The Android project is generated with the pinned Tauri CLI and then reviewed as

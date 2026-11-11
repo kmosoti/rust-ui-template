@@ -220,6 +220,7 @@ class NativeAppTest {
             File(directory, "runtime.json").writeText(js("({userAgent:navigator.userAgent, width:innerWidth,height:innerHeight,scrollY,focused:document.activeElement?.id,focusedBounds:document.activeElement?.getBoundingClientRect().toJSON(),webview:${JSONObject.quote(WebView.getCurrentWebViewPackage()?.versionName ?: "unknown")}})"))
             instrumentation.uiAutomation.takeScreenshot()?.let { bitmap -> File(directory, "screen.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }
         } catch (error: Throwable) { android.util.Log.e("RustUiE2E", "Diagnostic capture unavailable", error) }
-        try { if (::scenario.isInitialized) scenario.close() } catch (error: Throwable) { android.util.Log.e("RustUiE2E", "Cleanup unavailable", error) }
+        // Closing the last Tauri Activity exits this instrumentation process.
+        // The host force-stops the owned package after JUnit reports and evidence is collected.
     }
 }
