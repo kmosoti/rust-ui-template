@@ -49,11 +49,16 @@ it does not establish hardware rendering or manual Orca behavior.
   dependencies must already exist in the runtime image and missing ones fail.
 - PR32 Linux run43052897797 stalled in apt before any tests, was canceled once
   and rerun; the rerun also stalled. This slice replaces only the exact hosted
-  Azure Ubuntu mirror URL and hosted mirror+file lists with Ubuntu's official HTTPS archive, retains signed
+  Azure Ubuntu mirror URL and hosted mirror+file lists with the kernel.org third-party Ubuntu HTTPS mirror, retains signed
   suites/components, and bounds transport and overall setup time. Independent review found the
   hosted mirror+file indirection in canceled logs; the initial literal-URL-only
   replacement was insufficient and corrected before landing. No test
-  assertion is retried or skipped. Current-source CI must validate this change.
+  assertion is retried or skipped. The initial official archive.ubuntu.com replacement also timed out. Bounded
+  curl probes fetched kernel.org noble and noble-security InRelease successfully,
+  with Origin/Label Ubuntu and current signed metadata (2026-11-11). This is a
+  third-party mirror, not Ubuntu-operated. Ubuntu keyring/signatures/suites and
+  metadata expiry validation remain unchanged. Current-source CI must validate
+  the complete installation and application checks.
 
 ## Ownership and limitations
 
