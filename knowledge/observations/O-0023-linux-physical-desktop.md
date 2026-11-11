@@ -159,7 +159,13 @@ owned WebKit Web Process PID 3508000, i915 client 1797, accumulated 65,422,509ns
 Both report PCI device `0000:00:02.0`, independently identified above as Intel UHD.
 An additional owned client had zero render delta; it is not counted as rendering
 merely because its device was open. Six `FileNotFoundError` capture races occurred
-as descriptors/processes exited; zero rows were dropped.
+as descriptors/processes exited; zero rows were dropped. One additional final
+WebKit row resolved an already-closed fd link to its own `/proc/3508000/fd/23`
+pathname rather than `/dev/dri`; its previously read i915 client/device/counter
+fields remain intact. A privacy audit initially asserted every symlink resolved
+and failed on this row; the original row and [audit note](../evidence/O-0023/privacy-audit-notes.txt) are preserved.
+Attribution uses the stable DRM client/device fields, not that unresolved link.
+The collector does not claim atomic process/fd snapshots.
 
 The [Linux DRM usage specification](https://www.kernel.org/doc/html/latest/gpu/drm-usage-stats.html)
 defines engine time as workload execution belonging to the DRM client.
@@ -217,7 +223,9 @@ mocks that unrelated platform lookup. Failed and corrected test logs are retaine
 locally. Affected `py_compile` and `git diff --check` pass. No UI/core/host code,
 dependency, workflow, cache or platform matrix was changed; existing Linux CI
 will exercise PID selection in both production/restricted AT-SPI sessions without
-extra builds. Fresh-head CI remains pending until a PR exists.
+extra builds. Draft [PR #38](https://github.com/kmosoti/rust-ui-template/pull/38) runs fresh-head
+CI and independent Terra medium review. Its final evidence and human-pending
+status are maintained in the PR; the author does not land the change.
 
 ## Limits and relations
 
