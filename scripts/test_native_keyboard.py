@@ -8,6 +8,7 @@ from native_smoke import assert_dpr
 class KeyboardTests(unittest.TestCase):
     def keyboard(self):
         k = Keyboard(Mock(), '/session/example', Mock(), Mock(), 'unit')
+        k._execute.return_value = {'width':1600,'height':1100,'dpr':1}
         k.save = Mock()
         return k
 

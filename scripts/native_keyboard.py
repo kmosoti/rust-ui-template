@@ -100,6 +100,7 @@ class Keyboard:
 
     def run(self):
         original = None
+        started = time.monotonic()
         try:
             self.report['viewport'] = self.execute('return {width:innerWidth,height:innerHeight,dpr:devicePixelRatio}')
             self.checkpoint('fresh-window-skip-link', self.skip)
@@ -124,6 +125,7 @@ class Keyboard:
                     raise
                 print('Key release failed after original error:', type(error).__name__)
             finally:
+                self.report['elapsed_seconds'] = time.monotonic()-started
                 self.save()
 
     def skip(self):

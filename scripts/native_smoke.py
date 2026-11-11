@@ -192,7 +192,7 @@ def main():
         runtime['expected_dpr'] = args.expected_dpr
         runtime['driver_http_transport'] = 'stdlib http.client HTTP/1.1; no Connection: close; no retries'
         runtime['display_backend_requested'] = args.display_backend
-        runtime['display_environment'] = {key: os.environ.get(key) for key in ('GDK_BACKEND', 'DISPLAY', 'WAYLAND_DISPLAY', 'LIBGL_ALWAYS_SOFTWARE', 'GALLIUM_DRIVER', 'WEBKIT_DISABLE_DMABUF_RENDERER')}
+        runtime['display_environment'] = {key: os.environ.get(key) for key in ('GDK_BACKEND', 'DISPLAY', 'XAUTHORITY', 'WAYLAND_DISPLAY', 'LIBGL_ALWAYS_SOFTWARE', 'GALLIUM_DRIVER', 'WEBKIT_DISABLE_DMABUF_RENDERER')}
         runtime['system'] = platform.platform()
         for manager, command in [('dpkg-query', ['dpkg-query','-W','libgtk-3-0t64','libwebkit2gtk-4.1-0','webkit2gtk-driver']), ('rpm',['rpm','-q','gtk3','webkit2gtk4.1','webkitgtk6.0'])]:
             if shutil.which(manager):

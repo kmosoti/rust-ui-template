@@ -81,3 +81,27 @@ class DisplayArgumentTests(unittest.TestCase):
                 self.assertFalse(report['hardware_gpu_tested'])
             finally:
                 os.chdir(original)
+
+    def test_wayland_report_write_error_cannot_replace_native_failure(self):
+        import os
+        from pathlib import Path
+        import tempfile
+        import wayland_smoke
+        with tempfile.TemporaryDirectory() as directory:
+            original_directory = Path.cwd()
+            original_write = Path.write_text
+            writes = []
+            def write(path, text, *args, **kwargs):
+                writes.append(path)
+                if len(writes) == 3:  # help, initial report, final report
+                    raise OSError('report disk failure')
+                return original_write(path, text, *args, **kwargs)
+            try:
+                os.chdir(directory)
+                process = Mock(); process.wait.return_value = 9
+                with patch('sys.argv', ['wayland_smoke.py']), patch('wayland_smoke.Path.is_socket', return_value=True), patch('wayland_smoke.Path.write_text', write), patch('wayland_smoke.subprocess.check_output', side_effect=['--scale=SCALE','weston 13']), patch('wayland_smoke.subprocess.run'), patch('wayland_smoke.subprocess.Popen', return_value=process), patch('wayland_smoke.stop'):
+                    with self.assertRaisesRegex(RuntimeError, 'Native Wayland checks failed with exit code 9'):
+                        wayland_smoke.main()
+                self.assertEqual(len(writes), 3)
+            finally:
+                os.chdir(original_directory)
