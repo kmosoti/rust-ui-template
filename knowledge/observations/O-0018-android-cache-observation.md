@@ -62,3 +62,14 @@ and exact-hit only, so compatible fallback could look like a cold miss. Both
 profile phases now retain cache-matched-key too; a saved-profile regression
 distinguishes an old compatible key from the requested primary. No cache path,
 key or save policy changed.
+
+
+PR32 Linux run43060770879 attempts1/2 reproducibly fetched signed noble indices,
+then reported normal packages missing before any test. PR35's identical Linux
+setup progressed successfully. No application assertion ran in either failure;
+only one manual setup rerun was attempted. The cause is unknown. To investigate
+and improve setup convergence, log whitelisted apt state/list/architecture,
+index filenames/sizes and critical package policy, compare default/fresh policy,
+and make install recompute metadata from signed lists instead of generated
+binary package caches. This is an unconfirmed cache-state hypothesis until
+new diagnostics provide evidence; retain signatures, timeouts and every check.
