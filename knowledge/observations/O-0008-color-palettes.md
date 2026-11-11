@@ -104,6 +104,30 @@ rendered base/hover expectation respects it; this does not claim that every OS
 popup or hardware hover state was exercised. Evidence update is docs-only to
 avoid rerunning native packaging for a PR whose implementation is unchanged.
 
+## Integration-native disconnect and unchanged rerun
+
+The subsequent develop push run
+[42930850475 attempt 1](https://github.com/kmosoti/rust-ui-template/actions/runs/42930850475/attempts/1)
+failed in installed-production smoke: WebDriver disconnected with
+`http.client.RemoteDisconnected` at native_smoke.py line 75 while registering the
+error observer, before palette assertions. The log shows connection reset by
+peer. EGL/DRI3 warnings appear in both successful and failed logs, so they do not
+establish the cause. PR16's native run had already passed.
+
+Executed `gh run rerun 42930850475 --failed` without changing source, workflow,
+assertions or timeouts. [Attempt 2](https://github.com/kmosoti/rust-ui-template/actions/runs/42930850475/attempts/2)
+passed in 3m19s, including installed palette/navigation/CSP and restricted-window
+permission checks. Retrieved explicit attempts/1/jobs and attempts/2/jobs API
+responses and `gh run view 42930850475 --attempt 2 --log`; preserved the failed
+attempt log before rerun. Attempt 2 production smoke was 37s, fixture build 27s,
+and denial smoke 32s. Source remained develop d3fcd91 throughout.
+
+Observed: one integration transport disconnect, followed by an unchanged pass.
+Unknown: root cause and recurrence rate. This is not proof of deterministic
+native stability or a repaired browser crash. No blanket retry or weakened check
+was added. Investigate driver/WebKit process diagnostics if it recurs; do not
+attribute it to palette contrast or the EGL warning without evidence.
+
 ## Limits
 
 No local native launch without GTK/WebKit SDK. Actual installed palette switching, assets and retained CSP/permission checks
