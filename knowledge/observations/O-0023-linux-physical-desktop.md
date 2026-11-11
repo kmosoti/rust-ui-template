@@ -55,7 +55,7 @@ existing package was replaced. Runtime dependencies were already present.
 | Dimension | Observed value |
 | --- | --- |
 | OS / architecture / kernel | Fedora Linux 44 Workstation / x86_64 / 7.2.13-200.fc44.x86_64 |
-| Session / compositor | Existing GNOME Wayland `wayland-0`; GNOME Shell/Mutter 50.6-2.fc44 |
+| Session / compositor | Existing GNOME Wayland `wayland-0`; GNOME Shell 50.6-1.fc44, Mutter 50.6-2.fc44 |
 | GTK / WebKitGTK / matching WebKitWebDriver package | GTK 3.24.52-2.fc44; webkit2gtk4.1 and webkitgtk6.0 2.54.2-1.fc44 |
 | Python native accessibility | python3-pyatspi 2.58.2-1.fc44; gobject-introspection 1.86.0-3.fc44 |
 | Mesa | 26.2.5-1.fc44 |
