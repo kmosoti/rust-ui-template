@@ -42,3 +42,4 @@ tauri-utils = { path = "../../vendor/tauri-utils-2.10.2" }
 tauri-codegen = { path = "../../vendor/tauri-codegen-2.7.4" }
 dirs-sys = { path = "../../vendor/dirs-sys-0.5.0" }
 wry = { path = "../../vendor/wry-0.57.2" }
+markup5ever_rcdom = { path = "../../vendor/markup5ever_rcdom-0.40.1+unofficial" }

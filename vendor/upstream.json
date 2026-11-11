@@ -164,5 +164,18 @@
       "src/wkwebview/synthetic_mouse_events.rs": "1a59d449b985266c58a296cb2bf40fb40fb1e37e27ccae40042253d7faad432b",
       "src/wkwebview/util.rs": "c7be7b4421d3d4ba06a61d39f4efc3ada0eb3e2d691078aa842c3ae76f95e755"
     }
+  },
+  {
+    "crate": "markup5ever_rcdom-0.40.1+unofficial",
+    "registry_checksum": "64206f12eb431c03d9b6f293846f8b0517578905b6c0cac266aa52f09c11ad7c",
+    "upstream_files": {
+      ".cargo_vcs_info.json": "e511c732bfc7cc2575492ee1e0f05b2861262aeab030ed15c45c8ca33df16160",
+      "Cargo.toml": "75b878f0b8150bad6e267ca99cc9efcb1740b6ece4cab976d3d560d03821cdd4",
+      "Cargo.toml.orig": "61ef1655b841d3c60a66f83433b932d59bcb292cd8de803d7880e99a17fbc90f",
+      "LICENSE-APACHE": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+      "LICENSE-MIT": "86dd7f026f916daf7511e39951ad8ea8cf55a8db67ae64060dacf829761c18f3",
+      "README.md": "64b718e0238713a932cc94dd5cec1dcf4021cc34550f676b2379e22fe854b4ff",
+      "lib.rs": "e42eb615c97d8c61d3f1e379f30314ab4fcf3c5e654c5fd354187e7fe029a2a5"
+    }
   }
 ]

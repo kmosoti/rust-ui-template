@@ -1,0 +1,30 @@
+--- a/lib.rs
++++ b/lib.rs
+@@ -643,6 +643,7 @@
+                     NodeData::Element {
+                         ref name,
+                         ref attrs,
++                        ref template_contents,
+                         ..
+                     } => {
+                         serializer.start_elem(
+@@ -650,10 +651,17 @@
+                             attrs.borrow().iter().map(|at| (&at.name, &at.value[..])),
+                         )?;
+ 
+-                        ops.reserve(1 + handle.children.borrow().len());
++                        // HTML template children live in a separate document fragment.
++                        // Serialize that fragment's children inside the template element.
++                        let template = template_contents.borrow();
++                        let children = match template.as_ref() {
++                            Some(fragment) => fragment.children.borrow(),
++                            None => handle.children.borrow(),
++                        };
++                        ops.reserve(1 + children.len());
+                         ops.push_front(SerializeOp::Close(name.clone()));
+ 
+-                        for child in handle.children.borrow().iter().rev() {
++                        for child in children.iter().rev() {
+                             ops.push_front(SerializeOp::Open(child.clone()));
+                         }
+                     },

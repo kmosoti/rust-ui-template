@@ -64,3 +64,16 @@ recorded actual cached POM bytes through Gradle. Normal
 --no-configuration-cache` then passed (40s; 77 tasks). This compiled instrumentation
 and Android resources/code with Kotlin 2.4.21 and strict metadata; it deliberately
 excluded the Rust build task and is not APK runtime/ABI evidence.
+
+## HTML template preservation regression
+
+Final backend inspection found rcdom's serializer ignored template_contents.
+`cargo test --manifest-path apps/native/Cargo.toml -p native-html-tests --locked
+--offline template_contents_survive_injection` first failed with the actual output
+`<template></template>` instead of its paragraph/script fragment. A small fifth
+upstream-source patch makes SerializableHandle traverse template fragment children
+using the existing HTML5 serializer (no regex or application DOM mutation).
+Cargo generated the native lockfile source change. All8 actual Wry-source tests,
+12 Tauri HTML/CSP tests (including nested/inert templates) and the full native
+cargo-deny gate now pass locally. Native integration CI must rerun. Archive/file
+provenance and complete patch diffs are retained for the additional source.
