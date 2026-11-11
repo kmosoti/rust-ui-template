@@ -39,3 +39,12 @@ future work. Revisit on distro/runtime updates or another native disconnect.
 
 - **observes**: [D-0009](../decisions/D-0009-linux-android-delivery.md)
 - **continues**: [O-0009](O-0009-native-entry.md)
+
+## Independent review corrections
+
+Medium reviewer caught an over-broad text replacement duplicating production
+steps in the restricted workflow. Rewrote the explicit phase steps; restricted
+packages never overwrite production copies and a final SHA256 check guards them.
+Added both explicit denial flags/modes. Reviewer also identified cleanup OSError
+or close failures masking an active exception; cleanup now preserves an earlier
+failure but propagates cleanup failure after success. Two regression cases added.
