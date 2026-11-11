@@ -178,3 +178,26 @@ trusted develop push seeds them. Record a cold run, seed and three warm runs wit
 the same application source/toolchain/image. Keep all actual APK, production,
 denial, image, dependency, hash and source-drift checks. Cache partitioning alone
 is not evidence of a faster job; report any storage benefit separately.
+
+
+### Owned Ubuntu dependency setup
+
+`bash scripts/setup_linux.sh` creates one private Ubuntu source declaration and
+signed index set, applying the same explicit options to update/policy/install.
+Only Ubuntu package sources are needed for this package group. The system source
+file, keyring, suites/components and validity checks remain authoritative; a
+reachable third-party mirror changes transport, not trust. No system apt-list
+snapshot is restored. Metadata is removed on normal/error/signal exit; forced
+SIGKILL still relies on ephemeral runner cleanup. The job bounds setup to10min.
+
+```mermaid
+flowchart LR
+ S[System Ubuntu source and keyring] --> C[Owned source copy / selected mirror]
+ C --> I[Owned authenticated indexes]
+ I --> P[Same options for policy and install]
+ P --> V[GTK/WebKit version and all package runtime checks]
+ I --> X[Owned metadata cleanup]
+```
+
+This isolates observed index/configuration inconsistency; it does not establish
+its underlying cause. O-0018 retains failed runs and fresh/repeated evidence.

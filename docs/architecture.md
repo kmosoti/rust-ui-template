@@ -332,7 +332,8 @@ It does not verify Leptos, accessibility, cancellation I/O or native permissions
 
 ```mermaid
 flowchart LR
-  P[One production and one restricted DEB/RPM] --> X[Forced X11 / Xvfb]
+  A[Owned Ubuntu source and signed index set] --> P[One production and one restricted DEB/RPM]
+  P --> X[Forced X11 / Xvfb]
   P --> W[Owned private bus / headless Weston]
   W --> C[Forced Wayland client / software Mesa]
   X --> N[Installed-app WebDriver assertions]

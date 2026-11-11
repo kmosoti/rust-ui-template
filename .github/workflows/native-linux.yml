@@ -28,17 +28,7 @@ jobs:
         id: sdk
         timeout-minutes: 10
         run: |
-          # Hosted Azure mirror repeatedly stalled before any test. Keep Ubuntu's
-          # signed repository suites/components/keyring; use a reachable HTTPS mirror.
-          sudo sed -i 's|mirror+file:/etc/apt/apt-mirrors.txt|https://mirrors.edge.kernel.org/ubuntu|g; s|mirror+file:/etc/apt/apt-security-mirrors.txt|https://mirrors.edge.kernel.org/ubuntu|g; s|http://azure.archive.ubuntu.com/ubuntu|https://mirrors.edge.kernel.org/ubuntu|g; s|https://azure.archive.ubuntu.com/ubuntu|https://mirrors.edge.kernel.org/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources
-          sudo apt-get -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 -o Acquire::Retries=1 update
-          # Whitelisted diagnostics: no full configuration/environment dump.
-          sudo apt-config shell APT_STATE Dir::State APT_LISTS Dir::State::lists APT_ARCH APT::Architecture
-          sudo ls -lh /var/lib/apt/lists
-          sudo apt-cache policy libwebkit2gtk-4.1-dev weston at-spi2-core
-          sudo apt-cache -o Dir::Cache::pkgcache= -o Dir::Cache::srcpkgcache= policy libwebkit2gtk-4.1-dev weston at-spi2-core
-          # Recompute metadata from signed lists rather than image-generated bins.
-          sudo apt-get -o Dir::Cache::pkgcache= -o Dir::Cache::srcpkgcache= -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 -o Acquire::Retries=1 install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf webkit2gtk-driver xvfb desktop-file-utils weston wayland-utils libgl1-mesa-dri libegl-mesa0 libglib2.0-bin python3-gi python3-pyatspi at-spi2-core fonts-noto-core
+          bash scripts/setup_linux.sh
           pkg-config --modversion gtk+-3.0 webkit2gtk-4.1
           echo "version=$(pkg-config --modversion gtk+-3.0 webkit2gtk-4.1 | tr '\n' '-')" >> "$GITHUB_OUTPUT"
       - uses: ./.github/actions/restore-build-cache
