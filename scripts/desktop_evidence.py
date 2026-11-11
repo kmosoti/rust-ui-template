@@ -8,7 +8,7 @@ import signal
 import subprocess
 import sys
 
-from wayland_smoke import free_ports, stop
+from owned_process import free_ports, stop
 
 
 def main():

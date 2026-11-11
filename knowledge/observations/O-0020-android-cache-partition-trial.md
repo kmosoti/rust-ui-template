@@ -159,3 +159,34 @@ Seed SDK setup91s, ABI274s, emulator150s. Warm1 has been requested with
 seed profile before rerunning because Actions artifact retention/attempt behavior
 can remove earlier downloads. Adoption still awaits three successful exact-hit
 warm runs and the actual read-only synthetic fallback probe.
+
+
+## Old-runner warm observations and canceled sample
+
+Same sourcea88b6c6 and image20261101.360.1:
+
+| Attempt | Outcome | Job | Restores SDK/deps/targets | ABI | Emulator step |
+| --- | --- | ---: | --- | ---: | ---: |
+|2 |passed |347s |67/15/14s |62s |127s |
+|3 |passed |311s |60/15/13s |50s |113s |
+|4 |canceled after stall |1476s |79/13/10s |82s |1220s |
+
+The first two successful attempts have error-free all-exact-hit profiles
+(artifacts13877614409,13881780197). Attempt4 restored all three exact entries,
+passed both actual instrumentation cases and captured complete evidence, then
+stalled after its last application output. It is NOT a successful warm sample.
+The independent reviewer recommended canceling only that run at20min emulator
+step time; cancellation requested18:28:33, step ended18:28:47. Preserve device
+artifact13882119469 and restored profile13881443488. No post-validation profile
+or source-drift result exists, so do not impute a successful total or speedup.
+
+The actual synthetic fallback probe43072463454 passed320s, with SDK exact match
+and dependency/target primary equal to matched+'-probe'; both phases error-free,
+no PR cache saves. Source d2df099cb93bc1b066f8c169ae188c2f451fba25, same image,
+artifact13879665097. This tests backend fallback, not a real dependency upgrade.
+
+[O-0021](O-0021-android-lifecycle-stall.md) records the targeted lifecycle correction.
+Corrected-runner measurements must be labeled separately; old canceled data
+cannot be discarded or combined as a successful third observation. No adoption
+or #31 closure is established from only the two successes. Transfer itself was
+not faster in these samples, regardless of shorter successful job totals.

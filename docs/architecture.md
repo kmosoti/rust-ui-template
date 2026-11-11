@@ -387,3 +387,24 @@ The three roots are disjoint. No old monolithic restore overlaps them. SDK uses 
 tool/setup/vendor/build compatibility tuple; only lock/verification identities
 vary after that prefix. The SDK key excludes
 Rust/Gradle locks so an unrelated dependency update need not duplicate it.
+
+
+## Host test process ownership
+
+```mermaid
+flowchart LR
+  S[Shell / bounded AVD creation] --> A[Owned Android emulator session]
+  A --> B[Boot readiness]
+  B --> P[Production assertions]
+  P --> D[Restricted assertions]
+  D --> C[Owned serial shutdown request]
+  C --> K[Bounded TERM / KILL / wait]
+  W[Wayland and desktop/native drivers] --> K
+  A --> J[Phase journal / original failure evidence]
+  K --> J
+```
+
+Shared `owned_process` handles process-group termination; display and Android
+controllers own their specific setup, readiness and evidence. No controller
+replays failed application assertions or kills a global adb server. Detached
+services and external SIGKILL remain explicit limits of this ownership model.
