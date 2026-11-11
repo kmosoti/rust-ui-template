@@ -348,3 +348,19 @@ flowchart LR
 The software CI compositor owns its runtime, bus and process groups; the human
 harness preserves the existing session/settings. Hardware and Orca results are
 separate evidence, never inferred from software CI or device enumeration.
+## Android cache observation boundary
+
+```mermaid
+flowchart LR
+ Restore[Optional trusted cache restore] --> Before[Read-only metadata profile]
+ Before --> Verify[Unchanged build / APK / emulator / denial checks]
+ Verify --> After[Read-only metadata profile]
+ After --> Report[JSON sizes / source / image / key / hit / overhead]
+ Verify --> Save[Successful develop push only: trusted save]
+ Cold[Explicit PR cold label] --> Miss[Skip restore; never save PR state]
+ Miss --> Before
+```
+
+The observer does not read file contents or alter cached inputs. Layout changes
+require separate measured comparison; [O-0018](../knowledge/observations/O-0018-android-cache-observation.md)
+records outcomes and remaining evidence.

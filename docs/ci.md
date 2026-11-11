@@ -162,3 +162,19 @@ SDK verification11s, ABI builds147s and production/denial VM checks159s. Larger
 cache transfer work is tracked in #31; no test coverage is traded away for speed.
 See [O-0017](../knowledge/observations/O-0017-issue1-completion.md) for exact commands,
 cache trust, per-run evidence and source/environment limitations.
+
+## Android cache experiments
+
+The Android job records `android-cache-profile` JSON immediately after restore
+and after successful verification. Each non-overlapping root has apparent and
+allocated bytes plus immediate-child breakdowns; do not sum parent and child
+figures. Source, runner image, cache key/hit and profiler overhead are included.
+GitHub's cache API supplies compressed archive sizes separately.
+
+For a controlled cold PR run, add the `ci-cache-cold` label; this skips restoration
+without changing source. Remove it for normal restored runs. Label events only
+run Android for this particular control. PRs never save caches; only a successful
+trusted develop push seeds them. Record a cold run, seed and three warm runs with
+the same application source/toolchain/image. Keep all actual APK, production,
+denial, image, dependency, hash and source-drift checks. Cache partitioning alone
+is not evidence of a faster job; report any storage benefit separately.
