@@ -32,6 +32,7 @@ def main():
     environment.update(GDK_BACKEND='wayland', LIBGL_ALWAYS_SOFTWARE='1', GALLIUM_DRIVER='llvmpipe', WEBKIT_DISABLE_DMABUF_RENDERER='1')
     compositor = test = None
     original = None
+    started = time.monotonic()
     with tempfile.TemporaryDirectory(prefix='rust-ui-wayland-') as runtime:
         os.chmod(runtime, 0o700)
         environment.update(XDG_RUNTIME_DIR=runtime, WAYLAND_DISPLAY='rust-ui-owned')
@@ -93,10 +94,19 @@ def main():
                         stop(process, timeout=15 if process is test else 5)
                     except Exception as error:
                         failures.append(str(error))
-                if failures:
-                    (artifacts/(args.artifact_prefix+'-cleanup.json')).write_text(json.dumps({'original_error': str(original) if original else None, 'cleanup_errors': failures})+'\n')
-                    if original is None:
-                        raise RuntimeError('Owned Wayland cleanup failed')
+                try:
+                    result_report = json.loads(report.read_text())
+                    result_report.update(elapsed_seconds=time.monotonic()-started,
+                                         status='passed' if original is None and not failures else 'failed')
+                    report.write_text(json.dumps(result_report, indent=2)+'\n')
+                    if failures:
+                        (artifacts/(args.artifact_prefix+'-cleanup.json')).write_text(json.dumps({'original_error': str(original) if original else None, 'cleanup_errors': failures})+'\n')
+                except Exception as capture_error:
+                    if original is None and not failures:
+                        raise
+                    print('Wayland diagnostic capture failed:', type(capture_error).__name__)
+                if failures and original is None:
+                    raise RuntimeError('Owned Wayland cleanup failed')
 
 
 if __name__ == '__main__':
