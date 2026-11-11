@@ -35,7 +35,27 @@ def request(method, path, body=None, timeout=40):
     return value
 
 
-def record_failure(directory, name, phase, error, session):
+def owned_process_snapshot(pid, proc=Path('/proc'), limit=64):
+    """Bounded descendants and whitelisted state; never commands/environment."""
+    pending = [pid]; seen = set(); rows = []
+    while pending and len(seen) < limit:
+        current = pending.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        row = {'pid': current}
+        try:
+            fields = dict(line.split(':', 1) for line in (proc/str(current)/'status').read_text().splitlines() if ':' in line)
+            row.update({key: fields[key].strip() for key in ('Name', 'State', 'PPid', 'Threads', 'CoreDumping') if key in fields})
+            children = (proc/str(current)/'task'/str(current)/'children').read_text().split()
+            pending.extend(int(child) for child in children)
+        except (OSError, ValueError):
+            row['capture'] = 'exited or unavailable during snapshot'
+        rows.append(row)
+    return {'processes': rows, 'truncated': bool(pending)}
+
+
+def record_failure(directory, name, phase, error, session, driver=None):
     """Best-effort artifacts must never replace the original failure."""
     try:
         directory = Path(directory)
@@ -44,6 +64,8 @@ def record_failure(directory, name, phase, error, session):
             'phase': phase, 'type': type(error).__name__, 'error': str(error),
             'traceback': traceback.format_exc(), 'session_created': session is not None,
             'webdriver_response': getattr(error, 'webdriver_response', None),
+            'driver_returncode': driver.poll() if driver else None,
+            'owned_processes': owned_process_snapshot(driver.pid) if driver else None,
             'python': platform.python_version(), 'system': platform.platform(),
         }, indent=2))
         if session:
@@ -218,7 +240,7 @@ def main():
             print('Native driver log tail:', Path(log.name).read_text(errors='replace')[-8192:])
         except Exception:
             pass
-        record_failure('artifacts', args.artifact_prefix, phase, error, session)
+        record_failure('artifacts', args.artifact_prefix, phase, error, session, driver)
         raise
     finally:
         if session:
