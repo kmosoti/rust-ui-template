@@ -176,3 +176,7 @@ WebDriver key actions and measured software output scale. It retains the origina
 headless/AT-SPI matrix and documents the Weston13 headless seat limitation and
 explicit nested software alternative. Hardware desktop scaling and human Orca
 remain separate pending dimensions; historical failures above remain evidence.
+
+[O-0023](O-0023-linux-physical-desktop.md) records the first actual Fedora GNOME
+Wayland desktop continuation, its retained failed AT-SPI run and PID-scoped
+correction, measured app-attributed hardware work, and manual observation limits.

@@ -339,17 +339,24 @@ flowchart LR
   W --> C[Forced Wayland client / software Mesa]
   X --> N[Installed-app WebDriver assertions]
   C --> N
-  C --> A[Native AT-SPI roles and names]
+  C --> Access[Native AT-SPI roles and names]
   W --> E[Protocol / compositor / runtime evidence]
   N --> E
-  A --> E
+  Access --> E
   H[Existing human desktop] --> D[Desktop evidence harness]
+  D --> Pid[Exact owned executable PID]
+  Pid --> Access
+  D --> Scale[Explicit expected DPR / measured viewport and PNG]
   D --> M[Pending GPU attribution and manual Orca review]
 ```
 
 The software CI compositor owns its runtime, bus and process groups; the human
 harness preserves the existing session/settings. Hardware and Orca results are
 separate evidence, never inferred from software CI or device enumeration.
+The shared inspector discovers only top-level application PIDs and traverses the
+owned application's window tree; unrelated desktop content cannot consume its
+node/depth budget or supply evidence through a matching title. Expected DPR is
+an assertion passed to the native verifier, never a desktop setting mutation.
 ## Android cache observation boundary
 
 ```mermaid

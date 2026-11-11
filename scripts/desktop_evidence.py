@@ -18,6 +18,7 @@ def main():
     parser.add_argument('--artifact-prefix', default='desktop')
     parser.add_argument('--keyboard', action='store_true')
     parser.add_argument('--atspi', action='store_true', help='Requires accessibility already enabled on this desktop')
+    parser.add_argument('--expected-dpr', type=int, choices=(1, 2), help='Assert WebView DPR and PNG dimensions; does not change desktop scaling')
     args = parser.parse_args()
     backend = os.environ.get('GDK_BACKEND')
     if backend not in ('x11', 'wayland'):
@@ -37,7 +38,7 @@ def main():
         driver = device/'driver'
         row['driver'] = driver.resolve().name if driver.exists() else None
         devices.append(row)
-    report = {'system': platform.platform(), 'session': {key: os.environ.get(key) for key in ('XDG_SESSION_TYPE', 'XDG_CURRENT_DESKTOP', 'GDK_BACKEND', 'DISPLAY', 'WAYLAND_DISPLAY')}, 'drm_devices': devices, 'application_renderer': 'not measured: attach compositor/driver evidence manually', 'hardware_gpu_verified': False, 'orca_verified': False}
+    report = {'system': platform.platform(), 'session': {key: os.environ.get(key) for key in ('XDG_SESSION_TYPE', 'XDG_CURRENT_DESKTOP', 'GDK_BACKEND', 'DISPLAY', 'WAYLAND_DISPLAY')}, 'expected_dpr': args.expected_dpr, 'drm_devices': devices, 'application_renderer': 'not measured: attach compositor/driver evidence manually', 'hardware_gpu_verified': False, 'orca_verified': False}
     (artifacts/(args.artifact_prefix+'-desktop.json')).write_text(json.dumps(report, indent=2)+'\n')
     port, native_port = free_ports()
     command = [sys.executable, 'scripts/native_smoke.py', '--application', args.application, '--display-backend', backend, '--artifact-prefix', args.artifact_prefix, '--port', str(port), '--native-port', str(native_port)]
@@ -45,6 +46,8 @@ def main():
         command.append('--keyboard')
     if args.atspi:
         command.append('--atspi')
+    if args.expected_dpr is not None:
+        command.extend(['--expected-dpr', str(args.expected_dpr)])
     child = subprocess.Popen(command, start_new_session=True)
     try:
         if child.wait(timeout=240):

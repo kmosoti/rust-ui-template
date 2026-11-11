@@ -11,13 +11,18 @@ also needs gobject-introspection). Enable accessibility using the desktop's norm
 settings before an AT-SPI run. The harness never changes those settings, starts a
 replacement compositor or adjusts the existing session bus.
 
-Close other instances of this template before title-based AT-SPI inspection.
+Native AT-SPI inspection selects the exact executable PID from the owned driver
+descendants, then inspects only that application's matching window. Other apps
+and template instances are neither traversed nor terminated. Direct inspector
+use requires `--pid OWNED_APPLICATION_PID`; a matching title alone cannot supply
+evidence. Discovery is bounded to 256 top-level applications; the selected tree
+retains its 2,000-node and 24-level limits.
 From the repository root in that desktop session:
 
 ```sh
 # Choose the actual session, not both commands on an incompatible desktop.
-env -u DISPLAY GDK_BACKEND=wayland python3 scripts/desktop_evidence.py --atspi --artifact-prefix ubuntu-wayland-hardware
-GDK_BACKEND=x11 python3 scripts/desktop_evidence.py --atspi --artifact-prefix ubuntu-x11-hardware
+env -u DISPLAY GDK_BACKEND=wayland python3 scripts/desktop_evidence.py --atspi --expected-dpr 1 --artifact-prefix ubuntu-wayland-hardware
+GDK_BACKEND=x11 python3 scripts/desktop_evidence.py --atspi --expected-dpr 1 --artifact-prefix ubuntu-x11-hardware
 ```
 
 Use `--application` for a deliberately different installed executable. Remove
@@ -27,6 +32,14 @@ metadata. DRM device/driver presence proves capability only: it leaves
 `hardware_gpu_verified` false. Attach compositor diagnostics or a graphics trace
 attributing hardware rendering to this app, with GPU model/driver/renderer and
 capture method. Do not infer that from a WebKit user agent or `glxinfo` alone.
+
+Choose `--expected-dpr 1` or `2` for the intended desktop observation. This asserts
+the measured WebView DPR and PNG dimensions; it does not set desktop scaling.
+Record the human-requested scale and compositor-observed scale of the output
+actually entered by the app separately, especially on mixed-scale desktops.
+Keep logical viewport size, DPR and PNG pixel dimensions distinct. If the app
+opens on another output, retain the mismatch and correct the test setup before
+a separately named run; do not relabel or replay a failed assertion.
 
 For each actual GPU/session under review, attach the report, native AT-SPI tree,
 functional results, library/latest-response screenshots, and manual observations:
@@ -75,7 +88,7 @@ python3 scripts/wayland_smoke.py --keyboard --scale 2 --artifact-prefix software
 # Explicit software nesting for Weston 13; no automatic fallback:
 python3 scripts/wayland_smoke.py --compositor-backend x11 --keyboard --scale 2 --artifact-prefix nested-scale2
 # Existing real desktop (does not change renderer or accessibility settings):
-python3 scripts/desktop_evidence.py --keyboard --artifact-prefix desktop-keys
+python3 scripts/desktop_evidence.py --keyboard --expected-dpr 1 --artifact-prefix desktop-keys
 ```
 
 Output scaling is a compositor setting, not CSS zoom or browser emulation.

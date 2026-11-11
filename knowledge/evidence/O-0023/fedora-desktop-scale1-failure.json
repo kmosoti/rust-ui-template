@@ -1,0 +1,56 @@
+{
+  "phase": "native accessibility tree",
+  "type": "CalledProcessError",
+  "error": "Command '['/usr/bin/python3', 'scripts/inspect_atspi.py', '--window', 'Rust UI Template', '--output', 'artifacts/fedora-desktop-scale1-atspi.json']' returned non-zero exit status 1.",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/kmosoti/Documents/Codex/2026-11-11-continue-linux-desktop-validation-for-kmosoti/linux-desktop-validation/scripts/native_smoke.py\", line 224, in main\n    subprocess.run(['/usr/bin/python3', 'scripts/inspect_atspi.py', '--window', 'Restricted test window' if args.denial_fixture else 'Rust UI Template', '--output', 'artifacts/' + args.artifact_prefix + '-atspi.json'], check=True, timeout=12)\n    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib64/python3.14/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['/usr/bin/python3', 'scripts/inspect_atspi.py', '--window', 'Rust UI Template', '--output', 'artifacts/fedora-desktop-scale1-atspi.json']' returned non-zero exit status 1.\n",
+  "session_created": true,
+  "webdriver_response": null,
+  "driver_returncode": null,
+  "owned_processes": {
+    "processes": [
+      {
+        "pid": 3505735,
+        "Name": "tauri-driver",
+        "State": "S (sleeping)",
+        "PPid": "3505731",
+        "Threads": "1",
+        "CoreDumping": "0"
+      },
+      {
+        "pid": 3505736,
+        "Name": "WebKitWebDriver",
+        "State": "S (sleeping)",
+        "PPid": "3505735",
+        "Threads": "6",
+        "CoreDumping": "0"
+      },
+      {
+        "pid": 3505738,
+        "Name": "rust-ui-native",
+        "State": "S (sleeping)",
+        "PPid": "3505736",
+        "Threads": "37",
+        "CoreDumping": "0"
+      },
+      {
+        "pid": 3505829,
+        "Name": "WebKitWebProces",
+        "State": "S (sleeping)",
+        "PPid": "3505738",
+        "Threads": "55",
+        "CoreDumping": "0"
+      },
+      {
+        "pid": 3505812,
+        "Name": "WebKitNetworkPr",
+        "State": "S (sleeping)",
+        "PPid": "3505738",
+        "Threads": "12",
+        "CoreDumping": "0"
+      }
+    ],
+    "truncated": false
+  },
+  "python": "3.14.8",
+  "system": "Linux-7.2.13-200.fc44.x86_64-x86_64-with-glibc2.43"
+}

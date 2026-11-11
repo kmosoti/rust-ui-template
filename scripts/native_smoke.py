@@ -68,6 +68,24 @@ def owned_process_snapshot(pid, proc=Path('/proc'), limit=64):
     return {'processes': rows, 'truncated': bool(pending)}
 
 
+def owned_application_pid(driver_pid, application, proc=Path('/proc')):
+    """Resolve one exact executable among owned descendants, never a title match."""
+    snapshot = owned_process_snapshot(driver_pid, proc)
+    if snapshot['truncated']:
+        raise RuntimeError('Owned application lookup exceeded its process bound')
+    expected = Path(application).resolve()
+    matches = []
+    for row in snapshot['processes']:
+        try:
+            if (proc/str(row['pid'])/'exe').resolve(strict=True) == expected:
+                matches.append(row['pid'])
+        except OSError:
+            continue
+    if len(matches) != 1:
+        raise RuntimeError(f'Expected one owned application process; found {len(matches)}')
+    return matches[0]
+
+
 def record_failure(directory, name, phase, error, session, driver=None):
     """Best-effort artifacts must never replace the original failure."""
     try:
@@ -221,7 +239,8 @@ def main():
             Keyboard(request, prefix, execute, wait, args.artifact_prefix).run()
         if args.atspi:
             phase = 'native accessibility tree'
-            subprocess.run(['/usr/bin/python3', 'scripts/inspect_atspi.py', '--window', 'Restricted test window' if args.denial_fixture else 'Rust UI Template', '--output', 'artifacts/' + args.artifact_prefix + '-atspi.json'], check=True, timeout=12)
+            application_pid = owned_application_pid(driver.pid, args.application)
+            subprocess.run(['/usr/bin/python3', 'scripts/inspect_atspi.py', '--pid', str(application_pid), '--window', 'Restricted test window' if args.denial_fixture else 'Rust UI Template', '--output', 'artifacts/' + args.artifact_prefix + '-atspi.json'], check=True, timeout=12)
         execute("document.querySelector(\"nav[aria-label='Main navigation'] a[href='#/']\").click()")
         wait("!!document.querySelector('#number')")
         execute("window.__nativeErrors=[]; addEventListener('error', e=>window.__nativeErrors.push(e.message)); addEventListener('unhandledrejection', e=>window.__nativeErrors.push(String(e.reason)));")
