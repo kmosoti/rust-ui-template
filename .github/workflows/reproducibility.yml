@@ -1,10 +1,11 @@
 name: Clean frontend reproducibility
 on:
+  # Native crates/vendor are an isolated workspace, not frontend build inputs.
   pull_request:
-    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
+    paths-ignore: ["README.md", "docs/**", "knowledge/**", "apps/native/**", "vendor/**"]
   push:
     branches: [develop]
-    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
+    paths-ignore: ["README.md", "docs/**", "knowledge/**", "apps/native/**", "vendor/**"]
   workflow_dispatch:
 permissions:
   contents: read
