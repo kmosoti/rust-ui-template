@@ -1,6 +1,11 @@
 package dev.kmosoti.rustuitemplate
 
 import android.graphics.Bitmap
+import android.graphics.Rect
+import android.graphics.Color
+import android.os.Handler
+import android.os.Looper
+import android.view.PixelCopy
 import android.os.SystemClock
 import android.view.MotionEvent
 import android.content.pm.ActivityInfo
@@ -209,19 +214,85 @@ class NativeAppTest {
     }
 
     private fun capture(name: String) {
-        // DOM resize precedes compositor presentation during device rotation.
-        val painted = CountDownLatch(1)
-        instrumentation.runOnMainSync {
-            web.postVisualStateCallback(0L, object : WebView.VisualStateCallback() {
-                override fun onComplete(requestId: Long) {
-                    web.postOnAnimation { web.postOnAnimation { painted.countDown() } }
-                }
-            })
-        }
-        assertTrue("WebView did not paint $name", painted.await(10, TimeUnit.SECONDS))
-        instrumentation.waitForIdleSync()
+        // PixelCopy reads this window's presented WebView surface rather than
+        // UiAutomation's occasionally stale full-display rotation buffer.
         val directory = File(instrumentation.targetContext.filesDir, "evidence").apply { mkdirs() }
-        instrumentation.uiAutomation.takeScreenshot()?.let { bitmap -> File(directory, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }
+        val deadline = SystemClock.uptimeMillis() + 10000
+        var diagnostics = "no sample"
+        var consecutive = 0
+        while (SystemClock.uptimeMillis() < deadline) {
+            val painted = CountDownLatch(1)
+            instrumentation.runOnMainSync {
+                web.postVisualStateCallback(0L, object : WebView.VisualStateCallback() {
+                    override fun onComplete(requestId: Long) { web.postOnAnimation { painted.countDown() } }
+                })
+            }
+            assertTrue("WebView did not paint $name", painted.await(3, TimeUnit.SECONDS))
+            val map = JSONObject(js("""(()=>{
+              const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
+              const ctx=canvas.getContext('2d');
+              const points=[];
+              for(const fx of [.1,.3,.5,.7,.9]) for(const fy of [.15,.4,.65,.85]) {
+                const x=innerWidth*fx,y=innerHeight*fy;
+                let el=document.elementFromPoint(x,y),color=null;
+                // Avoid foreground pixels: only sample padding/empty areas.
+                const range=document.createRange();
+                let covered=false;
+                for(const child of el?.childNodes??[]) if(child.nodeType===Node.TEXT_NODE && child.textContent.trim()) {
+                  range.selectNodeContents(child);
+                  for(const r of range.getClientRects()) if(x>=r.left-2&&x<=r.right+2&&y>=r.top-2&&y<=r.bottom+2) covered=true;
+                }
+                if(covered||el?.closest('img,svg,input,button,select,textarea')) continue;
+                while(el&&!color){ctx.clearRect(0,0,1,1);ctx.fillStyle=getComputedStyle(el).backgroundColor;ctx.fillRect(0,0,1,1);const c=Array.from(ctx.getImageData(0,0,1,1).data);if(c[3]===255)color=c;el=el.parentElement;}
+                if(color)points.push({x,y,r:color[0],g:color[1],b:color[2]});
+              }
+              const markers=Array.from(document.querySelectorAll('h1,nav a[aria-current="page"],input:focus')).map(e=>e.getBoundingClientRect().toJSON()).filter(r=>r.top>=0&&r.bottom<=innerHeight&&r.width>20&&r.height>10);
+              return {width:innerWidth,height:innerHeight,points,markers};
+            })()"""))
+            var bitmap: Bitmap? = null
+            val copied = CountDownLatch(1)
+            var result = -1
+            scenario.onActivity { activity ->
+                val position = IntArray(2); web.getLocationInWindow(position)
+                if (web.width > 0 && web.height > 0) {
+                    bitmap = Bitmap.createBitmap(web.width, web.height, Bitmap.Config.ARGB_8888)
+                    PixelCopy.request(activity.window, Rect(position[0], position[1], position[0]+web.width, position[1]+web.height), bitmap!!, { code -> result=code; copied.countDown() }, Handler(Looper.getMainLooper()))
+                } else copied.countDown()
+            }
+            assertTrue("PixelCopy timeout: $name", copied.await(3, TimeUnit.SECONDS))
+            val frame = bitmap
+            var valid = result == PixelCopy.SUCCESS && frame != null
+            if (valid && frame != null) {
+                val sx=frame.width/map.getDouble("width");val sy=frame.height/map.getDouble("height")
+                valid = kotlin.math.abs(sx-sy)<0.05
+                val points=map.getJSONArray("points")
+                var checked=0;var mismatches=0;var right=0
+                for(i in 0 until points.length()) {
+                    val point=points.getJSONObject(i);val x=(point.getDouble("x")*sx).toInt().coerceIn(0,frame.width-1);val y=(point.getDouble("y")*sy).toInt().coerceIn(0,frame.height-1)
+                    val pixel=frame.getPixel(x,y)
+                    if(kotlin.math.abs(Color.red(pixel)-point.getInt("r"))>18||kotlin.math.abs(Color.green(pixel)-point.getInt("g"))>18||kotlin.math.abs(Color.blue(pixel)-point.getInt("b"))>18)mismatches++
+                    checked++;if(x>frame.width*.65)right++
+                }
+                var hasText=false;val markers=map.getJSONArray("markers")
+                for(i in 0 until markers.length()) {
+                    val r=markers.getJSONObject(i);val colors=HashSet<Int>()
+                    val left=(r.getDouble("left")*sx).toInt().coerceIn(0,frame.width-1);val top=(r.getDouble("top")*sy).toInt().coerceIn(0,frame.height-1)
+                    val rightEdge=(r.getDouble("right")*sx).toInt().coerceIn(left+1,frame.width);val bottom=(r.getDouble("bottom")*sy).toInt().coerceIn(top+1,frame.height)
+                    for(y in top until bottom step 2) for(x in left until rightEdge step 2)colors.add(frame.getPixel(x,y))
+                    if(colors.size>12)hasText=true
+                }
+                valid=valid&&checked>=4&&right>=1&&mismatches==0&&hasText
+                diagnostics="copy=$result size=${frame.width}x${frame.height} scale=$sx/$sy samples=$checked right=$right mismatches=$mismatches text=$hasText"
+                File(directory,"capture-$name.json").writeText(map.toString())
+                File(directory,"$name.png").outputStream().use { assertTrue("PNG write failed: $name",frame.compress(Bitmap.CompressFormat.PNG,100,it)) }
+                frame.recycle()
+            } else diagnostics="copy=$result null=${frame==null}"
+            consecutive=if(valid)consecutive+1 else 0
+            File(directory,"capture-$name.txt").writeText(diagnostics)
+            if(consecutive>=2)return
+            Thread.sleep(100)
+        }
+        fail("No validated presented frame for $name: $diagnostics")
     }
 
     @After fun evidenceAndClose() {
