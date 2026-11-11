@@ -77,3 +77,10 @@ Cargo generated the native lockfile source change. All8 actual Wry-source tests,
 12 Tauri HTML/CSP tests (including nested/inert templates) and the full native
 cargo-deny gate now pass locally. Native integration CI must rerun. Archive/file
 provenance and complete patch diffs are retained for the additional source.
+
+The first diff check on the regenerated unified patch flagged its required blank
+context line as trailing whitespace. `.gitattributes` now disables whitespace
+warnings only for vendor/patches/*.patch; source checks remain unchanged and
+patch bytes are preserved. `git diff --check` passes with that format-specific
+attribute. The combined branch is rebased on reviewed native/capture develop
+8b45f560, retaining both sides of the knowledge-index append conflict.
