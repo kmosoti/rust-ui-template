@@ -269,6 +269,20 @@ async fn suite(page: &Page, url: &str) -> Result<()> {
     click(page, "Fast request").await?;
     check(page, "document.querySelector('[role=status]')?.dataset.tone === 'danger' && document.querySelector('[role=status]').textContent.includes('Enter a whole number')").await?;
     println!("PASS: navigation cleanup, keyboard activation and text-labeled feedback tones");
+    // A viewport shrink must reveal the whole focused field, not only its caret.
+    page.execute(SetDeviceMetricsOverrideParams::new(390, 844, 1.0, false))
+        .await?;
+    js(
+        page,
+        "document.querySelector('#number').focus({preventScroll:true}); window.scrollTo(0,0)",
+    )
+    .await?;
+    page.execute(SetDeviceMetricsOverrideParams::new(390, 420, 1.0, false))
+        .await?;
+    check(page, "(()=>{const r=document.querySelector('#number').getBoundingClientRect();return document.activeElement.id==='number' && r.top>=0 && r.bottom<=innerHeight})()").await?;
+    page.execute(SetDeviceMetricsOverrideParams::new(1440, 1000, 1.0, false))
+        .await?;
+    println!("PASS: complete focused field remains visible after viewport shrink");
     let axe = fs::read_to_string(".tools/axe.min.js")?;
     js(page, &axe).await?;
     let violations: serde_json::Value = page.evaluate_function("async () => (await axe.run()).violations.map(v => ({id:v.id, nodes:v.nodes.map(n=>n.target)}))").await?.into_value()?;

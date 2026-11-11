@@ -10,6 +10,7 @@ use leptos::{prelude::*, task::spawn_local};
 
 mod examples;
 mod palettes;
+mod viewport;
 
 fn current_route() -> String {
     web_sys::window()
@@ -38,6 +39,8 @@ pub fn App(read_host_info: HostInfoReader) -> impl IntoView {
         move |_| route.set(current_route()),
     );
     let _listener = StoredValue::new_local(listener);
+    // Dropping this owner drops EventListener and detaches the resize callback.
+    let _viewport_listener = StoredValue::new_local(viewport::keep_focused_field_visible());
     view! {
         <div data-palette=move || appearance.get() class="min-h-screen bg-canvas text-ink">
         <a class="skip-link" data-ui-overflow="allow" data-ui-reason="Visually hidden skip link expands on keyboard focus; tested before activation." href="#workspace-content" on:click=move |ev| {

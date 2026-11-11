@@ -32,3 +32,15 @@ text-zoom suite must pass after shared CSS. Local emulator unavailable (/dev/kvm
 absent); actual device critique remains pending CI evidence, never assumed.
 
 System-bar surround stays Nocturne canvas with light native system icons across palettes; it does not attempt to mirror app-session palette state. Browser production desktop and320px captures were viewed: rail, feature and rows retain clear hierarchy, no clipping or overflow. Actual Android geometry critique pending emulator evidence.
+
+
+## Rendered keyboard correction
+
+API36/Chrome133 capture: at1080physicalpx, IME starts near y1633 while the
+focused number field extends below it. Its caret was visible but the full field
+was not. Keep native system/IME/cutout padding; add an app-owner-scoped viewport
+shrink listener in Leptos. Center only a clipped focused form control, leaving
+ordinary navigation and scrolling unchanged. Dropping the app owner removes the
+listener. Browser regression reproduced the failure against old production
+assets; the Android full-field assertion remains unchanged. Startup now captures
+library layout as well; device visual critique remains pending the corrected run.

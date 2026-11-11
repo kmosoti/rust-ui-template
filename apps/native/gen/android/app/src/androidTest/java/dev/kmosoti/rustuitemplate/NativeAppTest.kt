@@ -60,7 +60,7 @@ class NativeAppTest {
         assertEquals("1", js("document.querySelectorAll('link[rel=stylesheet]').length"))
         waitFor("getComputedStyle(document.body).backgroundColor === 'rgb(17, 18, 22)'")
         js(instrumentation.context.assets.open("axe.min.js").bufferedReader().use { it.readText() })
-        accessibility()
+        accessibility(); layout(); capture("library")
         js("window.__nativeErrors=[]; addEventListener('error',e=>window.__nativeErrors.push(e.message)); addEventListener('unhandledrejection',e=>window.__nativeErrors.push(String(e.reason))); true")
     }
 
@@ -217,7 +217,7 @@ class NativeAppTest {
         try {
             val directory = File(instrumentation.targetContext.filesDir, "evidence").apply { mkdirs() }
             File(directory, "phase.txt").writeText(phase)
-            File(directory, "runtime.json").writeText(js("({userAgent:navigator.userAgent, width:innerWidth,height:innerHeight,webview:${JSONObject.quote(WebView.getCurrentWebViewPackage()?.versionName ?: "unknown")}})"))
+            File(directory, "runtime.json").writeText(js("({userAgent:navigator.userAgent, width:innerWidth,height:innerHeight,scrollY,focused:document.activeElement?.id,focusedBounds:document.activeElement?.getBoundingClientRect().toJSON(),webview:${JSONObject.quote(WebView.getCurrentWebViewPackage()?.versionName ?: "unknown")}})"))
             instrumentation.uiAutomation.takeScreenshot()?.let { bitmap -> File(directory, "screen.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } }
         } catch (error: Throwable) { android.util.Log.e("RustUiE2E", "Diagnostic capture unavailable", error) }
         try { if (::scenario.isInitialized) scenario.close() } catch (error: Throwable) { android.util.Log.e("RustUiE2E", "Cleanup unavailable", error) }
