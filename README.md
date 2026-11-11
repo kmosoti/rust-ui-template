@@ -103,6 +103,9 @@ See the [platform evidence matrix](docs/platforms.md) for verified and untested 
 No signing/notarization, persistence, mobile build or general platform support
 claim is made. See the knowledge records for exact execution evidence.
 
+[DEB/RPM package validation](docs/linux-packages.md) describes the Ubuntu and
+Fedora targets, metadata checks, diagnostics and unsigned artifacts.
+
 ## Selected architecture
 
 - **Leptos** owns UI components, client-side routing, and reactive presentation state.

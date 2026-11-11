@@ -22,5 +22,24 @@ class NativeTransportTests(unittest.TestCase):
                 request('POST', '/session', {})
 
 
+class NativeDiagnosticsTests(unittest.TestCase):
+    def test_disconnected_screenshot_does_not_hide_failure_details(self):
+        import tempfile
+        from pathlib import Path
+        from native_smoke import record_failure
+        with tempfile.TemporaryDirectory() as directory:
+            with patch('native_smoke.request', side_effect=ConnectionError('disconnected')):
+                record_failure(directory, 'probe', 'palette selection', ValueError('original'), 'session')
+            result = json.loads((Path(directory) / 'probe-failure.json').read_text())
+            self.assertEqual(result['type'], 'ValueError')
+            self.assertEqual(result['error'], 'original')
+            self.assertEqual(result['phase'], 'palette selection')
+
+    def test_unwritable_diagnostics_do_not_raise(self):
+        from native_smoke import record_failure
+        with patch('native_smoke.Path.mkdir', side_effect=OSError('cannot write')):
+            record_failure('/not-used', 'probe', 'startup', RuntimeError('original'), None)
+
+
 if __name__ == '__main__':
     unittest.main()

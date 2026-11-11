@@ -1,7 +1,7 @@
 ---
 id: O-0009
 type: observation
-status: local-checked-ci-pending
+status: linux-ci-passed
 updated: 2026-11-11
 added_by: agent
 human_ratified: false
@@ -21,7 +21,10 @@ UI or app-core change. Android is not yet built by this slice.
 Local native GTK/WebKit headers remain unavailable; Java21 and Docker daemon are
 available, /dev/kvm and Android SDK are absent. Linux installed regression is
 required in GitHub CI. Formatting and locked metadata checks are recorded with
-the PR; subsequent execution evidence is linked from the next packaging record.
+the PR; PR18 passed core27s, browser1m25s, and Linux3m39s, including installed UI and
+restricted-window denial, then the independent medium reviewer rebase-landed as
+26ca10b75f4f85c22d3d633f2f70ec7c2413f3ec. See
+[O-0010](O-0010-linux-packages.md) for the next slice.
 
 ## Relations
 

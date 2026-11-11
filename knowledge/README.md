@@ -64,6 +64,8 @@ Provenance tracking **must never slow down agentic work**:
 | [D-0009 · Linux/Android delivery](decisions/D-0009-linux-android-delivery.md) | `agent` | `false` | DEB/RPM and Android test APK implementation sequence |
 | [O-0009 · Native library entry](observations/O-0009-native-entry.md) | `agent` | `false` | Shared entry preparation and Linux regression evidence |
 
+| [O-0010 · Linux packages](observations/O-0010-linux-packages.md) | `agent` | `false` | DEB/RPM installed tests and native diagnostics |
+
 ## Record protocol
 
 1. Use a stable ID, a descriptive filename, and front matter:

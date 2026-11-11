@@ -209,3 +209,21 @@ The isolated native workspace now exposes `rust_ui_native_lib::run()` and keeps
 the Linux executable as a thin caller. Linux-only x11/dbus features are scoped
 to that target. Android project generation and validation are subsequent work;
 this refactor alone is not Android build/launch evidence. Wire schema stays 1.
+
+## Linux package validation
+
+```mermaid
+flowchart LR
+  Assets[Production CSR assets] --> Binary[One Linux executable]
+  Binary --> Deb[Production DEB]
+  Binary --> Rpm[Production RPM]
+  Deb --> Ubuntu[Ubuntu24.04 install/reinstall/UI/remove]
+  Rpm --> Fedora[Fedora44 install/reinstall/UI/remove]
+  Fixture[Separate restricted config] --> Denial[Real IPC denial on both runtimes]
+  Ubuntu --> Evidence[Driver logs/screenshots/failure stages]
+  Fedora --> Evidence
+  Denial --> Evidence
+```
+
+Production package artifacts exclude restricted fixtures. See
+[Linux package instructions](linux-packages.md) for exact validation boundaries.

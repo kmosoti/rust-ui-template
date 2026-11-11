@@ -26,12 +26,21 @@
   "bundle": {
     "active": true,
     "targets": [
-      "deb"
+      "deb",
+      "rpm"
     ],
     "shortDescription": "Shared Leptos CSR UI example",
-    "longDescription": "A Linux desktop host for the same production Leptos browser UI.",
+    "longDescription": "Shared Leptos CSR UI packaged for Linux desktop.",
     "icon": [
       "icons/icon.png"
-    ]
+    ],
+    "linux": {
+      "rpm": {
+        "depends": [
+          "webkit2gtk4.1",
+          "gtk3"
+        ]
+      }
+    }
   }
 }
