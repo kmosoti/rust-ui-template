@@ -4,10 +4,11 @@ import json
 import os
 from pathlib import Path
 import platform
+import signal
 import subprocess
 import sys
 
-from wayland_smoke import free_ports
+from wayland_smoke import free_ports, stop
 
 
 def main():
@@ -40,8 +41,16 @@ def main():
     command = [sys.executable, 'scripts/native_smoke.py', '--application', args.application, '--display-backend', backend, '--artifact-prefix', args.artifact_prefix, '--port', str(port), '--native-port', str(native_port)]
     if args.atspi:
         command.append('--atspi')
-    subprocess.run(command, check=True, timeout=240)
+    child = subprocess.Popen(command, start_new_session=True)
+    try:
+        if child.wait(timeout=240):
+            raise RuntimeError('Installed desktop checks failed; inspect native evidence')
+    finally:
+        stop(child, timeout=15)
 
 
 if __name__ == '__main__':
+    def terminate(signum, frame):
+        raise SystemExit(128+signum)
+    signal.signal(signal.SIGTERM, terminate)
     main()
