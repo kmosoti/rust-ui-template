@@ -9,12 +9,12 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: android-${{ github.event.pull_request.number || github.ref }}-${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'ci-cache-cold' && 'unrelated-label' || 'validation' }}
+  group: android-${{ github.event.pull_request.number || github.ref }}-${{ (github.event.action == 'labeled' || github.event.action == 'unlabeled') && github.event.label.name != 'ci-cache-cold' && github.event.label.name != 'ci-cache-stale' && 'unrelated-label' || 'validation' }}
   cancel-in-progress: true
 jobs:
   android:
     # Label events only rerun this job for the explicit nonprivileged benchmark control.
-    if: github.event_name != 'pull_request' || (github.event.action != 'labeled' && github.event.action != 'unlabeled') || github.event.label.name == 'ci-cache-cold'
+    if: github.event_name != 'pull_request' || (github.event.action != 'labeled' && github.event.action != 'unlabeled') || github.event.label.name == 'ci-cache-cold' || github.event.label.name == 'ci-cache-stale'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -51,7 +51,8 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper/dists
             .tools/downloads
-          key: android-deps-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-jdk21-${{ hashFiles('Cargo.lock', 'apps/native/Cargo.lock', 'scripts/*setup*.py', 'scripts/tool-assets.json', 'scripts/android-assets.json', 'apps/native/gen/android/**/*.lockfile', 'apps/native/gen/android/gradle/**', 'apps/native/gen/android/gradle.properties', 'apps/native/gen/android/**/build.gradle.kts', 'apps/native/gen/android/**/verification-metadata.xml') }}
+          key: android-deps-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-jdk21-${{ hashFiles('scripts/*setup*.py', 'scripts/tool-assets.json', 'scripts/android-assets.json', 'apps/native/gen/android/gradle/wrapper/**', 'apps/native/gen/android/gradle.properties', 'apps/native/gen/android/**/build.gradle.kts', 'apps/native/gen/android/settings.gradle*') }}-${{ hashFiles('Cargo.lock', 'apps/native/Cargo.lock', 'apps/native/gen/android/**/*.lockfile', 'apps/native/gen/android/**/verification-metadata.xml') }}${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-stale') && !contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') && '-probe' || '' }}
+          restore-keys: android-deps-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-jdk21-${{ hashFiles('scripts/*setup*.py', 'scripts/tool-assets.json', 'scripts/android-assets.json', 'apps/native/gen/android/gradle/wrapper/**', 'apps/native/gen/android/gradle.properties', 'apps/native/gen/android/**/build.gradle.kts', 'apps/native/gen/android/settings.gradle*') }}-
       - uses: actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0 # v5.0.0
         id: target-cache
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
@@ -59,16 +60,18 @@ jobs:
           path: |
             target
             apps/native/target
-          key: android-targets-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-${{ hashFiles('.github/workflows/android.yml', 'scripts/*setup*.py', 'scripts/tool-assets.json', 'rust-toolchain.toml', 'Cargo.lock', 'apps/native/Cargo.lock', 'scripts/android-assets.json', 'apps/native/Cargo.toml', 'Cargo.toml', 'vendor/**', 'apps/native/gen/android/gradle.properties') }}
+          key: android-targets-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-${{ hashFiles('.github/workflows/android.yml', 'scripts/*setup*.py', 'scripts/tool-assets.json', 'rust-toolchain.toml', 'scripts/android-assets.json', 'apps/native/Cargo.toml', 'Cargo.toml', '.cargo/**', 'apps/native/.cargo/**', 'vendor/**', 'apps/native/gen/android/gradle.properties', 'apps/native/gen/android/**/build.gradle.kts') }}-${{ hashFiles('Cargo.lock', 'apps/native/Cargo.lock', 'apps/native/gen/android/**/*.lockfile', 'apps/native/gen/android/**/verification-metadata.xml') }}${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-stale') && !contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') && '-probe' || '' }}
+          restore-keys: android-targets-v2-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-rust1.99.1-jdk21-${{ hashFiles('.github/workflows/android.yml', 'scripts/*setup*.py', 'scripts/tool-assets.json', 'rust-toolchain.toml', 'scripts/android-assets.json', 'apps/native/Cargo.toml', 'Cargo.toml', '.cargo/**', 'apps/native/.cargo/**', 'vendor/**', 'apps/native/gen/android/gradle.properties', 'apps/native/gen/android/**/build.gradle.kts') }}-
       - name: Profile restored cache without reading file contents
         run: python3 scripts/profile_android_cache.py --phase restored
         env:
           ANDROID_CACHE_HIT: ${{ steps.sdk-cache.outputs.cache-hit == 'true' && steps.dependency-cache.outputs.cache-hit == 'true' && steps.target-cache.outputs.cache-hit == 'true' }}
           ANDROID_CACHE_KEY: android-partitions-v2
           ANDROID_CACHE_COMPONENTS: >-
-            {"sdk":{"key":"${{ steps.sdk-cache.outputs.cache-primary-key }}","hit":"${{ steps.sdk-cache.outputs.cache-hit }}"},
-            "dependencies":{"key":"${{ steps.dependency-cache.outputs.cache-primary-key }}","hit":"${{ steps.dependency-cache.outputs.cache-hit }}"},
-            "targets":{"key":"${{ steps.target-cache.outputs.cache-primary-key }}","hit":"${{ steps.target-cache.outputs.cache-hit }}"}}
+            {"sdk":{"key":"${{ steps.sdk-cache.outputs.cache-primary-key }}","hit":"${{ steps.sdk-cache.outputs.cache-hit }}","matched_key":"${{ steps.sdk-cache.outputs.cache-matched-key }}"},
+            "dependencies":{"key":"${{ steps.dependency-cache.outputs.cache-primary-key }}","hit":"${{ steps.dependency-cache.outputs.cache-hit }}","matched_key":"${{ steps.dependency-cache.outputs.cache-matched-key }}"},
+            "targets":{"key":"${{ steps.target-cache.outputs.cache-primary-key }}","hit":"${{ steps.target-cache.outputs.cache-hit }}","matched_key":"${{ steps.target-cache.outputs.cache-matched-key }}"}}
+          ANDROID_CACHE_STALE_PROBE: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-stale') && !contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
           ANDROID_CACHE_COLD: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
       - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown --target aarch64-linux-android --target x86_64-linux-android
       - run: python3 scripts/setup_ci_tools.py && python3 scripts/setup_frontend.py && python3 scripts/setup_native_cli.py
@@ -147,9 +150,10 @@ jobs:
           ANDROID_CACHE_HIT: ${{ steps.sdk-cache.outputs.cache-hit == 'true' && steps.dependency-cache.outputs.cache-hit == 'true' && steps.target-cache.outputs.cache-hit == 'true' }}
           ANDROID_CACHE_KEY: android-partitions-v2
           ANDROID_CACHE_COMPONENTS: >-
-            {"sdk":{"key":"${{ steps.sdk-cache.outputs.cache-primary-key }}","hit":"${{ steps.sdk-cache.outputs.cache-hit }}"},
-            "dependencies":{"key":"${{ steps.dependency-cache.outputs.cache-primary-key }}","hit":"${{ steps.dependency-cache.outputs.cache-hit }}"},
-            "targets":{"key":"${{ steps.target-cache.outputs.cache-primary-key }}","hit":"${{ steps.target-cache.outputs.cache-hit }}"}}
+            {"sdk":{"key":"${{ steps.sdk-cache.outputs.cache-primary-key }}","hit":"${{ steps.sdk-cache.outputs.cache-hit }}","matched_key":"${{ steps.sdk-cache.outputs.cache-matched-key }}"},
+            "dependencies":{"key":"${{ steps.dependency-cache.outputs.cache-primary-key }}","hit":"${{ steps.dependency-cache.outputs.cache-hit }}","matched_key":"${{ steps.dependency-cache.outputs.cache-matched-key }}"},
+            "targets":{"key":"${{ steps.target-cache.outputs.cache-primary-key }}","hit":"${{ steps.target-cache.outputs.cache-hit }}","matched_key":"${{ steps.target-cache.outputs.cache-matched-key }}"}}
+          ANDROID_CACHE_STALE_PROBE: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-stale') && !contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
           ANDROID_CACHE_COLD: ${{ contains(github.event.pull_request.labels.*.name, 'ci-cache-cold') }}
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()

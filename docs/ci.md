@@ -204,13 +204,14 @@ its underlying cause. O-0018 retains failed runs and fresh/repeated evidence.
 ### Android partition experiment
 
 The v2 trial separates `.tools/android-sdk`, dependency/tool/Gradle state and
-compiled frontend/native targets. Exact keys include runner image and relevant
-input fingerprints. Targets additionally hash vendored sources and workflow
+compiled frontend/native targets. Keys include runner image and relevant input fingerprints. The SDK is exact;
+dependency/target fallback retains the same tool/setup/build compatibility
+tuple and varies only lock/verification identity. Targets additionally hash vendored sources and workflow
 build flags. Full SDK byte verification, source-drift checks, strict Gradle
 verification, both ABIs and real production/denial emulator checks remain.
 PRs cannot save any partition; the cold label skips all restores. A successful
 develop push seeds only missing components, then exact-source reruns measure warm
-behavior. Profiles retain each component key/hit. No AVD, signing keys or system
+behavior. Profiles retain each component primary/matched key and exact-hit status. No AVD, signing keys or system
 directories are cached.
 
 This is a trial, not a performance claim. Compare a cold run, trusted seed and
@@ -219,3 +220,11 @@ transfer from build/emulator variance. Keep v2 only if repeat measurements show
 a practical transfer/runtime or cache-duplication benefit without a meaningful
 whole-job regression. Otherwise revert the partition layout and preserve the
 measurement tooling and unsuccessful experiment evidence in #31.
+
+
+Use `ci-cache-stale` on a PR for a synthetic primary-key mismatch in dependency/
+target partitions. After a trusted seed, this exercises compatible fallback;
+SDK stays exact. Cold wins if both labels exist. Profiles report matched key,
+primary key and probe status. This is not a dependency-upgrade test. Both label
+controls are read-only for caches and irrelevant label events cannot cancel the
+real Android validation job.
