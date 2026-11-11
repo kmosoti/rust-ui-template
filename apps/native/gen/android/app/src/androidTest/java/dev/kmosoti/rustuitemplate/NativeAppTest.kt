@@ -227,7 +227,7 @@ class NativeAppTest {
                     override fun onComplete(requestId: Long) { web.postOnAnimation { painted.countDown() } }
                 })
             }
-            assertTrue("WebView did not paint $name", painted.await(3, TimeUnit.SECONDS))
+            assertTrue("WebView did not paint $name", painted.await((deadline-SystemClock.uptimeMillis()).coerceIn(1,3000), TimeUnit.MILLISECONDS))
             val map = JSONObject(js("""(()=>{
               const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
               const ctx=canvas.getContext('2d');
@@ -259,7 +259,7 @@ class NativeAppTest {
                     PixelCopy.request(activity.window, Rect(position[0], position[1], position[0]+web.width, position[1]+web.height), bitmap!!, { code -> result=code; copied.countDown() }, Handler(Looper.getMainLooper()))
                 } else copied.countDown()
             }
-            assertTrue("PixelCopy timeout: $name", copied.await(3, TimeUnit.SECONDS))
+            assertTrue("PixelCopy timeout: $name", copied.await((deadline-SystemClock.uptimeMillis()).coerceIn(1,3000), TimeUnit.MILLISECONDS))
             val frame = bitmap
             var valid = result == PixelCopy.SUCCESS && frame != null
             if (valid && frame != null) {
@@ -286,10 +286,22 @@ class NativeAppTest {
                 File(directory,"capture-$name.json").writeText(map.toString())
                 File(directory,"$name.png").outputStream().use { assertTrue("PNG write failed: $name",frame.compress(Bitmap.CompressFormat.PNG,100,it)) }
                 frame.recycle()
-            } else diagnostics="copy=$result null=${frame==null}"
+            } else { diagnostics="copy=$result null=${frame==null}"; frame?.recycle() }
             consecutive=if(valid)consecutive+1 else 0
             File(directory,"capture-$name.txt").writeText(diagnostics)
-            if(consecutive>=2)return
+            if(consecutive>=2) {
+                // Retain whole-display keyboard/inset evidence separately from
+                // the validated WebView-only crop; do not confuse the two.
+                if(name=="keyboard") {
+                    val display=instrumentation.uiAutomation.takeScreenshot()
+                    assertNotNull("Missing IME display screenshot",display)
+                    display!!.let { full ->
+                        File(directory,"keyboard-display.png").outputStream().use { assertTrue("IME PNG write failed",full.compress(Bitmap.CompressFormat.PNG,100,it)) }
+                        full.recycle()
+                    }
+                }
+                return
+            }
             Thread.sleep(100)
         }
         fail("No validated presented frame for $name: $diagnostics")
