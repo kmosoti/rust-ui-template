@@ -201,9 +201,9 @@ flowchart LR
 
 This isolates observed index/configuration inconsistency; it does not establish
 its underlying cause. O-0018 retains failed runs and fresh/repeated evidence.
-### Android partition experiment
+### Android cache partitions
 
-The v2 trial separates `.tools/android-sdk`, dependency/tool/Gradle state and
+The retained v2 layout separates `.tools/android-sdk`, dependency/tool/Gradle state and
 compiled frontend/native targets. Keys include runner image and relevant input fingerprints. The SDK is exact;
 dependency/target fallback retains the same tool/setup/build compatibility
 tuple and varies only lock/verification identity. Targets additionally hash vendored sources and workflow
@@ -214,12 +214,15 @@ develop push seeds only missing components, then exact-source reruns measure war
 behavior. Profiles retain each component primary/matched key and exact-hit status. No AVD, signing keys or system
 directories are cached.
 
-This is a trial, not a performance claim. Compare a cold run, trusted seed and
-three warm runs with v1 observations, separating image/source changes and
-transfer from build/emulator variance. Keep v2 only if repeat measurements show
-a practical transfer/runtime or cache-duplication benefit without a meaningful
-whole-job regression. Otherwise revert the partition layout and preserve the
-measurement tooling and unsuccessful experiment evidence in #31.
+The cold/seed/three-warm trial retained this layout for independent SDK reuse,
+not transfer speed. Corrected warm median391s versus v1 median384s was1.82%
+slower, within the10% trial gate; restore median82s versus72s was13.89% slower.
+Source/harness changes, small samples and archive freshness limit comparison.
+[O-0020](../knowledge/observations/O-0020-android-cache-partition-trial.md)
+retains all measurements, the canceled shutdown stall, synthetic fallback proof
+and decision limits. #31 remains open for transfer latency and longer-term reuse.
+Reconsider the simpler layout if reuse no longer justifies the cost; preserve
+measurement tooling and unsuccessful evidence.
 
 
 Use `ci-cache-stale` on a PR for a synthetic primary-key mismatch in dependency/
