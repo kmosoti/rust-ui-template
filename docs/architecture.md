@@ -276,3 +276,40 @@ flowchart LR
 
 Reviewed source patches and licenses are documented in [vendor ownership](../vendor/README.md).
 These transform packaged HTML; Leptos remains the sole owner of the live UI DOM.
+
+## Dependency verification and cache trust
+
+```mermaid
+flowchart LR
+ Source[Root/native Cargo and Gradle locks] --> Rust[cargo-deny: license / advisory / source]
+ Source --> OSV[OSV: explicit Gradle locks and licenses]
+ Expiry[Dated maintenance exceptions] --> Gate[Expiry and actual MPL rejection gate]
+ Gate --> Rust
+ Tools[SHA-256 verified official tool archives] --> Rust
+ Tools --> OSV
+ Rust --> Evidence[Reports and setup timings]
+ OSV --> Evidence
+ Pass[Successful develop push only] --> Cache[Save dependency/tool archive cache]
+ Cache --> Restore[Optional read-only PR restore]
+```
+
+[Security policy](security.md) separates Rust license enforcement, Android license
+inventory and default-branch schedule activation. No signing authority is added.
+
+## Independent clean frontend verification
+
+```mermaid
+flowchart LR
+ Commit[Exact reviewed commit] --> First[Fresh clone A / empty target]
+ Commit --> Second[Fresh clone B / empty target]
+ Pins[Pinned verified tools / source epoch] --> First
+ Pins --> Second
+ First --> Tests[Workspace + production root/subpath browser tests]
+ First --> Compare[Compare every production path and SHA-256]
+ Second --> Compare
+ Tests --> Report[Logs / manifests / screenshots / limitations]
+ Compare --> Report
+```
+
+The gate restores no compiled caches. Registry downloads may be reused; signed
+native package reproducibility is a separate release concern.

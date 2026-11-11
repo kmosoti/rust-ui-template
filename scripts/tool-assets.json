@@ -32,6 +32,7 @@
   "axe": {
     "url": "https://registry.npmjs.org/axe-core/-/axe-core-4.10.3.tgz",
     "integrity": "sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==",
-    "version": "4.10.3"
+    "version": "4.10.3",
+    "sha256": "0f2b4d7dcdf7d1219df8d1959ad68e565f51d14c3f0d88bb71cd59abeb956292"
   }
 }

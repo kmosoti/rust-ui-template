@@ -118,3 +118,12 @@ on physical hardware is not established by that build/signature check.
 The run's final JUnit reports passed production and real restricted-window denial.
 Source and remaining limitations are recorded in O-0011; artifact retention is
 7days. Future CI artifacts must be checked against their own hashes/source.
+
+## Dependency security updates
+
+Kotlin's Gradle plugin is now pinned to stable 2.4.21. Reviewed settings-time
+rules update vulnerable AGP/lint transitive dependencies, including buildSrc,
+without bypassing strict lock/metadata checks. Use the update commands above to
+regenerate actual locks and verification data, then run the
+[dependency policy checks](security.md) and full emulator/ABI CI. Local compilation
+with a skipped Rust task is not runtime validation.

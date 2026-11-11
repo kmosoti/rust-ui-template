@@ -364,3 +364,11 @@ Each non-index record in [`knowledge/decisions/`](knowledge/decisions/D-0001-csr
 Tests must exercise the behavior claimed. A Lean theorem about an abstract model does not verify the Rust implementation unless source extraction and assumptions are audited; a cross-compile is not a platform launch test.
 
 All contributions are distributed under the [MIT License](LICENSE).
+
+## Dependency updates
+
+Run [both Rust policy checks and all Gradle lock scans](docs/security.md) when
+updating dependencies. Regenerate real locks and verification metadata with the
+owning tools; preserve licenses and reviewed source patch provenance. Maintenance
+exceptions must name an advisory, explain scope and carry an enforced expiry.
+A cache hit never substitutes for dependency/advisory/license verification.

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "RUSTSEC-2024-0436",
+    "package": "paste 1.0.15",
+    "kind": "unmaintained",
+    "expires": "2027-02-09",
+    "reason": "Leptos 0.8.23 requires the archived compile-time macro crate. No vulnerability is identified by this maintenance advisory; replacement requires upstream integration. Preserve advisory output and review before expiry."
+  },
+  {
+    "id": "RUSTSEC-2024-0370",
+    "package": "proc-macro-error 1.0.4",
+    "kind": "unmaintained",
+    "expires": "2027-02-09",
+    "reason": "GTK3 glib/gtk macros require this compile-time dependency. No vulnerability is identified by this maintenance advisory; replacing GTK/Tauri macros is beyond a safe patch. Preserve advisory output and review before expiry."
+  }
+]

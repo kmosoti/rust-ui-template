@@ -1,0 +1,34 @@
+name: Clean frontend reproducibility
+on:
+  pull_request:
+    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
+  push:
+    branches: [develop]
+    paths-ignore: ["README.md", "docs/**", "knowledge/**"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: reproducibility-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  frontend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - run: rustup toolchain install 1.99.1 --profile minimal --target wasm32-unknown-unknown
+      - name: Independent clean production builds and fresh tests
+        run: python3 scripts/check_frontend_repro.py
+        env:
+          CHROMIUM_PATH: /usr/bin/google-chrome
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: clean-frontend-evidence
+          path: artifacts/frontend-repro/
+          retention-days: 14
+          if-no-files-found: error
