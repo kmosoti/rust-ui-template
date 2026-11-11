@@ -87,7 +87,7 @@ The CLI setup script pins the official Linux x86_64 Tauri 2.12.4 binary and hash
 other development platforms can install the same version with
 `cargo install tauri-cli --version 2.12.4 --locked` but are untested here.
 The root rebuild removes the browser test’s nested `dist/sub` fixture before
-embedding assets, matching CI. Linux CI validates the DEB on Ubuntu and RPM in Fedora 44 under Xvfb using
+embedding assets, matching CI. Linux CI validates the DEB on Ubuntu and RPM in Fedora 44 under forced X11/Xvfb and owned software Wayland using
 `tauri-driver` 2.1.0 and `WebKitWebDriver` (`webkit2gtk-driver` package):
 
 ```sh

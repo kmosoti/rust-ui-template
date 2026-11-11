@@ -11,6 +11,7 @@ also needs gobject-introspection). Enable accessibility using the desktop's norm
 settings before an AT-SPI run. The harness never changes those settings, starts a
 replacement compositor or adjusts the existing session bus.
 
+Close other instances of this template before title-based AT-SPI inspection.
 From the repository root in that desktop session:
 
 ```sh
