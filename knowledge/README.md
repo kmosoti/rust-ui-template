@@ -104,3 +104,5 @@ The index is curated, not automatically generated. Start with Markdown and versi
 - [D-0011 · Scoped CSR milestone completion](decisions/D-0011-scoped-csr-milestone.md) (`agent`, `human_ratified: false`).
 
 - [O-0017 · Scoped milestone completion](observations/O-0017-issue1-completion.md): final source CI, reviewed artifacts, cold/seed/warm observations and explicit limits (`agent`, `human_ratified: false`).
+
+- [R-0008: Maintenance and release readiness](research/R-0008-maintenance-release-readiness.md) — stable upstream blockers, reassessment date and inactive weekly-monitor handoff.
