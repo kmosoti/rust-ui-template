@@ -26,8 +26,9 @@ the GitHub artifact connector (gh downloads returned403). Obtained jobs JSON via
 | warm1 |43052897725/1 |402s |72s |12s |86s |165s |
 | forced cold |43054680023/1 |711s |skipped |113s |278s |159s |
 | warm2 |43056742413/1 |379s |95s |9s |69s |151s |
+| warm3 |43056742413/2 |384s |65s |11s |82s |158s |
 
-All passed the unchanged full Android validation. Warm3 is pending. Profiles
+All passed the unchanged full Android validation. All three warm samples are complete: median job384s, restore72s. Profiles
 had no errors; observer elapsed2.425/2.355s on warm1 and2.206/1.991s on warm2.
 Cold restored measurement had no existing cache; post-validation took2.096s.
 SDK raw apparent8,713,047,443bytes; its system image is4,585,407,573bytes,
@@ -52,7 +53,7 @@ contribution. Warm runtime variance includes build/emulator costs, not just I/O.
   missing exact keys after all original validation/source-drift checks pass.
   No AVD, signing material or system-directory cache is introduced.
 - `python3 -m unittest discover -s scripts -p 'test_*.py'`:29 passed locally;
-  `git diff --check` passed. No candidate hosted result is claimed yet.
+  `git diff --check` passed. YAML parse also passed. No candidate hosted result is claimed yet.
 - Collect a candidate cold/miss run, trusted seed and three warm observations.
   Compare median whole-job and summed restore/transfer sizes against the v1
   three-warm baseline. Record source/image differences. A practical benefit must
