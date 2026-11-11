@@ -9,7 +9,7 @@ WASM UI does not by itself establish native platform support.
 | Linux Tauri / WebKitGTK | Ubuntu 24.04 DEB and Fedora 44 RPM, x86_64 built/installed/reinstalled/removed | Xvfb: Ubuntu WebKitGTK 2.52.6 / Fedora 2.54.2; shared UI, IPC validation, CSP and real permission denial passed |
 | Windows / WebView2 | Not built | Not launched |
 | macOS / WKWebView | Not built | Not launched |
-| Android / Android WebView | Not built | Not launched |
+| Android / Android WebView | Test-signed ARM64 and x86_64 APKs built, strict locked Gradle dependencies | API 36 / Android 16 x86_64 emulator, WebView 133.0.6943.137: offline bundled UI, IPC/CSP/real denial, IME, Back, rotation and lifecycle checks passed; ARM64 build-only |
 | iOS / WKWebView | Not built; requires macOS/Xcode | Not launched |
 
 Tailwind 4's upstream CSS compatibility floors are Chrome 111, Safari 16.4 and
@@ -32,3 +32,10 @@ See [D-0005](../knowledge/decisions/D-0005-linux-native-host.md) and
 [O-0005](../knowledge/observations/O-0005-linux-native-host.md) for exact evidence.
 
 DEB/RPM delivery: [O-0010](../knowledge/observations/O-0010-linux-packages.md) and [package workflow](linux-packages.md). X11 CI does not establish Wayland or hardware GPU behavior.
+
+Android execution: [run 42953564848](https://github.com/kmosoti/rust-ui-template/actions/runs/42953564848), [O-0011](../knowledge/observations/O-0011-android-apks.md). Minimum API 29 and WebView 111+ are prerequisites, not lower-bound runtime evidence. Physical devices and TalkBack remain untested.
+
+Final Android develop run 42960500792 passed functional DOM, IPC, accessibility
+smoke and keyboard/rotation geometry assertions. Downloaded library and landscape
+screenshots remain blank/partially presented; visual capture evidence is not
+complete. See O-0011 for the distinction and pending capture validation.

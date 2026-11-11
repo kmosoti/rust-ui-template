@@ -1,6 +1,6 @@
 # rust-ui-template
 
-**Status: browser and Linux desktop slices; not a complete cross-platform release.** The shared Leptos UI uses the dependency-free core. An Ubuntu 24.04 Debian package has build, installation and WebKit launch evidence; other native platforms remain future work.
+**Status: browser and Linux desktop slices; not a complete cross-platform release.** The shared Leptos UI uses the dependency-free core. Ubuntu 24.04 DEB and Fedora 44 RPM packages have installation, reinstallation, launch and permission-denial evidence. Android APK/device evidence is tracked separately below; other native platforms remain deferred.
 
 A minimal Rust-first UI foundation for browser, desktop, and mobile clients. The template will be implemented incrementally through the repository's GitHub issues.
 
@@ -60,9 +60,9 @@ to `artifacts/response-lab.png`, `artifacts/workspace-overview.png`, and
 `artifacts/preferences.png`.
 
 The initial URL opens the Nocturne library. Example routes are `#/` (response lab), `#/overview` (library), and
-`#/settings` (preferences form). Library content and artwork are examples. Preferences
-are local component state and reset on navigation; no persistence or network API
-is implemented. Browser binaries come from the environment; their versions must
+`#/settings` (preferences form). Library content and artwork are examples. Form preferences
+are local component state and reset on navigation; the app-session color scheme
+survives navigation and resets on reload. No persistence or network API is implemented. Browser binaries come from the environment; their versions must
 be recorded with test results. Other system browsers/WebViews remain unverified.
 
 ## Linux desktop host
@@ -70,7 +70,7 @@ be recorded with test results. Other system browsers/WebViews remain unverified.
 The Tauri 2 host embeds the same production `dist/` as the browser and has an
 isolated Cargo workspace/lockfile in `apps/native` so GTK dependencies do not
 enter browser-only checks. Its only application command is a versioned,
-read-only `app_info`, granted to the local `main` window on Linux. About shows
+read-only `app_info`, granted to the local `main` window on Linux and Android. About shows
 the native result or an explicit unavailable message in a browser.
 
 On Ubuntu 24.04, install `libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`,
@@ -87,7 +87,7 @@ The CLI setup script pins the official Linux x86_64 Tauri 2.12.4 binary and hash
 other development platforms can install the same version with
 `cargo install tauri-cli --version 2.12.4 --locked` but are untested here.
 The root rebuild removes the browser test’s nested `dist/sub` fixture before
-embedding assets, matching CI. Linux CI installs the Debian package and launches it under Xvfb using
+embedding assets, matching CI. Linux CI validates the DEB on Ubuntu and RPM in Fedora 44 under Xvfb using
 `tauri-driver` 2.1.0 and `WebKitWebDriver` (`webkit2gtk-driver` package):
 
 ```sh
@@ -100,7 +100,7 @@ The separate `tauri.e2e.conf.json` replaces the window with a restricted one for
 denial test; its bundle is a test fixture, not the production package. Production
 CSP allows the bundled scripts and WASM while blocking arbitrary inline scripts.
 See the [platform evidence matrix](docs/platforms.md) for verified and untested targets.
-No signing/notarization, persistence, mobile build or general platform support
+No production signing/notarization, persistence or general platform support
 claim is made. See the knowledge records for exact execution evidence.
 
 [DEB/RPM package validation](docs/linux-packages.md) describes the Ubuntu and
@@ -114,7 +114,7 @@ Fedora targets, metadata checks, diagnostics and unsigned artifacts.
 - **Tauri 2** packages the same client for desktop (Windows, macOS, Linux) and mobile (Android, iOS), with native functionality behind narrow capability-scoped adapters.
 - **Pure Rust core** owns reusable application rules and state transitions, independent of UI, browser, or operating-system APIs.
 
-The core workspace pins Rust 1.99.1 with Edition 2024/resolver 3. The remaining implementation roadmap calls for current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. The browser slice pins its dependencies and build tools; native toolchain compatibility remains to be established.
+The core workspace pins Rust 1.99.1 with Edition 2024/resolver 3. The remaining implementation roadmap calls for current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. The browser slice pins its dependencies and build tools; native compatibility and untested configurations are listed in the evidence matrix.
 
 ## Release sequence
 

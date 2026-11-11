@@ -95,14 +95,17 @@ flowchart LR
   Host --> DTO
   Build["Standalone Tailwind + Trunk"] --> Assets["One production CSS/JS/WASM bundle"]
   Assets --> Web["Browser: independent runtime instance"]
-  Assets --> Desktop["Tauri WebKitGTK: independent runtime instance"]
+  Assets --> Desktop["Linux Tauri WebKitGTK: independent runtime instance"]
+  Assets --> Mobile["Android WebView: independent runtime instance"]
+  Mobile --> Client
   Desktop --> Client
   Web --> Client
 ```
 
 Sharing code and wire types does not share process state or permission authority.
 The browser adapter never grants native authority; the host enforces the ACL and
-validates the schema independently. Other native platforms remain unvalidated.
+validates the schema independently. Exact Android evidence is tracked in O-0011;
+Windows/macOS/iOS remain unvalidated.
 
 ## Host information flow (current)
 
@@ -138,10 +141,13 @@ flowchart TD
   Tools --> Checks["Locked tests, lint, boundary and source-drift checks"]
   Tools --> Frontend["Tailwind + Trunk production assets"]
   Frontend --> Chrome["Chromiumoxide: interaction, axe, geometry and captures"]
-  Frontend --> Linux["Tauri Debian package: installed WebKit/CSP/ACL smoke"]
+  Frontend --> Linux["Installed Ubuntu DEB / Fedora RPM: WebKit/CSP/ACL"]
+  Frontend --> Android["Test-signed ARM64 / x86_64 APKs: pinned SDK and Gradle locks"]
+  Android --> Device["Fresh API 36 WebView: AndroidX offline / IME / CSP / ACL"]
   Checks --> Gate["Applicable checks + independent standard/medium review"]
   Chrome --> Gate
   Linux --> Gate
+  Device --> Gate
   Gate --> Develop["Reviewer rebase lands into develop"]
   Develop --> Trusted["Successful develop push may save immutable caches"]
   Trusted -.-> Restore
@@ -217,8 +223,8 @@ flowchart LR
   Assets[Production CSR assets] --> Binary[One Linux executable]
   Binary --> Deb[Production DEB]
   Binary --> Rpm[Production RPM]
-  Deb --> Ubuntu[Ubuntu24.04 install/reinstall/UI/remove]
-  Rpm --> Fedora[Fedora44 install/reinstall/UI/remove]
+  Deb --> Ubuntu[Ubuntu 24.04 install/reinstall/UI/remove]
+  Rpm --> Fedora[Fedora 44 install/reinstall/UI/remove]
   Fixture[Separate restricted config] --> Denial[Real IPC denial on both runtimes]
   Ubuntu --> Evidence[Driver logs/screenshots/failure stages]
   Fedora --> Evidence

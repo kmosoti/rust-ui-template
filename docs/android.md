@@ -103,3 +103,18 @@ CI discards verified SDK ZIPs after successful setup to release about3.3GB befor
 emulator startup; warm installed-tree reuse still needs no archive download.
 Emulator early exit fails promptly with its log tail, rather than consuming the
 entire boot deadline. Cold/warm transfer/runtime effects must be measured before claiming improvement.
+
+
+## Verified test artifacts
+
+[Passing API 36 run42953564848](https://github.com/kmosoti/rust-ui-template/actions/runs/42953564848)
+provides the `android-test-signed-apks` artifact: ARM64 (`arm64-v8a`) and x86_64
+application APKs with `android-apks.sha256`. They use application ID
+`dev.kmosoti.rustuitemplate`, version0.1.0/code1000, minSDK29 and targetSDK37.
+Local `sha256sum --check`, `aapt2 dump badging` and `apksigner verify` passed
+for both downloaded APKs. These remain test-signed artifacts; ARM64 installation
+on physical hardware is not established by that build/signature check.
+
+The run's final JUnit reports passed production and real restricted-window denial.
+Source and remaining limitations are recorded in O-0011; artifact retention is
+7days. Future CI artifacts must be checked against their own hashes/source.

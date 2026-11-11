@@ -209,3 +209,47 @@ were taken during compositor transition even though DOM geometry was settled.
 The capture helper compiled with strict verified dependencies (1s); final
 capture-synchronized CI remains pending. This changes test capture timing, not
 application behavior or assertion criteria.
+
+
+## Downloaded artifact validation
+
+Successful source63eb6f23 run42953564848 took9m05s on Ubuntu24.04. Completed
+steps: verified SDK/NDK/emulator83s, frontend70s, dual-ABI APK build216s,
+offline production+denial VM checks128s. This was a cold Android profile; no warm
+CI cache/transfer speedup is claimed. Caches still save only on successful
+trusted develop pushes. Final capture-synchronized source is a separate run.
+
+Downloaded artifact13825884521 through the GitHub connector. `sha256sum --check
+artifacts/android-apks.sha256` passed both; aapt2 badging and apksigner verify
+passed with ID dev.kmosoti.rustuitemplate, version0.1.0/code1000, minSDK29,
+targetSDK37, correct single ABI per APK. Recorded first-passing artifact hashes:
+
+- ARM64: 39d9e3ed49a1df440f11a77985df86f6a3e3adc18dbfd4a9c972a7c70f8a4500
+- x86_64: f7c2a5dcf9a7b1f0c2bc2bf8b340b47c5e187e54e4ce817c2b944036ffecaa3c
+
+These hashes identify that specific test-signed artifact, not a reproducibility
+claim across ephemeral signing keys/jobs. SDK/NDK and Gradle pins are committed;
+physical ARM64, API29, TalkBack and production signing remain unverified.
+
+## Merged develop verification and capture limit
+
+PR #20 landed on develop at `67de1a8bb6744e3a3c629d3295f43492354a5f5d`.
+All four workflows passed on that commit: core 42960500765, browser
+42960500669, Linux 42960500736 and Android 42960500792. Android production
+and denial instrumentation both reported success. The trusted Android run
+completed in 12m20s including its first successful cache save; this is not a
+warm-cache measurement.
+
+Downloaded device artifact 13829158493 through the GitHub connector after
+`gh run download` failed with an HTTP 403 at the artifact redirect. Inspected
+`library.png`, `keyboard.png`, `landscape.png`, runtime.json and instrumentation
+output. The WebView is 133.0.6943.137 on Android 16. The keyboard capture shows
+the complete focused field. However the library capture is blank and landscape
+contains a partial portrait-width surface. DOM geometry/assertions passed, but
+postVisualStateCallback plus two animation frames did not establish system
+compositor presentation. Visual capture evidence remains incomplete. A bounded
+capture validation fix and fresh emulator run are required before completion.
+
+These observations supersede the earlier statement that synchronized capture CI
+was pending; they do not invalidate the separately executed DOM/IPC checks or
+establish physical-device support. No main promotion was performed.
