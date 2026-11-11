@@ -1,7 +1,7 @@
 ---
 id: O-0020
 type: observation
-status: seeded-warm-and-fallback-review-pending
+status: measured-retained-with-transfer-followup
 updated: 2026-11-11
 added_by: agent
 human_ratified: false
@@ -190,3 +190,48 @@ Corrected-runner measurements must be labeled separately; old canceled data
 cannot be discarded or combined as a successful third observation. No adoption
 or #31 closure is established from only the two successes. Transfer itself was
 not faster in these samples, regardless of shorter successful job totals.
+
+
+## Corrected-runner results and bounded retention decision
+
+Run43080751204/attempts1–3 used PR36 headda033df, actual tested synthetic
+sourceabfd780204a777923d2f9c41de508f22c3111ade and ubuntu24 image20261101.360.1.
+These are a separate corrected-harness series, not a replacement for the canceled
+old-runner sample. `gh run rerun 43080751204` requested repeated measurements
+of successful validation; no failed application assertion was replayed.
+
+| Attempt | Job | Restores SDK/deps/targets | SDK verify | ABI | Emulator | Profile artifact | Device artifact |
+| --- | ---: | --- | ---: | ---: | ---: | --- | --- |
+|1 |355s |65/15/13s |9s |64s |137s |13883982991 |13885206265 |
+|2 |391s |60/12/10s |14s |80s |147s |13885396302 |13884909341 |
+|3 |393s |45/11/9s |11s |82s |161s |13884938306 |13885572319 |
+
+Downloaded each profile/device ZIP before the next rerun using the GitHub
+artifact connector. `gh api .../attempts/N/jobs` plus `ci_timings.py` supplied
+job/step durations. A Python inspection of both profile phases for all three
+attempts asserted the same source/image, all three exact primary/matched keys,
+normal probe/cold flags and no recursive measurement errors. Each lifecycle
+journal ends cleanup-complete with no original/cleanup error; emulator return
+codes were -9/0/0. All original validation and source-drift checks passed; PR
+save steps were skipped. [O-0021](O-0021-android-lifecycle-stall.md) interprets
+actual termination evidence and its limits.
+
+**Decision:** retain the disjoint v2 layout for independently reusable SDK state
+and compatible dependency/target fallback. The actual trusted seed stores one
+3,267,755,610-byte SDK entry; the hosted synthetic lock-identity probe reused
+that same exact SDK while restoring compatible dependencies/targets. Local
+lock-only key properties agree. This establishes independent reuse, not a
+measured future quota/eviction saving or a real dependency-upgrade result.
+
+The corrected series median whole job391s versus v1's384s is **1.82% slower**,
+below the preregistered10% regression boundary (422.4s). Summed restore times
+93/82/65s have median82s versus72s: **13.89% slower**, so this is explicitly not
+a cache-transfer speed improvement. Harness/source differences, three samples,
+runner variance and archive freshness limit causal comparison. No statistical
+significance, universal speedup or partition-only compression benefit is claimed.
+The previous two successes and canceled1476s stall remain visible above.
+
+#31 stays open for transfer latency and longer-term cache reuse/storage evidence.
+Revisit on SDK/tool/image changes, real lock upgrades, quota/eviction pressure,
+or sustained runtime regression. Keep full verification on every cache state;
+reconsider the simpler layout if independent reuse no longer justifies it.
