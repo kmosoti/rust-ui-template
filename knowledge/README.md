@@ -93,3 +93,4 @@ Provenance tracking **must never slow down agentic work**:
 The index is curated, not automatically generated. Start with Markdown and version control; introduce graph tooling only after an actual retrieval or integrity failure justifies it.
 
 - [D-0010 · Permissive Rust dependencies](decisions/D-0010-permissive-rust-dependencies.md) and [O-0013 · Patch evidence](observations/O-0013-permissive-native.md) (`agent`, `human_ratified: false`).
+- [O-0012 · Presented Android captures](observations/O-0012-presented-captures.md): defect and bounded validation evidence (`agent`, `human_ratified: false`).
