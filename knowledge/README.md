@@ -112,3 +112,5 @@ The index is curated, not automatically generated. Start with Markdown and versi
 - [O-0020: Android cache partition trial](observations/O-0020-android-cache-partition-trial.md) — cold/seed/three-warm evidence, retained SDK reuse and unresolved transfer latency.
 
 - [O-0021: Android lifecycle stall and bounded correction](observations/O-0021-android-lifecycle-stall.md) — canceled benchmark preserved; bounded lifecycle regressions and three real hosted validations.
+
+- [O-0022: Linux automated keyboard and software output scale](observations/O-0022-linux-keyboard-scaling.md) — reviewed plan, real-key/session boundaries, actual failures and scale evidence (`agent`, `human_ratified: false`).

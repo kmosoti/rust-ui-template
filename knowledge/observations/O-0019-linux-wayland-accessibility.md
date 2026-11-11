@@ -168,3 +168,11 @@ The final evidence slice also makes Ubuntu restricted-package removal explicit
 after its denial checks and preserves the executable-absence assertion. Fedora
 already removes both variants. This improves repeatable cleanup rather than
 relying on runner disposal; actual final-head hosted execution remains required.
+
+## Automated keyboard and software-scale continuation
+
+[O-0022](O-0022-linux-keyboard-scaling.md) extends these observations with actual
+WebDriver key actions and measured software output scale. It retains the original
+headless/AT-SPI matrix and documents the Weston13 headless seat limitation and
+explicit nested software alternative. Hardware desktop scaling and human Orca
+remain separate pending dimensions; historical failures above remain evidence.

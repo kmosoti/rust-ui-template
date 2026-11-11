@@ -408,3 +408,21 @@ Shared `owned_process` handles process-group termination; display and Android
 controllers own their specific setup, readiness and evidence. No controller
 replays failed application assertions or kills a global adb server. Detached
 services and external SIGKILL remain explicit limits of this ownership model.
+
+### Linux keyboard and software-scale evidence
+
+```mermaid
+flowchart LR
+  Package["Installed production DEB/RPM"] --> Driver["tauri-driver / WebKitWebDriver"]
+  Keys["W3C key actions: Tab, chords, activation, select"] --> Driver
+  Driver --> UI["Shared Leptos UI in WebKitGTK"]
+  Headless["Owned Weston15 headless + software seat: scales1/2"] --> UI
+  Ubuntu["Owned Weston13 headless: scale1 + AT-SPI"] --> UI
+  Nested["Owned Xvfb -> Weston13 X11 backend: scale2"] -->|Wayland client; DISPLAY absent| UI
+  UI --> Evidence["Bounded read-only focus/state JSON + PNG + actual output/protocol"]
+  Manual["Outside CI: physical desktop100/200%, GPU, human keys, Orca"] -.-> Evidence
+```
+
+The smoke harness owns input and observations; Leptos retains sole DOM ownership.
+Only the compositor receives the nested X server connection. Software output
+scale and automated keys do not establish the manual desktop dimensions.

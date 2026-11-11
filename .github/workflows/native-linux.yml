@@ -61,8 +61,9 @@ jobs:
           sudo dpkg -i artifacts/rust-ui-native-linux.deb
           sudo dpkg -i artifacts/rust-ui-native-linux.deb
           python3 scripts/check_linux_package.py --format deb
-          dbus-run-session -- env -u WAYLAND_DISPLAY GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe WEBKIT_DISABLE_DMABUF_RENDERER=1 xvfb-run -a python3 scripts/native_smoke.py --display-backend x11 --artifact-prefix ubuntu-production
+          dbus-run-session -- env -u WAYLAND_DISPLAY GDK_BACKEND=x11 LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe WEBKIT_DISABLE_DMABUF_RENDERER=1 xvfb-run -a python3 scripts/native_smoke.py --display-backend x11 --artifact-prefix ubuntu-production --keyboard
           python3 scripts/wayland_smoke.py --atspi --artifact-prefix ubuntu-wayland-software-production
+          python3 scripts/wayland_smoke.py --scale 2 --compositor-backend x11 --keyboard --artifact-prefix ubuntu-wayland-software-production-scale2
           sudo dpkg --remove rust-ui-template
           test ! -e /usr/bin/rust-ui-native
       - name: Build Fedora 44 runtime test environment

@@ -7,6 +7,7 @@ import io
 import os
 from pathlib import Path
 import signal
+import struct
 import socket
 import shutil
 import sys
@@ -107,6 +108,11 @@ def reserve_check(port):
         probe.bind(('127.0.0.1', port))
 
 
+def assert_dpr(observed, expected):
+    if expected is not None and abs(observed - expected) > .05:
+        raise AssertionError(f"DPR mismatch: expected {expected}, observed {observed}")
+
+
 def main():
     global DRIVER_PORT
     parser = argparse.ArgumentParser()
@@ -115,9 +121,13 @@ def main():
     parser.add_argument('--artifact-prefix', default='native-linux')
     parser.add_argument('--display-backend', choices=['auto', 'x11', 'wayland'], default='auto')
     parser.add_argument('--atspi', action='store_true', help='Inspect native accessibility using system Python/pyatspi')
+    parser.add_argument('--keyboard', action='store_true')
+    parser.add_argument('--expected-dpr', type=int, choices=[1, 2])
     parser.add_argument('--port', type=int, default=4444)
     parser.add_argument('--native-port', type=int, default=4445)
     args = parser.parse_args()
+    if args.keyboard and args.denial_fixture:
+        parser.error('--keyboard cannot be used with --denial-fixture')
     if args.port == args.native_port or not all(0 < p < 65536 for p in (args.port, args.native_port)):
         parser.error('Driver ports must be distinct values between1 and65535')
     if args.display_backend == 'wayland' and (os.environ.get('GDK_BACKEND') != 'wayland' or os.environ.get('DISPLAY')):
@@ -148,8 +158,8 @@ def main():
         prefix = '/session/' + session
         request('POST', prefix + '/timeouts', {'script': 15000})
 
-        def execute(script):
-            return request('POST', prefix + '/execute/sync', {'script': script, 'args': []})
+        def execute(script, timeout=40):
+            return request('POST', prefix + '/execute/sync', {'script': script, 'args': []}, timeout=timeout)
 
         def wait(predicate):
             end = time.monotonic() + 15
@@ -179,6 +189,7 @@ def main():
         wait("document.querySelector('h1')?.textContent === 'Your library'")
         wait("document.querySelector('[data-testid=featured-art]')?.naturalWidth > 0")
         runtime = execute('return {userAgent:navigator.userAgent,width:innerWidth,height:innerHeight,dpr:devicePixelRatio}')
+        runtime['expected_dpr'] = args.expected_dpr
         runtime['driver_http_transport'] = 'stdlib http.client HTTP/1.1; no Connection: close; no retries'
         runtime['display_backend_requested'] = args.display_backend
         runtime['display_environment'] = {key: os.environ.get(key) for key in ('GDK_BACKEND', 'DISPLAY', 'WAYLAND_DISPLAY', 'LIBGL_ALWAYS_SOFTWARE', 'GALLIUM_DRIVER', 'WEBKIT_DISABLE_DMABUF_RENDERER')}
@@ -188,7 +199,20 @@ def main():
                 runtime['runtime_packages'] = subprocess.run(command, capture_output=True, text=True, timeout=10).stdout.splitlines()
                 break
         Path('artifacts/' + args.artifact_prefix + '-runtime.json').write_text(json.dumps(runtime, indent=2)+'\n')
-        Path('artifacts/' + args.artifact_prefix + '-library.png').write_bytes(base64.b64decode(request('GET', prefix + '/screenshot')))
+        screenshot = base64.b64decode(request('GET', prefix + '/screenshot'))
+        runtime['screenshot_pixels'] = dict(zip(('width', 'height'), struct.unpack('>II', screenshot[16:24])))
+        runtime['screenshot_pixel_tolerance'] = 1
+        runtime['screenshot_matches_viewport_dpr'] = all(abs(runtime['screenshot_pixels'][axis]-runtime[axis]*runtime['dpr']) <= 1 for axis in ('width','height'))
+        Path('artifacts/' + args.artifact_prefix + '-runtime.json').write_text(json.dumps(runtime, indent=2)+'\n')
+        Path('artifacts/' + args.artifact_prefix + '-library.png').write_bytes(screenshot)
+        phase = 'output scale verification'
+        assert_dpr(runtime['dpr'], args.expected_dpr)
+        if args.expected_dpr is not None:
+            assert runtime['screenshot_matches_viewport_dpr'], runtime
+        if args.keyboard:
+            phase = 'real keyboard navigation'
+            from native_keyboard import Keyboard
+            Keyboard(request, prefix, execute, wait, args.artifact_prefix).run()
         if args.atspi:
             phase = 'native accessibility tree'
             subprocess.run(['/usr/bin/python3', 'scripts/inspect_atspi.py', '--window', 'Restricted test window' if args.denial_fixture else 'Rust UI Template', '--output', 'artifacts/' + args.artifact_prefix + '-atspi.json'], check=True, timeout=12)
