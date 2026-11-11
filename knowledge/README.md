@@ -61,6 +61,9 @@ Provenance tracking **must never slow down agentic work**:
 | [D-0008 · Semantic color schemes](decisions/D-0008-color-palettes.md) | `agent` | `false` | Six user palettes, session selection and contrast contracts |
 | [O-0008 · Color scheme evidence](observations/O-0008-color-palettes.md) | `agent` | `false` | Rendered contrast, interaction, accessibility and native results |
 
+| [D-0009 · Linux/Android delivery](decisions/D-0009-linux-android-delivery.md) | `agent` | `false` | DEB/RPM and Android test APK implementation sequence |
+| [O-0009 · Native library entry](observations/O-0009-native-entry.md) | `agent` | `false` | Shared entry preparation and Linux regression evidence |
+
 ## Record protocol
 
 1. Use a stable ID, a descriptive filename, and front matter:
