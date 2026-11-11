@@ -15,6 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--application', default='/usr/bin/rust-ui-native')
     parser.add_argument('--artifact-prefix', default='desktop')
+    parser.add_argument('--keyboard', action='store_true')
     parser.add_argument('--atspi', action='store_true', help='Requires accessibility already enabled on this desktop')
     args = parser.parse_args()
     backend = os.environ.get('GDK_BACKEND')
@@ -39,6 +40,8 @@ def main():
     (artifacts/(args.artifact_prefix+'-desktop.json')).write_text(json.dumps(report, indent=2)+'\n')
     port, native_port = free_ports()
     command = [sys.executable, 'scripts/native_smoke.py', '--application', args.application, '--display-backend', backend, '--artifact-prefix', args.artifact_prefix, '--port', str(port), '--native-port', str(native_port)]
+    if args.keyboard:
+        command.append('--keyboard')
     if args.atspi:
         command.append('--atspi')
     child = subprocess.Popen(command, start_new_session=True)

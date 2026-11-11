@@ -49,3 +49,39 @@ claim of accessibility conformance. Record every untested GPU/compositor/scaling
 combination and every failed/manual-pending item; never mark this list complete
 from CI screenshots. Put dated evidence in `knowledge/` with provenance and link
 it to #23. No hardware GPU or manual Orca result was obtained in the cloud host.
+
+## Automated keys and software output scale
+
+Production X11 sessions now use WebDriver W3C key actions for the skip link,
+forward/reverse Tab navigation, response input/Slow/Fast/Cancel, and the actual
+palette select. JavaScript in this sequence only reads state and focus. Each
+semantic traversal is bounded to 40 Tabs and 15 seconds, including command timeouts;
+input failures and assertions are never replayed. The keyboard JSON records
+checkpoint progress, bounded focus traces, viewport/DPR, overlap timing and failure
+context. Focused skip-link and number-field PNGs show the observed outline.
+These are automated input observations, not a human keyboard usability verdict.
+
+Fedora Weston 15 uses headless pixman and its advertised `--fake-seat` for keyboard
+focus at output scales1 and 2. Ubuntu Weston 13 has no headless keyboard seat:
+its original headless scale1/AT-SPI run remains unchanged, while the added scale2
+keyboard run explicitly uses a Weston X11 backend inside an owned Xvfb parent.
+The application and `wayland-info` have neither `DISPLAY` nor `XAUTHORITY`; they
+use the owned Wayland socket. This nested software configuration is recorded in
+the compositor JSON and is never labeled a hardware desktop.
+
+```sh
+# Existing supported software seat (Weston 15):
+python3 scripts/wayland_smoke.py --keyboard --scale 2 --artifact-prefix software-scale2
+# Explicit software nesting for Weston 13; no automatic fallback:
+python3 scripts/wayland_smoke.py --compositor-backend x11 --keyboard --scale 2 --artifact-prefix nested-scale2
+# Existing real desktop (does not change renderer or accessibility settings):
+python3 scripts/desktop_evidence.py --keyboard --artifact-prefix desktop-keys
+```
+
+Output scaling is a compositor setting, not CSS zoom or browser emulation.
+Requested scale, Weston command/version/help, actual output protocol,
+logical viewport, observed DPR and PNG pixel dimensions are retained. DPR must
+match the requested scale within 0.05, and screenshot pixels must agree with
+viewport×DPR within 1 pixel. A mismatch fails. Software output scale2 does not
+complete real desktop 100/200% scaling, GPU attribution, human usability or Orca
+speech checks. Those manual checkboxes and issue #23 remain open.
