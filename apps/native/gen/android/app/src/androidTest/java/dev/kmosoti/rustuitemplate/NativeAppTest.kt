@@ -1,11 +1,15 @@
 package dev.kmosoti.rustuitemplate
 
 import android.graphics.Bitmap
+import android.os.SystemClock
+import android.view.MotionEvent
 import android.content.pm.ActivityInfo
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.lifecycle.Lifecycle
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.web.sugar.Web.onWebView
@@ -48,8 +52,15 @@ class NativeAppTest {
             if (!::web.isInitialized) Thread.sleep(100)
         }
         assertTrue("WebView did not initialize", ::web.isInitialized)
+        val version = WebView.getCurrentWebViewPackage()?.versionName ?: "0"
+        assertTrue("Tailwind4 requires WebView Chromium111+; actual=$version", version.substringBefore('.').toInt() >= 111)
         waitFor("document.querySelector('h1')?.textContent === 'Your library'", 60000)
         waitFor("document.querySelector('[data-testid=featured-art]')?.naturalWidth > 0")
+        assertEquals("\"https:\"", js("location.protocol"))
+        assertEquals("1", js("document.querySelectorAll('link[rel=stylesheet]').length"))
+        waitFor("getComputedStyle(document.body).backgroundColor === 'rgb(17, 18, 22)'")
+        js(instrumentation.context.assets.open("axe.min.js").bufferedReader().use { it.readText() })
+        accessibility()
         js("window.__nativeErrors=[]; addEventListener('error',e=>window.__nativeErrors.push(e.message)); addEventListener('unhandledrejection',e=>window.__nativeErrors.push(String(e.reason))); true")
     }
 
@@ -88,9 +99,52 @@ class NativeAppTest {
         js("document.querySelector('#number').value='$number'; document.querySelector('#number').dispatchEvent(new Event('input',{bubbles:true})); true")
     }
 
+    private fun tapInput() {
+        js("document.querySelector('#number').scrollIntoView({block:'center'}); true")
+        val box = JSONObject(js("(()=>{const r=document.querySelector('#number').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,width:innerWidth}})()"))
+        val location = IntArray(2)
+        var scale = 1f
+        instrumentation.runOnMainSync { web.getLocationOnScreen(location); scale = web.width.toFloat()/box.getDouble("width").toFloat() }
+        val x = location[0] + box.getDouble("x").toFloat()*scale
+        val y = location[1] + box.getDouble("y").toFloat()*scale
+        val now = SystemClock.uptimeMillis()
+        for ((action, time) in listOf(MotionEvent.ACTION_DOWN to now, MotionEvent.ACTION_UP to now+50)) {
+            val event = MotionEvent.obtain(now, time, action, x, y, 0)
+            instrumentation.sendPointerSync(event); event.recycle()
+        }
+    }
+
+    private fun evidence(name: String, value: String) {
+        val directory = File(instrumentation.targetContext.filesDir, "evidence").apply { mkdirs() }
+        File(directory, name).writeText(value)
+    }
+
+    private fun accessibility() {
+        js("window.__axeResult=null; axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}).then(r=>window.__axeResult={violations:r.violations}).catch(e=>window.__axeResult={error:String(e)}); true")
+        waitFor("window.__axeResult !== null", 30000)
+        val result = JSONObject(js("window.__axeResult"))
+        evidence("axe-${phase.replace(' ', '-')}.json", result.toString())
+        assertFalse(result.toString(), result.has("error"))
+        assertEquals(result.toString(), 0, result.getJSONArray("violations").length())
+    }
+
+    private fun waitForIme(visible: Boolean) {
+        val deadline = System.currentTimeMillis() + 15000
+        while (true) {
+            var shown = false
+            scenario.onActivity { activity ->
+                shown = ViewCompat.getRootWindowInsets(activity.findViewById(android.R.id.content))?.isVisible(WindowInsetsCompat.Type.ime()) ?: false
+            }
+            if (shown == visible) return
+            if (System.currentTimeMillis() > deadline) fail("IME visibility did not become $visible")
+            Thread.sleep(50)
+        }
+    }
+
     private fun layout() {
         val audit = instrumentation.context.assets.open("layout-audit.js").bufferedReader().use { it.readText() }
         val result = JSONObject(js("($audit)()"))
+        evidence("layout-${phase.replace(' ', '-')}.json", result.toString())
         assertFalse(result.toString(), result.getBoolean("horizontalOverflow"))
         for (key in listOf("clippedText", "escapedControls", "overlaps")) assertEquals(result.toString(), 0, result.getJSONArray(key).length())
     }
@@ -128,13 +182,13 @@ class NativeAppTest {
         Thread.sleep(1700); route("#/", "Latest response")
         waitFor("document.querySelector('[role=status]')?.textContent.includes('No result yet')")
         phase = "IME and layout"
-        click("#number"); layout(); capture("keyboard")
-        Espresso.closeSoftKeyboard(); layout()
+        tapInput(); waitForIme(true); layout(); capture("keyboard")
+        Espresso.closeSoftKeyboard(); waitForIme(false); layout()
         phase = "palette navigation"
         route("#/settings", "Preferences")
         js("const e=document.querySelector('#color-scheme'); e.value='signal-blue'; e.dispatchEvent(new Event('change',{bubbles:true})); true")
         waitFor("document.querySelector('[data-palette]')?.dataset.palette === 'signal-blue'")
-        layout()
+        accessibility(); layout()
         route("#/about", "About")
         waitFor("document.querySelector('[data-testid=host-info]')?.textContent.includes('android')")
         waitFor("document.querySelector('[data-palette]')?.dataset.palette === 'signal-blue'")
@@ -151,7 +205,7 @@ class NativeAppTest {
         phase = "CSP"
         js("window.__inlineProbe=false; window.__cspEvents=0; addEventListener('securitypolicyviolation',()=>window.__cspEvents++); const s=document.createElement('script'); s.textContent='window.__inlineProbe=true'; document.head.append(s); true")
         waitFor("window.__cspEvents>0"); assertEquals("false", js("window.__inlineProbe"))
-        assertEquals("[]", js("window.__nativeErrors")); layout()
+        assertEquals("[]", js("window.__nativeErrors")); accessibility(); layout()
     }
 
     private fun capture(name: String) {

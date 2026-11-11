@@ -90,7 +90,7 @@ flowchart LR
   Client --> DTO
   Client -->|browser mode| Unsupported["Typed Unsupported result"]
   Unsupported --> UI
-  Client -->|native app_info invocation| ACL["Tauri ACL: local Linux main window"]
+  Client -->|native app_info invocation| ACL["Tauri ACL: local Linux/Android main window"]
   ACL --> Host["apps/native: Rust input validation and handler"]
   Host --> DTO
   Build["Standalone Tailwind + Trunk"] --> Assets["One production CSS/JS/WASM bundle"]
@@ -117,7 +117,7 @@ sequenceDiagram
     Adapter-->>View: Unsupported
   else Tauri WebView
     Adapter->>Gate: app_info(request schema_version=1)
-    alt local Linux main window
+    alt local Linux/Android main window
       Gate->>Rust: authorized invocation
       Rust->>Rust: validate typed input/version
       Rust-->>Adapter: AppInfo or typed error
@@ -200,15 +200,15 @@ See [color scheme contract](color-palettes.md).
 ```mermaid
 flowchart LR
   Desktop[Linux executable] --> Run[Native library run]
-  Android[Android entry macro: integration pending] --> Run
+  Android[Android entry macro] --> Run
   Run --> Commands[Same registered app_info and ACL]
   Run --> Bundle[Same CSR frontend assets]
 ```
 
 The isolated native workspace now exposes `rust_ui_native_lib::run()` and keeps
 the Linux executable as a thin caller. Linux-only x11/dbus features are scoped
-to that target. Android project generation and validation are subsequent work;
-this refactor alone is not Android build/launch evidence. Wire schema stays 1.
+to that target. The generated Android host is implemented; its runtime evidence and limits are
+recorded separately in O-0011. This entry-point extraction alone is not launch evidence. Wire schema stays 1.
 
 ## Linux package validation
 
