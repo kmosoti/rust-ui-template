@@ -2,31 +2,73 @@
 import io
 import json
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from urllib.error import HTTPError
 
 from native_smoke import request
 
 
 class NativeTransportTests(unittest.TestCase):
+    def connection(self, status, body):
+        connection = Mock()
+        response = connection.getresponse.return_value
+        response.status = status; response.reason = 'test response'; response.headers = {}
+        response.read.return_value = body
+        return connection
+
     def test_application_rejection_is_a_successful_webdriver_result(self):
         rejected = {'ok': False, 'error': 'unsupported_version'}
-        response = io.BytesIO(json.dumps({'value': rejected}).encode())
-        with patch('native_smoke.urllib.request.urlopen', return_value=response):
+        connection = self.connection(200, json.dumps({'value': rejected}).encode())
+        with patch('native_smoke.http.client.HTTPConnection', return_value=connection):
             self.assertEqual(request('POST', '/session/example/execute/async', {}), rejected)
+        connection.close.assert_called_once()
 
-    def test_webdriver_http_failure_still_propagates(self):
-        failure = HTTPError('http://127.0.0.1:4444/session', 500, 'session not created', {}, None)
-        with patch('native_smoke.urllib.request.urlopen', side_effect=failure):
-            with self.assertRaises(HTTPError):
-                request('POST', '/session', {})
-
-    def test_transport_rejection_retains_bounded_response(self):
-        failure = HTTPError('http://127.0.0.1:4444/session', 500, 'session not created', {}, io.BytesIO(b'{"value":{"error":"session not created"}}'))
-        with patch('native_smoke.urllib.request.urlopen', side_effect=failure):
+    def test_transport_rejection_retains_bounded_response_and_closes_socket(self):
+        connection = self.connection(500, b'{"value":{"error":"session not created"}}')
+        with patch('native_smoke.http.client.HTTPConnection', return_value=connection):
             with self.assertRaises(HTTPError) as raised:
                 request('POST', '/session', {})
         self.assertIn('session not created', raised.exception.webdriver_response)
+        connection.getresponse.return_value.read.assert_called_once_with(8192)
+        connection.close.assert_called_once()
+
+    def test_timeout_closes_socket_and_is_not_replayed(self):
+        connection = Mock()
+        connection.getresponse.side_effect = TimeoutError('original timeout')
+        with patch('native_smoke.http.client.HTTPConnection', return_value=connection) as constructor:
+            with self.assertRaisesRegex(TimeoutError, 'original timeout'):
+                request('GET', '/status', timeout=2)
+        self.assertEqual(constructor.call_args.kwargs['timeout'], 2)
+        connection.request.assert_called_once()
+        connection.close.assert_called_once()
+
+    def test_real_http11_wire_does_not_forward_connection_close(self):
+        import threading
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+        import native_smoke
+        seen = []
+        class Handler(BaseHTTPRequestHandler):
+            protocol_version = 'HTTP/1.1'
+            def do_GET(self):
+                seen.append((self.request_version, self.headers.get('Connection')))
+                body = b'{"value":{"error":"wire rejection"}}' if self.path == '/rejected' else b'{"value":true}'
+                self.send_response(500 if self.path == '/rejected' else 200); self.send_header('Content-Length', str(len(body)))
+                self.end_headers(); self.wfile.write(body)
+            def log_message(self, *args):
+                pass
+        server = HTTPServer(('127.0.0.1', 0), Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+        try:
+            with patch.object(native_smoke, 'DRIVER_PORT', server.server_port):
+                self.assertTrue(request('GET', '/status'))
+                self.assertTrue(request('GET', '/status'))
+                with self.assertRaises(HTTPError) as rejected:
+                    request('GET', '/rejected')
+                self.assertEqual(rejected.exception.code, 500)
+                self.assertIn('wire rejection', rejected.exception.webdriver_response)
+            self.assertEqual(seen, [('HTTP/1.1', None)]*3)
+        finally:
+            server.shutdown(); server.server_close(); thread.join(2)
 
 
 class NativeDiagnosticsTests(unittest.TestCase):
