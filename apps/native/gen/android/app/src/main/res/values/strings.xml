@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">"Rust UI Template"</string>
+    <string name="main_activity_title">"Rust UI Template"</string>
+</resources>

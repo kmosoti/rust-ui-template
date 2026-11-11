@@ -1,0 +1,5 @@
+{
+  "identifier": "dev.kmosoti.rustuitemplate",
+  "app": { "windows": [ { "label": "main", "title": "Rust UI Template", "url": "index.html", "useHttpsScheme": true } ] },
+  "bundle": { "android": { "minSdkVersion": 29 } }
+}

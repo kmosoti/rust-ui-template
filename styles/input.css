@@ -69,3 +69,6 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
+@media (pointer: coarse) {
+  .primary-action, .secondary-action, .field, .nav-link { min-height: 48px; }
+}

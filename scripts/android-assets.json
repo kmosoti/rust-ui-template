@@ -1,0 +1,74 @@
+{
+  "ndk;29.0.14206865": {
+    "url": "https://dl.google.com/android/repository/android-ndk-r29-linux.zip",
+    "sha256": "4abbbcdc842f3d4879206e9695d52709603e52dd68d3c1fff04b3b5e7a308ecf",
+    "destination": "ndk/29.0.14206865",
+    "revision": "29.0.14206865",
+    "metadata_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><repository xmlns=\"http://schemas.android.com/repository/android/common/02\"><localPackage xmlns=\"\" xmlns:sdk=\"http://schemas.android.com/sdk/android/repo/repository2/03\" xmlns:common=\"http://schemas.android.com/repository/android/common/02\" xmlns:sdk-common=\"http://schemas.android.com/sdk/android/repo/common/03\" xmlns:generic=\"http://schemas.android.com/repository/android/generic/02\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" path=\"ndk;29.0.14206865\" obsolete=\"false\"><type-details xsi:type=\"generic:genericDetailsType\" />\n    <revision>\n      <major>29</major>\n      <minor>0</minor>\n      <micro>14206865</micro>\n    </revision>\n    <display-name>NDK (Side by side) 29.0.14206865</display-name>\n    <uses-license ref=\"android-sdk-license\" />\n    </localPackage></repository>",
+    "emulator_only": false
+  },
+  "build-tools;37.0.0": {
+    "url": "https://dl.google.com/android/repository/build-tools_r37_linux.zip",
+    "sha256": "01af179347cbcd9c208b7f8171f7b21f6dd1d2f85bcd15e88caa51d5d7b86060",
+    "destination": "build-tools/37.0.0",
+    "revision": "37.0.0",
+    "metadata_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><repository xmlns=\"http://schemas.android.com/repository/android/common/02\"><localPackage xmlns=\"\" xmlns:sdk=\"http://schemas.android.com/sdk/android/repo/repository2/03\" xmlns:common=\"http://schemas.android.com/repository/android/common/02\" xmlns:sdk-common=\"http://schemas.android.com/sdk/android/repo/common/03\" xmlns:generic=\"http://schemas.android.com/repository/android/generic/02\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" path=\"build-tools;37.0.0\" obsolete=\"false\"><type-details xsi:type=\"generic:genericDetailsType\" />\n    <revision>\n      <major>37</major>\n      <minor>0</minor>\n      <micro>0</micro>\n    </revision>\n    <display-name>Android SDK Build-Tools 37</display-name>\n    <uses-license ref=\"android-sdk-license\" />\n    </localPackage></repository>",
+    "emulator_only": false
+  },
+  "build-tools;36.0.0": {
+    "url": "https://dl.google.com/android/repository/build-tools_r36_linux.zip",
+    "sha256": "5d9ac77fb6ff43d9da518a337b4fcf8f9097113df531d99ccefe80ef7ce8250b",
+    "destination": "build-tools/36.0.0",
+    "revision": "36.0.0",
+    "metadata_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><repository xmlns=\"http://schemas.android.com/repository/android/common/02\"><localPackage xmlns=\"\" xmlns:sdk=\"http://schemas.android.com/sdk/android/repo/repository2/03\" xmlns:common=\"http://schemas.android.com/repository/android/common/02\" xmlns:sdk-common=\"http://schemas.android.com/sdk/android/repo/common/03\" xmlns:generic=\"http://schemas.android.com/repository/android/generic/02\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" path=\"build-tools;36.0.0\" obsolete=\"false\"><type-details xsi:type=\"generic:genericDetailsType\" />\n    <revision>\n      <major>36</major>\n      <minor>0</minor>\n      <micro>0</micro>\n    </revision>\n    <display-name>Android SDK Build-Tools 36</display-name>\n    <uses-license ref=\"android-sdk-license\" />\n    </localPackage></repository>",
+    "emulator_only": false
+  },
+  "cmdline-tools;19.0": {
+    "url": "https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip",
+    "sha256": "7ec965280a073311c339e571cd5de778b9975026cfcbe79f2b1cdcb1e15317ee",
+    "destination": "cmdline-tools/19.0",
+    "revision": "19.0.0",
+    "metadata_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><repository xmlns=\"http://schemas.android.com/repository/android/common/02\"><localPackage xmlns=\"\" xmlns:sdk=\"http://schemas.android.com/sdk/android/repo/repository2/03\" xmlns:common=\"http://schemas.android.com/repository/android/common/02\" xmlns:sdk-common=\"http://schemas.android.com/sdk/android/repo/common/03\" xmlns:generic=\"http://schemas.android.com/repository/android/generic/02\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" path=\"cmdline-tools;19.0\" obsolete=\"false\"><type-details xsi:type=\"generic:genericDetailsType\" />\n    <revision>\n      <major>19</major>\n      <minor>0</minor>\n    </revision>\n    <display-name>Android SDK Command-line Tools</display-name>\n    <uses-license ref=\"android-sdk-license\" />\n    </localPackage></repository>",
+    "emulator_only": false
+  },
+  "platform-tools": {
+    "url": "https://dl.google.com/android/repository/platform-tools_r37.0.1-linux.zip",
+    "sha256": "d230f13842f60f782a8645f9c813f8f845bf36089ea7289f28c48f17979313f1",
+    "destination": "platform-tools",
+    "revision": "37.0.1",
+    "metadata_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><repository xmlns=\"http://schemas.android.com/repository/android/common/02\"><localPackage xmlns=\"\" xmlns:sdk=\"http://schemas.android.com/sdk/android/repo/repository2/03\" xmlns:common=\"http://schemas.android.com/repository/android/common/02\" xmlns:sdk-common=\"http://schemas.android.com/sdk/android/repo/common/03\" xmlns:generic=\"http://schemas.android.com/repository/android/generic/02\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" path=\"platform-tools\" obsolete=\"false\"><type-details xsi:type=\"generic:genericDetailsType\" />\n    <revision>\n      <major>37</major>\n      <minor>0</minor>\n      <micro>1</micro>\n    </revision>\n    <display-name>Android SDK Platform-Tools</display-name>\n    <uses-license ref=\"android-sdk-license\" />\n    </localPackage></repository>",
+    "emulator_only": false
+  },
+  "platforms;android-37.0": {
+    "url": "https://dl.google.com/android/repository/platform-37.0_r02.zip",
+    "sha256": "840b23e827f96e64aea4c89a1194aac3dc5f6bad37edb231c5c795d890330e8d",
+    "destination": "platforms/android-37.0",
+    "revision": "2.0.0",
+    "metadata_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><repository xmlns=\"http://schemas.android.com/repository/android/common/02\"><localPackage xmlns=\"\" xmlns:sdk=\"http://schemas.android.com/sdk/android/repo/repository2/03\" xmlns:common=\"http://schemas.android.com/repository/android/common/02\" xmlns:sdk-common=\"http://schemas.android.com/sdk/android/repo/common/03\" xmlns:generic=\"http://schemas.android.com/repository/android/generic/02\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" path=\"platforms;android-37.0\" obsolete=\"false\"><type-details xsi:type=\"sdk:platformDetailsType\">\n      <api-level>37.0</api-level>\n      <codename />\n      <extension-level>22</extension-level>\n      <base-extension>true</base-extension>\n      <layoutlib api=\"15\" />\n    </type-details>\n    <revision>\n      <major>2</major>\n    </revision>\n    <display-name>Android SDK Platform 37.0</display-name>\n    <uses-license ref=\"android-sdk-license\" />\n    </localPackage></repository>",
+    "emulator_only": false
+  },
+  "platforms;android-36": {
+    "url": "https://dl.google.com/android/repository/platform-36_r02.zip",
+    "sha256": "37607369a28c5b640b3a7998868d45898ebcb777565a0e85f9acf36f29631d2e",
+    "destination": "platforms/android-36",
+    "revision": "2.0.0",
+    "metadata_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><repository xmlns=\"http://schemas.android.com/repository/android/common/02\"><localPackage xmlns=\"\" xmlns:sdk=\"http://schemas.android.com/sdk/android/repo/repository2/03\" xmlns:common=\"http://schemas.android.com/repository/android/common/02\" xmlns:sdk-common=\"http://schemas.android.com/sdk/android/repo/common/03\" xmlns:generic=\"http://schemas.android.com/repository/android/generic/02\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" path=\"platforms;android-36\" obsolete=\"false\"><type-details xsi:type=\"sdk:platformDetailsType\">\n      <api-level>36</api-level>\n      <extension-level>17</extension-level>\n      <base-extension>true</base-extension>\n      <layoutlib api=\"15\" />\n    </type-details>\n    <revision>\n      <major>2</major>\n    </revision>\n    <display-name>Android SDK Platform 36</display-name>\n    <uses-license ref=\"android-sdk-license\" />\n    </localPackage></repository>",
+    "emulator_only": false
+  },
+  "emulator": {
+    "url": "https://dl.google.com/android/repository/emulator-linux_x64-16740729.zip",
+    "sha256": "cbc7c3cfb83220b8a0f9c513fdab557712e74d339ec19ddffa43f23350ae9bdd",
+    "destination": "emulator",
+    "revision": "37.2.13",
+    "metadata_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><repository xmlns=\"http://schemas.android.com/repository/android/common/02\"><localPackage xmlns=\"\" xmlns:sdk=\"http://schemas.android.com/sdk/android/repo/repository2/03\" xmlns:common=\"http://schemas.android.com/repository/android/common/02\" xmlns:sdk-common=\"http://schemas.android.com/sdk/android/repo/common/03\" xmlns:generic=\"http://schemas.android.com/repository/android/generic/02\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" path=\"emulator\" obsolete=\"false\"><type-details xsi:type=\"generic:genericDetailsType\" />\n    <revision>\n      <major>37</major>\n      <minor>2</minor>\n      <micro>13</micro>\n    </revision>\n    <display-name>Android Emulator</display-name>\n    <uses-license ref=\"android-sdk-license\" />\n    </localPackage></repository>",
+    "emulator_only": true
+  },
+  "system-images;android-36;google_apis;x86_64": {
+    "url": "https://dl.google.com/android/repository/sys-img/google_apis/x86_64-36_r07.zip",
+    "sha256": "b1bb0769d0bed7698e61f203d7dc9bf6e7c37cd01a39d0d8788a11186bc78160",
+    "destination": "system-images/android-36/google_apis/x86_64",
+    "revision": "7.0.0",
+    "metadata_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><repository xmlns=\"http://schemas.android.com/repository/android/common/02\"><localPackage xmlns=\"\" xmlns:sys-img=\"http://schemas.android.com/sdk/android/repo/sys-img2/03\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" path=\"system-images;android-36;google_apis;x86_64\" obsolete=\"false\"><type-details xsi:type=\"sys-img:sysImgDetailsType\">\n      <api-level>36</api-level>\n      <extension-level>17</extension-level>\n      <base-extension>true</base-extension>\n      <tag>\n        <id>google_apis</id>\n        <display>Google APIs</display>\n      </tag>\n      <vendor>\n        <id>google</id>\n        <display>Google Inc.</display>\n      </vendor>\n      <abi>x86_64</abi>\n    </type-details>\n    <revision>\n      <major>7</major>\n    </revision>\n    <display-name>Google APIs Intel x86_64 Atom System Image</display-name>\n    <uses-license ref=\"android-sdk-license\" />\n    </localPackage></repository>",
+    "emulator_only": true
+  }
+}
