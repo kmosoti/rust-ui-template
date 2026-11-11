@@ -237,7 +237,8 @@ flowchart LR
   APK --> WebView[Android WebView: Leptos DOM owner]
   WebView --> ACL[Local main window capability]
   ACL --> Info[Same schema1 app_info handler]
-  Host[Android Activity: system and IME insets] --> WebView
+  Host[Android Activity: system, cutout and IME insets] --> WebView
+  Focus[App-owned viewport listener: reveal clipped focused field] --> WebView
   Test[AndroidX instrumentation] --> WebView
   Restricted[Separate restricted-window APK] --> Denied[Real ACL denial]
   Test --> Evidence[Runtime versions / screenshots / geometry / logcat]
@@ -246,8 +247,8 @@ flowchart LR
 The Android project is generated with the pinned Tauri CLI and then reviewed as
 source; only machine-specific bridges/JNI/build outputs are regenerated. Its
 Android-safe application ID is distinct from Linux's package identity; wire
-schema and pure core remain unchanged. Host root padding owns insets, the shared
-DOM owns layout/scrolling. No Node or embedded automation server is introduced.
+schema and pure core remain unchanged. Host root padding owns insets; the shared
+DOM owns layout and its focused-field scrolling adapter. No Node or embedded automation server is introduced.
 Current Android build and runtime evidence/limits are recorded in
 [O-0011](../knowledge/observations/O-0011-android-apks.md), not inferred from the
 diagram. Linux packages are already validated separately.

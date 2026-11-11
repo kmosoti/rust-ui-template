@@ -81,8 +81,9 @@ native IPC and malformed input, real ACL denial, CSP inline-script denial,
 slow/fast stale retention, cancel, navigation cleanup, palette continuity,
 Back, portrait/landscape, background/foreground, IME and geometry smoke.
 System chrome retains the dark Nocturne canvas with light system icons across palettes.
-Insets have one owner: host root padding accounts for system bars/IME; the shared
-DOM scrolls normally. Coarse-pointer controls are at least48CSSpx high.
+Host root padding accounts for system bars, cutouts and IME. Leptos owns the
+viewport-shrink listener that reveals a clipped focused field; its app owner
+drops the listener during cleanup. Ordinary document scrolling remains native. Coarse-pointer controls are at least48CSSpx high.
 This does not prove TalkBack usability or full accessibility conformance.
 
 CI uploads test-signed application APKs plus hashes only after device checks.

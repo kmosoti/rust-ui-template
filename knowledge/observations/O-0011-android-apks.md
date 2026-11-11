@@ -152,3 +152,25 @@ DRI3 warnings are also present in passing runs, so no GPU cause is inferred.
 One explicit failed-job rerun passed all DEB/RPM production and denial checks;
 the failure and known transport limitation are retained, not hidden by automatic
 retry. Browser/core source checks passed on the same c74f7786 head.
+
+## First real device UI result and correction
+
+Run42948857272 booted the emulator and passed bundled HTTPS/single CSS/art,
+startup axe, real app_info/input rejection, stale/cancel/navigation checks before
+failing the unchanged complete-focused-field assertion with IME visible. Actual
+runtime: API36, x86_64, Android16, WebView/Chrome133.0.6943.137 (artifact13824108972).
+Viewed its screenshot: keyboard top near physicaly1633 clips the lower input
+border while the caret is still visible; innerHeight571 / width412 CSSpx.
+This is a real geometry failure, not a backend capability failure.
+
+Added an app-owner-scoped gloo resize listener in shared Leptos UI. It scrolls
+only a clipped focused form control on viewport shrink; StoredValue ownership
+detaches it on cleanup. No native injected-JS UI owner and no request-rule changes.
+Native padding also includes observed Pixel7 display-cutout insets. Updated the
+brief/architecture and added startup layout/capture and focused-bounds diagnostics.
+
+New browser viewport-shrink regression failed against old production assets,
+then passed with the corrected production root/subpath builds. Full browser suite
+passed all56 palette/viewport audits plus interactions/assets/axe. CSR WASM
+Clippy passed; strict offline AndroidTest compilation passed2s. Cargo locks are
+unchanged: only declared web-sys features changed. Device correction pending CI.

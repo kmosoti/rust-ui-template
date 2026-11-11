@@ -13,7 +13,7 @@ leptos = { version = "=0.8.23", features = ["csr"] }
 futures = "=0.3.31"
 gloo-timers = { version = "=0.3.0", features = ["futures"] }
 gloo-events = "=0.2.0"
-web-sys = { version = "=0.3.107", features = ["Window", "Location"] }
+web-sys = { version = "=0.3.107", features = ["Window", "Location", "Document", "Element", "DomRect", "ScrollIntoViewOptions", "ScrollLogicalPosition"] }
 
 [lints]
 workspace = true
