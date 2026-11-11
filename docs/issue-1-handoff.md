@@ -1,3 +1,27 @@
+# Current Issue #1 completion handoff
+
+The agreed milestone is browser/Linux CSR plus delivered Android test evidence.
+Windows/macOS/iOS, broader runtime coverage and production signing have explicit
+follow-ups (#22–#24); proof continuation is #27, maintenance replacements #28.
+No main promotion, tag or publication is included.
+
+Current implementation includes the permissive native dependency patches (#26),
+security/clean-build gates (#29), and the Android presented-capture correction
+(#25). Final applicable CI, artifact inspection and independent landing are the
+completion gate; do not infer completion from a pending PR.
+
+- [Pinned toolchains and fresh checkout commands](toolchains.md)
+- [Platform evidence and untested configurations](platforms.md)
+- [Dependency checks and bounded exceptions](security.md)
+- [Actual core extraction assessment; no proof claim](proof-feasibility.md)
+- [Milestone release notes](release-notes.md)
+- [CI measurements, cache trust and clean build contract](ci.md)
+
+The remainder below preserves historical foundation notes. They are not a list
+of still-missing browser/native crates or instructions to repeat landed work.
+
+---
+
 > Current handoff: browser/Nocturne/seven palettes, the shared native entry and Ubuntu 24.04 DEB/Fedora 44 RPM checks are implemented. Android APK/device work is tracked in [O-0011](../knowledge/observations/O-0011-android-apks.md) and the [platform matrix](platforms.md). Desktop work remains Linux-focused; Windows/macOS and iOS are deferred. Security/release checks and source-linked proof feasibility remain open. Issue #1 stays open.
 >
 > The foundation notes below are historical, not instructions to repeat already-landed browser/native work.

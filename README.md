@@ -1,6 +1,6 @@
 # rust-ui-template
 
-**Status: browser and Linux desktop slices; not a complete cross-platform release.** The shared Leptos UI uses the dependency-free core. Ubuntu 24.04 DEB and Fedora 44 RPM packages have installation, reinstallation, launch and permission-denial evidence. Android APK/device evidence is tracked separately below; other native platforms remain deferred.
+**Status: browser/Linux CSR foundation with Android test evidence on develop.** The shared Leptos UI uses the dependency-free core. Ubuntu 24.04 DEB and Fedora 44 RPM packages have installation, reinstallation, launch and permission-denial evidence. Android APK/device evidence is tracked separately below; other native platforms remain deferred.
 
 A minimal Rust-first UI foundation for browser, desktop, and mobile clients. The template will be implemented incrementally through the repository's GitHub issues.
 
@@ -114,7 +114,7 @@ Fedora targets, metadata checks, diagnostics and unsigned artifacts.
 - **Tauri 2** packages the same client for desktop (Windows, macOS, Linux) and mobile (Android, iOS), with native functionality behind narrow capability-scoped adapters.
 - **Pure Rust core** owns reusable application rules and state transitions, independent of UI, browser, or operating-system APIs.
 
-The core workspace pins Rust 1.99.1 with Edition 2024/resolver 3. The remaining implementation roadmap calls for current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. The browser slice pins its dependencies and build tools; native compatibility and untested configurations are listed in the evidence matrix.
+The core workspace pins Rust 1.99.1 with Edition 2024/resolver 3. The implementation uses current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. The browser slice pins its dependencies and build tools; native compatibility and untested configurations are listed in the evidence matrix.
 
 ## Release sequence
 
@@ -168,3 +168,15 @@ The generated Tauri Android host reuses the same UI/core and production assets.
 See [Android build/instrumentation guide](docs/android.md) and the
 [platform evidence matrix](docs/platforms.md) for current validation and limits.
 APKs are debug/test-signed; store signing, iOS and other desktop ports are deferred.
+
+## Milestone handoff
+
+[Validated toolchains and fresh Linux checkout commands](docs/toolchains.md) ·
+[Milestone release notes and limits](docs/release-notes.md) ·
+[Dependency policy](docs/security.md) ·
+[Source-linked extraction assessment](docs/proof-feasibility.md).
+
+Issue #1 completion is scoped to browser/Linux plus the delivered Android tests.
+Windows/macOS/iOS (#22), broader Linux/Android/runtime coverage (#23), production
+signing/release promotion (#24), implementation-linked proof (#27) and dated macro
+maintenance replacements (#28) remain separate. Main is human-gated and untouched.
