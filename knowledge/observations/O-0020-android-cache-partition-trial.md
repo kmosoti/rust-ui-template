@@ -1,7 +1,7 @@
 ---
 id: O-0020
 type: observation
-status: candidate-awaiting-hosted-measurements
+status: provisionally-landed-seed-warm-probe-pending
 updated: 2026-11-11
 added_by: agent
 human_ratified: false
@@ -93,3 +93,29 @@ vendor, manifest and workflow build-input changes invalidate the relevant
 prefixes. These fixtures do not edit generated repository locks and do not claim
 to implement GitHub's full expression engine. The reusable regression will ship
 with the final evidence PR used for the hosted synthetic fallback probe.
+
+
+## Provisional landing and cold observations
+
+Independent medium review owned PR35's provisional rebase merge into develop
+`a88b6c66a2fc9f9d72f6f165601af30814cd9508` after all six final-head checks passed.
+This authorizes trusted seeding, not performance adoption or #31 closure.
+
+- Early all-miss Android43061948302:742s, source d1395070d6836520c7b0068ea13100ec4e5d5b10,
+  artifact13873939388. SDK setup135s, ABI build282s, emulator155s.
+- Final exact-head PR35 Android43068162561:564s, source86ba0fe27247692d6712ba9fe7d9cc282b031163,
+  artifact13876764253. Three restore lookups1/1/0s, SDK115s, ABI213s,
+  emulator110s. Every cache component had an empty hit/matched key and populated
+  primary; both profile phases were error-free, observer0.0004/1.398s.
+- Both images ubuntu24/20261101.360.1. These cold results vary substantially and
+  do not establish a speedup: compiler/emulator/network time varies too. Preserve
+  source IDs and compare repeated warm jobs, not a favorable single cold sample.
+- Trusted develop seed is run43069846343. No candidate cache was saved by a PR.
+  Three warm exact hits and a synthetic fallback probe remain pending.
+- After inheriting the final transport fix,42 local Python tests pass, including
+  five stdlib compatibility properties against actual workflow key patterns.
+  Fixture locks are temporary synthetic data, not edits to generated repo locks.
+
+Runtime investigation required actual package evidence before this landing:
+[O-0019](O-0019-linux-wayland-accessibility.md) retains failed runs, the negative
+proxy experiment, actual restricted RPM checks and the HTTP-client decision.
