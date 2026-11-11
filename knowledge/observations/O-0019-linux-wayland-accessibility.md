@@ -162,3 +162,9 @@ denial/native AT-SPI and removal passed locally with exit0. An independent mediu
 reviewer inspected the actual log. No IPC response was faked. This successful
 configuration is evidence for compatibility, not proof that every intermittent
 upstream transport failure has been eliminated.
+
+
+The final evidence slice also makes Ubuntu restricted-package removal explicit
+after its denial checks and preserves the executable-absence assertion. Fedora
+already removes both variants. This improves repeatable cleanup rather than
+relying on runner disposal; actual final-head hosted execution remains required.

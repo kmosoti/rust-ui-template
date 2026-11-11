@@ -1,7 +1,7 @@
 ---
 id: O-0020
 type: observation
-status: provisionally-landed-seed-warm-probe-pending
+status: seeded-warm-and-fallback-review-pending
 updated: 2026-11-11
 added_by: agent
 human_ratified: false
@@ -119,3 +119,43 @@ This authorizes trusted seeding, not performance adoption or #31 closure.
 Runtime investigation required actual package evidence before this landing:
 [O-0019](O-0019-linux-wayland-accessibility.md) retains failed runs, the negative
 proxy experiment, actual restricted RPM checks and the HTTP-client decision.
+
+Comparison control: evaluated both Android workflows with local YAML inspection;
+all21 non-profiler shell commands and the build environment match between
+baseline3160e4a and developa88b6c6. `git diff --exit-code` also found no changes
+in Cargo locks/manifests, Rust pin, crates, native Rust/capabilities/Android source,
+Android/tool asset pins, Android/frontend/native setup Python, emulator/device
+scripts, styles, Trunk configuration and index input. Cache/profiler changes and
+separate Linux harness work account for the source-ID differences; a faster
+single cold result is not evidence of reduced build/test coverage.
+
+
+## Trusted seed
+
+Develop run43069846343/attempt1 passed742s on sourcea88b6c6 and image
+ubuntu24/20261101.360.1; artifact13876849920 has error-free all-miss profiles.
+All three save steps succeeded and the cache API confirms their exact keys under
+refs/heads/develop, not a PR ref:
+
+| Component | Cache ID | Compressed bytes | Save step |
+| --- | --- | ---: | ---: |
+| SDK |10369184852 |3267755610 |43s |
+| Dependencies/tools/Gradle |10369204165 |683180406 |17s |
+| Compiled targets |10369212413 |543907393 |8s |
+| Total | |4494843409 |68s |
+
+The measured archive sum is9.57% below the existing4,970,485,718-byte v1 archive,
+but **freshness is a confound**: the warm v1 archive retains old unused state.
+Both the actual v1 forced-cold and v2 seed produce the same apparent bucket sizes
+(SDK8309.4MiB, Gradle924.2MiB, native target1492.4MiB), while the old warm v1 cache
+contains Gradle1409.4MiB and native target2336.3MiB. Do not attribute the full
+byte reduction to partitioning or claim a controlled compression improvement.
+SDK archive identity is independently stable across lock-only fixture/probe
+identities; avoiding future duplicate SDK saves is a separate structural benefit,
+not a measured quota/eviction improvement.
+
+Seed SDK setup91s, ABI274s, emulator150s. Warm1 has been requested with
+`gh run rerun 43069846343`; no failed assertion is being retried. Preserve the
+seed profile before rerunning because Actions artifact retention/attempt behavior
+can remove earlier downloads. Adoption still awaits three successful exact-hit
+warm runs and the actual read-only synthetic fallback probe.
