@@ -1,7 +1,7 @@
 ---
 id: O-0015
 type: observation
-status: ci-validation-pending
+status: reviewed-reproducibility-passed
 updated: 2026-11-11
 added_by: agent
 human_ratified: false
@@ -48,3 +48,11 @@ checks actual tracked frontend inputs against both event filters. Security check
 are not narrowed. This avoids unrelated cold builds without omitting a frontend
 input; future cross-workspace/vendor consumption requires revisiting the boundary.
 Fresh CI on the changed workflow/integrated base remains required.
+
+## Final integrated verification
+
+Exact-head run42981140733 and post-merge develop run42982373211 passed. The final
+PR artifact reports6 identical files and all fresh commands passed. The guarded
+native-only filter is included in the reviewed source; current source/frontend
+changes still exercised the full gate. [O-0017](O-0017-issue1-completion.md) records
+source/artifact identities, timings and the frontend-only reproducibility limit.

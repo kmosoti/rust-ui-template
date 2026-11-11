@@ -1,7 +1,7 @@
 ---
 id: O-0014
 type: observation
-status: local-checks-passed-ci-pending
+status: reviewed-develop-ci-passed
 updated: 2026-11-11
 added_by: agent
 human_ratified: false
@@ -95,3 +95,10 @@ Tool setup took0.788s with no initial archive entries and0.507s on repeated
 verified setup. This is one job's cold/hot archive observation, not a controlled
 cross-run cache speedup or native build timing claim. Same-source warm cache
 transfer/seed measurements remain to be recorded after develop landing.
+
+## Final integrated verification
+
+All6 exact-head PR29 and post-merge develop323167e3 checks passed, including actual
+Android ABI/emulator behavior with KGP2.4.21 and the template/capture fixes.
+[O-0017](O-0017-issue1-completion.md) supersedes earlier pending-CI notes and records
+same-source31s seed/24s warm security observations plus artifacts/limits.

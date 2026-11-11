@@ -147,3 +147,18 @@ trigger it. A coverage guard checks actual tracked frontend inputs against both
 PR/push ignore lists. If the browser workspace ever consumes native/vendor code,
 remove those ignores as part of that architecture change. Dependency-security
 coverage remains independent and is not narrowed by this optimization.
+
+## Completion measurements (2026-11-11)
+
+Same source323167e3, Ubuntu24.04 image20261101.360.1: dependency-security seed
+run42982373154/attempt1 passed31s and saved its verified dependency/archive cache
+in4s; exact-hit attempt2 passed24s including4s to restore156MiB. Both executed all
+checks. Warm verified setup calls took0.141s/0.366s. These are single paired samples,
+not a universal speedup claim. The initial exact-head cold tool setup was1.054s,
+then0.207s on repeated setup within the job.
+
+Actual Android run42981139718 passed7m25s: cache transfer61s, tool setup2s,
+SDK verification11s, ABI builds147s and production/denial VM checks159s. Larger
+cache transfer work is tracked in #31; no test coverage is traded away for speed.
+See [O-0017](../knowledge/observations/O-0017-issue1-completion.md) for exact commands,
+cache trust, per-run evidence and source/environment limitations.

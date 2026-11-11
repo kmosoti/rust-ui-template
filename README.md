@@ -13,7 +13,7 @@ cargo fetch --locked
 cargo test --workspace --locked --offline
 ```
 
-See the [coding-agent handoff and full check commands](docs/issue-1-handoff.md), [decision D-0002](knowledge/decisions/D-0002-latest-request-core.md), and [execution evidence O-0002](knowledge/observations/O-0002-core-foundation.md). A successful core test is not a browser, desktop, or mobile launch test. Issue #1 remains open.
+See the [coding-agent handoff and full check commands](docs/issue-1-handoff.md), [decision D-0002](knowledge/decisions/D-0002-latest-request-core.md), and [execution evidence O-0002](knowledge/observations/O-0002-core-foundation.md). A successful core test is not a browser, desktop, or mobile launch test. The scoped milestone handoff records the separate production/platform evidence and follow-ups.
 
 ## Default workspace
 
