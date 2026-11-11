@@ -96,3 +96,24 @@ Local current-source production/denial and new-head hosted results remain pendin
 until executed. Ubuntu metadata now lives in an owned /tmp directory so _apt can
 traverse the parent; RUNNER_TEMP had caused a root-download fallback warning.
 The prior fresh/repeated Ubuntu probe already used /tmp with no such warning.
+
+
+## HTTP boundary investigation
+
+The next run43066561532 still reset at Fedora X11 window-handles despite software
+flags and no DRI3 warning. Artifact13876661535 shows tauri-driver, WebKitWebDriver,
+the app and both WebKit workers alive at capture, with no core dump. Thus the
+warning was not established as the cause and software flags did not solve the
+transport failure. No assertion was replayed.
+
+Inspected actual pinned tauri-driver2.1.0 server.rs: it forwards incoming headers
+unchanged through a pooled Hyper client, with canceled-request retries disabled.
+A real local HTTP/1.1 wire probe showed Python urllib forces Connection: close.
+The harness now uses stdlib http.client, omits that hop-by-hop close header,
+consumes responses and closes its frontend socket. The backend's default HTTP/1.1
+persistence is preserved. No failed command is replayed, no driver fork or app
+change is introduced. HTTP failure status, bounded body and original exceptions
+remain available; timeout/socket cleanup and wire-level success/non-2xx are
+covered. The same wire probe now observes no Connection header. This is evidence
+for the interoperability hypothesis, not proof of every upstream root cause.
+Local production and fresh hosted verification are required before landing.

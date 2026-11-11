@@ -2,6 +2,8 @@
 import argparse
 import base64
 import json
+import http.client
+import io
 import os
 from pathlib import Path
 import signal
@@ -13,7 +15,6 @@ import traceback
 import subprocess
 import time
 import urllib.error
-import urllib.request
 
 
 DRIVER_PORT = 4444
@@ -21,18 +22,21 @@ DRIVER_PORT = 4444
 
 def request(method, path, body=None, timeout=40):
     data = None if body is None else json.dumps(body).encode()
-    req = urllib.request.Request(f'http://127.0.0.1:{DRIVER_PORT}' + path, data=data, method=method, headers={'Content-Type': 'application/json'})
+    # urllib forces Connection: close; tauri-driver forwards it to a pooled
+    # native connection. Leave HTTP/1.1 backend persistence intact. Never retry.
+    connection = http.client.HTTPConnection('127.0.0.1', DRIVER_PORT, timeout=timeout)
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as response:
-            result = json.load(response)
-    except urllib.error.HTTPError as error:
-        try:
-            error.webdriver_response = error.read(8192).decode(errors='replace')
-        except Exception:
-            error.webdriver_response = None
-        raise
-    value = result.get('value')
-    return value
+        connection.request(method, path, body=data, headers={'Content-Type': 'application/json'})
+        response = connection.getresponse()
+        if not 200 <= response.status < 300:
+            error_body = response.read(8192)
+            error = urllib.error.HTTPError(f'http://127.0.0.1:{DRIVER_PORT}'+path, response.status, response.reason, response.headers, io.BytesIO(error_body))
+            error.webdriver_response = error_body.decode(errors='replace')
+            raise error
+        result = json.loads(response.read())
+        return result.get('value')
+    finally:
+        connection.close()
 
 
 def owned_process_snapshot(pid, proc=Path('/proc'), limit=64):
@@ -179,6 +183,7 @@ def main():
         wait("document.querySelector('h1')?.textContent === 'Your library'")
         wait("document.querySelector('[data-testid=featured-art]')?.naturalWidth > 0")
         runtime = execute('return {userAgent:navigator.userAgent,width:innerWidth,height:innerHeight,dpr:devicePixelRatio}')
+        runtime['driver_http_transport'] = 'stdlib http.client HTTP/1.1; no Connection: close; no retries'
         runtime['display_backend_requested'] = args.display_backend
         runtime['display_environment'] = {key: os.environ.get(key) for key in ('GDK_BACKEND', 'DISPLAY', 'WAYLAND_DISPLAY', 'LIBGL_ALWAYS_SOFTWARE', 'GALLIUM_DRIVER', 'WEBKIT_DISABLE_DMABUF_RENDERER')}
         runtime['system'] = platform.platform()

@@ -72,3 +72,11 @@ After the restricted build succeeds, `linux-restricted-test-fixture` retains onl
 its test RPM for one day to support local reproduction. Missing output fails the
 upload. This is separate from `unsigned-linux-packages`, which remains production
 only; the restricted fixture must never enter a production/release path.
+
+
+The native HTTP client deliberately omits `Connection: close`: tauri-driver2.1
+forwards incoming headers through its pooled backend client. Each frontend
+response is consumed and its socket closed without forcing the backend to close.
+Wire tests cover success, HTTP failure/body preservation and no replay; timeouts
+still fail. This addresses an investigated interoperability hazard rather than
+masking it with application assertion retries; see O-0019 for failed evidence.
