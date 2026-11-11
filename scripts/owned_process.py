@@ -4,6 +4,8 @@ import signal
 import socket
 import subprocess
 
+KILL_WAIT_TIMEOUT = 5
+
 def free_ports():
     sockets = [socket.socket(), socket.socket()]
     try:
@@ -20,7 +22,7 @@ def stop(process, timeout=10):
         try:
             os.killpg(process.pid, signal.SIGTERM)
         except ProcessLookupError:
-            process.wait(timeout=5)
+            process.wait(timeout=KILL_WAIT_TIMEOUT)
             return
         try:
             process.wait(timeout=timeout)
@@ -29,5 +31,5 @@ def stop(process, timeout=10):
                 os.killpg(process.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
-            process.wait(timeout=5)
+            process.wait(timeout=KILL_WAIT_TIMEOUT)
 

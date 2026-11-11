@@ -18,9 +18,15 @@ import time
 import urllib.error
 
 
-from owned_process import stop
+from owned_process import stop, KILL_WAIT_TIMEOUT
+from native_keyboard import RELEASE_TIMEOUT
 
 DRIVER_PORT = 4444
+SESSION_DELETE_TIMEOUT = 3
+DRIVER_STOP_TIMEOUT = 5
+# Grace for native SIGTERM cleanup: release, session DELETE, driver TERM/KILL,
+# plus bounded orchestration overhead. External SIGKILL cannot run finalizers.
+NATIVE_STOP_TIMEOUT = RELEASE_TIMEOUT + SESSION_DELETE_TIMEOUT + DRIVER_STOP_TIMEOUT + KILL_WAIT_TIMEOUT + 5
 
 
 def request(method, path, body=None, timeout=40):
@@ -88,7 +94,7 @@ def record_failure(directory, name, phase, error, session, driver=None):
 def cleanup_driver(driver, log, preserve_error):
     errors = []
     try:
-        stop(driver, timeout=5)
+        stop(driver, timeout=DRIVER_STOP_TIMEOUT)
     except Exception as error:
         errors.append(error)
     try:
@@ -270,7 +276,7 @@ def main():
     finally:
         if session:
             try:
-                request('DELETE', '/session/' + session, timeout=3)
+                request('DELETE', '/session/' + session, timeout=SESSION_DELETE_TIMEOUT)
             except Exception:
                 pass
         cleanup_driver(driver, log, preserve_error=sys.exc_info()[0] is not None)

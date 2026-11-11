@@ -85,3 +85,7 @@ match the requested scale within 0.05, and screenshot pixels must agree with
 viewport×DPR within 1 pixel. A mismatch fails. Software output scale2 does not
 complete real desktop 100/200% scaling, GPU attribution, human usability or Orca
 speech checks. Those manual checkboxes and issue #23 remain open.
+
+Keyboard action release has a 3s timeout. Both owned native wrappers allow 21s
+for release, session deletion and driver TERM/KILL cleanup before escalation.
+External SIGKILL or forced container destruction cannot run Python finalizers.

@@ -5,6 +5,7 @@ from pathlib import Path
 
 TAB, SHIFT, CONTROL, ENTER, SPACE = '\ue004', '\ue008', '\ue009', '\ue007', '\ue00d'
 HOME, DOWN = '\ue011', '\ue015'
+RELEASE_TIMEOUT = 3
 
 # Whitelist diagnostic fields; never serialize DOM, arbitrary attributes or input data.
 FOCUS = """return (() => {const e=document.activeElement,r=e.getBoundingClientRect(),s=getComputedStyle(e);return {
@@ -117,7 +118,7 @@ class Keyboard:
             raise
         finally:
             try:
-                self.request('DELETE', self.prefix+'/actions')
+                self.request('DELETE', self.prefix+'/actions', timeout=RELEASE_TIMEOUT)
             except Exception as error:
                 if original is None:
                     self.report.update(status='failed', failed_checkpoint='release-actions', failure_summary=str(error)[:1500])

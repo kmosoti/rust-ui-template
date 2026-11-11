@@ -34,6 +34,12 @@ Pending 11 immediately before Fast and observing 22 before the original slow
 must remain stable beyond its original timer. Representative focus outlines
 and viewport-visible rectangles are asserted and captured. Held modifiers are
 released even on failure; diagnostic/release failures preserve the original error.
+Independent medium review found that an unbounded-to-the-wrapper default 40s
+release could exceed its 15s grace and prevent driver cleanup. Release is now 3s;
+both native wrappers share 21s grace, covering release 3 + session DELETE 3 + driver
+TERM 5/KILL 5 + 5s overhead. Regressions verify the bounded release and actual wrapper
+budget use. External SIGKILL, including a forcibly killed parent/container, cannot
+run Python finalizers; no absolute cleanup guarantee is made for that case.
 
 Scale means an actual Weston output setting. Record requested scale, command,
 version/help, output and seat protocol, logical viewport, observed DPR and PNG
@@ -92,7 +98,7 @@ DPR 2/PNG 3200×2200 on Weston 15. No output-size adjustment was necessary there
 GTK 3.24.52, WebKitGTK/WebDriver 2.54.2, Weston 15.0.1 and tauri-driver 2.1.0.
 Final Fedora command includes install/reinstall and removal/executable absence.
 
-57 Python unit tests pass, including unreachable/deadline focus traces,
+59 Python unit tests pass, including unreachable/deadline focus traces,
 no action replay, modifier release/original failure preservation, diagnostic
 write failure, scale/fixture rejection, DPR mismatch, explicit nested forwarding
 and display isolation. Existing transport, owned-process and security tests remain.
