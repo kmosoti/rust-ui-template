@@ -154,8 +154,9 @@ class Keyboard:
         assert self.execute('return document.activeElement.textContent') == name
 
     def freshness(self):
-        self.number(11); self.button('Slow request'); self.keys(ENTER)
+        self.number(11); self.button('Slow request')
         slow_started = time.monotonic()
+        self.keys(ENTER)
         self.wait("document.querySelector('[role=status]')?.textContent.includes('Request pending.')")
         self.number(22, reverse=True); self.button('Fast request')
         assert self.execute("return document.querySelector('[role=status]').textContent.includes('Request pending.')"), 'Slow request completed before Fast activation'
