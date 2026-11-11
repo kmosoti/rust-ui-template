@@ -1703,8 +1703,6 @@ dependencies = [
 [[package]]
 name = "markup5ever_rcdom"
 version = "0.40.1+unofficial"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64206f12eb431c03d9b6f293846f8b0517578905b6c0cac266aa52f09c11ad7c"
 dependencies = [
  "html5ever",
  "markup5ever",

@@ -107,6 +107,14 @@ mod tests {
   use http::StatusCode;
 
   #[test]
+  fn template_contents_survive_injection() {
+    let template = "<template><p>keep &amp; escape</p><script>inert()</script></template>";
+    let body = format!("<html><head></head><body>{template}</body></html>");
+    let output = run(&body, "text/html", vec!["window.init=true".into()]);
+    assert!(output.contains(template), "template fragment lost: {output}");
+  }
+
+  #[test]
   fn test_no_scripts_returns_original_response() {
     let body = "<html><head></head><body>Test</body></html>";
 

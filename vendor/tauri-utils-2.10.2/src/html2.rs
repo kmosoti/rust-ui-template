@@ -285,6 +285,15 @@ mod tests {
   }
 
   #[test]
+  fn template_fragment_roundtrips_without_inert_nonce_injection() {
+    let html = "<html><head><template><style>p{color:red}</style><script src=\"https://example.test/inert.js\"></script><template><p>nested &amp; preserved</p></template></template></head><body></body></html>";
+    let doc = parse_doc(html.into());
+    inject_nonce_token(&doc, &config::DisabledCspModificationKind::Flag(false));
+    assert_eq!(String::from_utf8(serialize_doc(&doc)).unwrap(), html);
+    assert!(inline_script_contents(&doc).is_empty());
+  }
+
+  #[test]
   fn script_order_empty_template_and_foreign_namespace() {
     let doc = parse_doc("<script></script><script>first\r\nsecond</script><template><script>inert</script></template><svg><script>foreign</script></svg><script>last</script>".into());
     assert_eq!(

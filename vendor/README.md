@@ -10,6 +10,8 @@ hashes; `patches/` contains the complete text changes against those sources.
   markup5ever_rcdom; traverse actual parsed nodes for nonce/CSP operations.
 - tauri-codegen 2.7.4: consume explicit script contents from that backend.
 - dirs-sys 0.5.0: compare the optional directory key with standard Rust.
+- markup5ever_rcdom 0.40.1+unofficial: preserve HTML template fragment children
+  in the upstream serializer; regression tests exercise nested/inert templates.
 - wry 0.57.2: use HTML5 parsing/serialization for Android initialization injection.
 
 The legacy internal tauri-utils html entry names remain, but its old kuchiki
