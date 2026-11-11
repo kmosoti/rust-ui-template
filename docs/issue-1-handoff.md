@@ -5,10 +5,11 @@ Windows/macOS/iOS, broader runtime coverage and production signing have explicit
 follow-ups (#22–#24); proof continuation is #27, maintenance replacements #28.
 No main promotion, tag or publication is included.
 
-Current implementation includes the permissive native dependency patches (#26),
-security/clean-build gates (#29), and the Android presented-capture correction
-(#25). Final applicable CI, artifact inspection and independent landing are the
-completion gate; do not infer completion from a pending PR.
+The implementation is reviewed and landed on develop at323167e3; all six
+post-merge source workflows passed. Exact runs/artifacts, commands, cache
+measurements and limits are in [O-0017](../knowledge/observations/O-0017-issue1-completion.md).
+The final documentation PR30 and issue checklist complete the handoff; no
+cross-platform release or formal proof is implied.
 
 - [Pinned toolchains and fresh checkout commands](toolchains.md)
 - [Platform evidence and untested configurations](platforms.md)
@@ -22,7 +23,9 @@ of still-missing browser/native crates or instructions to repeat landed work.
 
 ---
 
-> Current handoff: browser/Nocturne/seven palettes, the shared native entry and Ubuntu 24.04 DEB/Fedora 44 RPM checks are implemented. Android APK/device work is tracked in [O-0011](../knowledge/observations/O-0011-android-apks.md) and the [platform matrix](platforms.md). Desktop work remains Linux-focused; Windows/macOS and iOS are deferred. Security/release checks and source-linked proof feasibility remain open. Issue #1 stays open.
+## Historical foundation and native snapshots
+
+> Historical handoff (status at that time, superseded by the completion record above): browser/Nocturne/seven palettes, the shared native entry and Ubuntu 24.04 DEB/Fedora 44 RPM checks are implemented. Android APK/device work is tracked in [O-0011](../knowledge/observations/O-0011-android-apks.md) and the [platform matrix](platforms.md). Desktop work remains Linux-focused; Windows/macOS and iOS are deferred. At that snapshot, security/release checks and source-linked proof feasibility remained open and Issue #1 stayed open.
 >
 > The foundation notes below are historical, not instructions to repeat already-landed browser/native work.
 

@@ -25,6 +25,7 @@ No main merge, tag, publication or production signing is authorized here.
 - #24: signing/distribution/provenance, native package determinism and default-branch weekly security schedule activation.
 - #27: compatible Aeneas/Lean translation, real theorem, axiom audit and proof mutation sensitivity after successful Charon extraction.
 - #28: replace the two dated compile-time macro maintenance exceptions before2027-02-09.
+- #31: measured Android cache transfer optimization without dropping checks.
 - #2: optional web SSR/hydration; native stays CSR.
 
 A passing independent clean-frontend comparison establishes configured unsigned

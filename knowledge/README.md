@@ -102,3 +102,5 @@ The index is curated, not automatically generated. Start with Markdown and versi
 - [O-0016 · Actual core extraction assessment](observations/O-0016-core-extraction.md) (`agent`, `human_ratified: false`; no proof claim).
 
 - [D-0011 · Scoped CSR milestone completion](decisions/D-0011-scoped-csr-milestone.md) (`agent`, `human_ratified: false`).
+
+- [O-0017 · Scoped milestone completion](observations/O-0017-issue1-completion.md): final source CI, reviewed artifacts, cold/seed/warm observations and explicit limits (`agent`, `human_ratified: false`).

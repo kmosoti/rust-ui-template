@@ -53,6 +53,8 @@ not merely process exit status. Full commands/results and hashes are retained in
 
 ## Remaining proof work
 
+A future proof must audit the analysis compiler/standard-library assumptions for
+the shipping compiler rather than treating source extraction as a binary proof.
 OCaml/Dune, Aeneas translation, Lean/Lake and theorem/axiom auditing were not run
 in this pilot. They are tracked in [#27](https://github.com/kmosoti/rust-ui-template/issues/27),
 with the exact compatible tool pins. Do not call the Rust implementation formally

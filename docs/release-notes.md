@@ -1,7 +1,7 @@
 # CSR foundation milestone on develop
 
 This is an engineering milestone for Issue #1, not a published release, signed
-artifact distribution or promotion into main. Final completion evidence is linked
+artifact distribution or promotion into main. All six post-merge source workflows passed on develop323167e3. Completion evidence is linked
 from [the handoff](issue-1-handoff.md) and knowledge records.
 
 ## Delivered behavior
@@ -48,3 +48,7 @@ The actual Rust core extracts with the pinned Charon/Aeneas preset, but Aeneas
 translation, Lean/Lake checking and theorem/axiom/mutation audits remain #27.
 **No formal verification claim is made.** Persistence, sync, a production game
 launcher and server rendering are not implemented by the example UI.
+
+Remaining measured CI cache-transfer work is tracked in #31. The implemented
+security cache is156MiB; a same-source seed/warm pair passed31s/24s with all checks
+retained. These observations do not imply every platform job has the same gain.
