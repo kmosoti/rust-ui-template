@@ -32,7 +32,7 @@ jobs:
             .tools/downloads/osv-scanner-2.7.1
           key: security-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Cargo.lock', 'apps/native/Cargo.lock', 'scripts/security-assets.json') }}
           restore-keys: security-v1-${{ runner.os }}-${{ runner.arch }}-
-      - run: rustup toolchain install 1.99.1 --profile minimal
+      - run: rustup toolchain install 1.100.0 --profile minimal
       - name: Verified security tools and repeated-setup measurement
         run: |
           python3 - <<'PY'

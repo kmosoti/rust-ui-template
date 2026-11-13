@@ -16,7 +16,7 @@ was substituted and the shipping Rust toolchain/manifests were not downgraded.
 
 | Component | Pinned assessment input |
 | --- | --- |
-| Shipping compiler | Rust 1.99.1 |
+| Shipping compiler (at pilot; current shipping pin 1.100.0) | Rust 1.99.1 |
 | Aeneas source inspected | `0d21a9ec7bbbb110110cacc14464a47fd71c8705` |
 | Charon required by that Aeneas `charon-pin` | `454586e9b770231e66d2062993e632dfc06463e2` |
 | Charon compiler | `nightly-2026-09-17`, rustc 1.100.0-nightly |

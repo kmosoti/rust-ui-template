@@ -114,3 +114,5 @@ The index is curated, not automatically generated. Start with Markdown and versi
 - [O-0021: Android lifecycle stall and bounded correction](observations/O-0021-android-lifecycle-stall.md) — canceled benchmark preserved; bounded lifecycle regressions and three real hosted validations.
 
 - [O-0022: Linux automated keyboard and software output scale](observations/O-0022-linux-keyboard-scaling.md) — reviewed plan, real-key/session boundaries, actual failures and scale evidence (`agent`, `human_ratified: false`).
+
+- [O-0024: Rust 1.100.0 toolchain and MSRV upgrade](observations/O-0024-rust-1.100-upgrade.md) — toolchain pin `1.100.0`, root/native `rust-version = "1.100"`, `cargo fmt` 1.100 workspace member scoping fix, cache-key isolation and local verification (`agent`, `human_ratified: false`; `O-0023` reserved for draft PR #38).

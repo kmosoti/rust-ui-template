@@ -5,7 +5,7 @@ Pins describe the configured CSR build; actual platform launches are listed in
 
 | Concern | Pin / source |
 | --- | --- |
-| Rust / edition / resolver | 1.99.1 / 2024 / 3; rust-toolchain.toml, package rust-version 1.99 |
+| Rust / edition / resolver | 1.100.0 / 2024 / 3; rust-toolchain.toml, root and native package rust-version 1.100 |
 | Leptos | 0.8.23; root Cargo.lock |
 | wasm-bindgen | 0.2.130; both Cargo locks, Trunk selects matching CLI |
 | Trunk | 0.21.14; verified official binary via setup_ci_tools.py |
@@ -36,7 +36,7 @@ Install Python3, Git, rustup and Chrome/Chromium, then clone the desired reviewe
 revision and run from its root:
 
 ```sh
-rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
+rustup toolchain install 1.100.0 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
 python3 scripts/setup_ci_tools.py
 python3 scripts/setup_frontend.py
 export PATH="$PWD/.tools:$PATH" NO_COLOR=false

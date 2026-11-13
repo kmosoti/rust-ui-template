@@ -9,7 +9,7 @@ APK tests denial. No remote origin receives IPC permission.
 
 ## Build on Linux x86_64
 
-Use Rust1.99.1, a full JDK21 (CI21.0.13+9), unzip and the existing Node-free
+Use Rust1.100.0, a full JDK21 (CI21.0.13+9), unzip and the existing Node-free
 frontend setup. SDK37/target37, minimum29 with Chromium/WebView111+ (OS API alone is insufficient), NDK29.0.14206865, Gradle9.6.1,
 AGP9.3.1 and Kotlin2.2.10 are pinned. The Tauri Android library also compiles
 against SDK36/build-tools36; these are explicit installer inputs, not hidden

@@ -36,7 +36,7 @@ jobs:
         with:
           profile: native
           sdk: ${{ steps.sdk.outputs.version }}
-      - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
+      - run: rustup toolchain install 1.100.0 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
       - run: python3 scripts/setup_ci_tools.py
       - run: echo "$GITHUB_WORKSPACE/.tools" >> "$GITHUB_PATH"
       - run: cargo install tauri-driver --version 2.1.0 --locked --root .tools/driver
@@ -45,7 +45,7 @@ jobs:
       - run: cargo fetch --locked && cargo fetch --manifest-path apps/native/Cargo.toml --locked
       - run: .tools/tailwindcss -i styles/input.css -o styles/generated.css --minify
       - run: trunk build --release --locked
-      - run: cargo fmt --manifest-path apps/native/Cargo.toml -- --check
+      - run: cargo fmt --manifest-path apps/native/Cargo.toml -p rust-ui-native -p native-html-tests -- --check
       - name: Rebuild package-owned assets against cached dependencies
         run: cargo clean --manifest-path apps/native/Cargo.toml -p rust-ui-native --release
       - name: Build production DEB and RPM

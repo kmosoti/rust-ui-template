@@ -29,7 +29,7 @@ in **Preferences → Appearance**. The choice applies across the current session
 
 ## Browser development
 
-Install Rust 1.99.1 with the `wasm32-unknown-unknown` target, Python 3,
+Install Rust 1.100.0 with the `wasm32-unknown-unknown` target, Python 3,
 Chrome or Chromium, and Trunk 0.21.14 (`cargo install trunk --version 0.21.14 --locked`).
 Node and npm are not required. From the repository root:
 
@@ -114,7 +114,7 @@ Fedora targets, metadata checks, diagnostics and unsigned artifacts.
 - **Tauri 2** packages the same client for desktop (Windows, macOS, Linux) and mobile (Android, iOS), with native functionality behind narrow capability-scoped adapters.
 - **Pure Rust core** owns reusable application rules and state transitions, independent of UI, browser, or operating-system APIs.
 
-The core workspace pins Rust 1.99.1 with Edition 2024/resolver 3. The implementation uses current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. The browser slice pins its dependencies and build tools; native compatibility and untested configurations are listed in the evidence matrix.
+The core workspace pins Rust 1.100.0 with Edition 2024/resolver 3. The implementation uses current Leptos APIs, Tailwind 4 CSS-first configuration, explicit Tauri custom-command ACLs/CSP, locked builds, and least-privilege CI. The browser slice pins its dependencies and build tools; native compatibility and untested configurations are listed in the evidence matrix.
 
 ## Release sequence
 
