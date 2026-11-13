@@ -2,6 +2,8 @@
 
 Pins describe the configured CSR build; actual platform launches are listed in
 [the evidence matrix](platforms.md). They are not support claims for other hosts.
+The [Rust 1.100 upgrade observation](../knowledge/observations/O-0024-rust-1.100-upgrade.md)
+records the source-bound compiler, cache and hosted validation evidence.
 
 | Concern | Pin / source |
 | --- | --- |
