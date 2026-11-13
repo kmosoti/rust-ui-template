@@ -32,7 +32,7 @@ jobs:
         with:
           profile: core
       - name: Install pinned Rust
-        run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
+        run: rustup toolchain install 1.100.0 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
       - name: Report toolchain
         run: |
           rustc --version --verbose

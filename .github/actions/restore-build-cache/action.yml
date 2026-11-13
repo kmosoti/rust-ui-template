@@ -30,6 +30,6 @@ runs:
           .tools
           target
           apps/native/target
-        key: build-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-${{ inputs.profile }}-${{ inputs.sdk }}-rust1.99.1-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock', 'apps/native/Cargo.lock', 'scripts/*setup*.py', 'scripts/tool-assets.json', 'scripts/security-assets.json') }}
+        key: build-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-${{ inputs.profile }}-${{ inputs.sdk }}-rust1.100.0-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock', 'apps/native/Cargo.lock', 'scripts/*setup*.py', 'scripts/tool-assets.json', 'scripts/security-assets.json') }}
         restore-keys: |
-          build-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-${{ inputs.profile }}-${{ inputs.sdk }}-rust1.99.1-
+          build-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.image.outputs.version }}-${{ inputs.profile }}-${{ inputs.sdk }}-rust1.100.0-

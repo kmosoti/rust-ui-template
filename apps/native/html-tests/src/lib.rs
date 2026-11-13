@@ -4,5 +4,6 @@ pub struct InitializationScript {
     pub script: String,
     pub for_main_frame_only: bool,
 }
+#[rustfmt::skip]
 #[path = "../../../../vendor/wry-0.57.2/src/inject_initialization_scripts.rs"]
 mod inject_initialization_scripts;
