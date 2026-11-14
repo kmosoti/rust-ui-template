@@ -1,0 +1,47 @@
+{
+  "system": "Linux-7.2.13-200.fc44.x86_64-x86_64-with-glibc2.43",
+  "session": {
+    "XDG_SESSION_TYPE": "wayland",
+    "XDG_CURRENT_DESKTOP": "GNOME",
+    "GDK_BACKEND": "wayland",
+    "DISPLAY": null,
+    "WAYLAND_DISPLAY": "wayland-0"
+  },
+  "drm_devices": [
+    {
+      "device": "/sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0",
+      "vendor_id": "0x10de",
+      "device_id": "0x2520",
+      "driver": "nvidia"
+    },
+    {
+      "device": "/sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0/drm/card0",
+      "driver": null
+    },
+    {
+      "device": "/sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0/drm/card0",
+      "driver": null
+    },
+    {
+      "device": "/sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0/drm/card0",
+      "driver": null
+    },
+    {
+      "device": "/sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0/drm/card0",
+      "driver": null
+    },
+    {
+      "device": "/sys/devices/pci0000:00/0000:00:02.0",
+      "vendor_id": "0x8086",
+      "device_id": "0x9bc4",
+      "driver": "i915"
+    },
+    {
+      "device": "/sys/devices/pci0000:00/0000:00:02.0/drm/card1",
+      "driver": null
+    }
+  ],
+  "application_renderer": "not measured: attach compositor/driver evidence manually",
+  "hardware_gpu_verified": false,
+  "orca_verified": false
+}

@@ -1,0 +1,103 @@
+{
+  "profile": "default (only configured profile; active process internal profile not queried)",
+  "settings": [
+    {
+      "schema": "org.gnome.Orca.Speech",
+      "path": "/org/gnome/orca/default/speech/",
+      "keys": {
+        "enable": {
+          "effective": true,
+          "user_value": null
+        },
+        "speech-server": {
+          "effective": "",
+          "user_value": null
+        },
+        "speech-server-factory": {
+          "effective": "speechdispatcherfactory",
+          "user_value": null
+        },
+        "synthesizer": {
+          "effective": "",
+          "user_value": null
+        },
+        "verbosity-level": {
+          "effective": "verbose",
+          "user_value": null
+        },
+        "punctuation-level": {
+          "effective": "most",
+          "user_value": null
+        }
+      }
+    },
+    {
+      "schema": "org.gnome.Orca.Voice",
+      "path": "/org/gnome/orca/default/voices/default/",
+      "keys": {
+        "family-name": {
+          "effective": "",
+          "user_value": null
+        },
+        "family-lang": {
+          "effective": "",
+          "user_value": null
+        },
+        "family-dialect": {
+          "effective": "",
+          "user_value": null
+        },
+        "rate": {
+          "effective": 50,
+          "user_value": null
+        },
+        "pitch": {
+          "effective": 5.0,
+          "user_value": null
+        },
+        "volume": {
+          "effective": 10.0,
+          "user_value": null
+        },
+        "established": {
+          "effective": false,
+          "user_value": null
+        }
+      }
+    },
+    {
+      "schema": "org.gnome.Orca.Keybindings",
+      "path": "/org/gnome/orca/default/keybindings/",
+      "keys": {
+        "keyboard-layout": {
+          "effective": "desktop",
+          "user_value": null
+        },
+        "desktop-modifier-keys": {
+          "effective": [
+            "Insert",
+            "KP_Insert"
+          ],
+          "user_value": null
+        },
+        "laptop-modifier-keys": {
+          "effective": [
+            "Caps_Lock",
+            "Shift_Lock"
+          ],
+          "user_value": null
+        }
+      }
+    },
+    {
+      "schema": "org.gnome.Orca.LiveRegions",
+      "path": "/org/gnome/orca/default/live-regions/",
+      "keys": {
+        "enabled": {
+          "effective": true,
+          "user_value": null
+        }
+      }
+    }
+  ]
+}

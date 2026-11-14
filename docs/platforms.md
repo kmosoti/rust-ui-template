@@ -36,6 +36,12 @@ DEB/RPM delivery: [O-0010](../knowledge/observations/O-0010-linux-packages.md) a
 software backend establishes hardware GPU or manual Orca behavior; follow the
 [desktop handoff](linux-desktop-validation.md).
 
+[O-0023](../knowledge/observations/O-0023-linux-physical-desktop.md) adds a specific
+Fedora 44/GNOME 50.6 physical Wayland observation using the installed production
+RPM, app-attributed Intel i915 render-engine counters and native AT-SPI. Its
+per-run scale, manual keyboard and Orca results are recorded separately; this
+does not extend the matrix to other GPUs, desktops or accessibility conformance.
+
 Android execution: [run 42953564848](https://github.com/kmosoti/rust-ui-template/actions/runs/42953564848), [O-0011](../knowledge/observations/O-0011-android-apks.md). Minimum API 29 and WebView 111+ are prerequisites, not lower-bound runtime evidence. Physical devices and TalkBack remain untested.
 
 Historical Android develop run42960500792 passed functional checks but had blank /

@@ -132,6 +132,27 @@ class OwnedProcessDiagnosticsTests(unittest.TestCase):
             self.assertFalse(result['truncated'])
             self.assertTrue(owned_process_snapshot(10, proc, limit=1)['truncated'])
 
+    def test_application_lookup_binds_exact_owned_executable_and_rejects_ambiguity(self):
+        import tempfile
+        from pathlib import Path
+        from native_smoke import owned_application_pid
+        with tempfile.TemporaryDirectory() as directory:
+            proc = Path(directory)
+            app = proc/'application'; app.touch()
+            for pid in (10, 11, 99):
+                (proc/str(pid)).mkdir()
+                (proc/str(pid)/'exe').symlink_to(app)
+            # PID99 matches the binary but is unrelated, so cannot be selected.
+            owned = {'processes': [{'pid': 11}], 'truncated': False}
+            with patch('native_smoke.owned_process_snapshot', return_value=owned):
+                self.assertEqual(owned_application_pid(10, app, proc), 11)
+            with patch('native_smoke.owned_process_snapshot', return_value={'processes': [{'pid': 10}, {'pid': 11}], 'truncated': False}):
+                with self.assertRaisesRegex(RuntimeError, 'found 2'):
+                    owned_application_pid(10, app, proc)
+            with patch('native_smoke.owned_process_snapshot', return_value={'processes': [], 'truncated': True}):
+                with self.assertRaisesRegex(RuntimeError, 'process bound'):
+                    owned_application_pid(10, app, proc)
+
     def test_process_exit_during_capture_is_diagnostic_only(self):
         import tempfile
         from pathlib import Path

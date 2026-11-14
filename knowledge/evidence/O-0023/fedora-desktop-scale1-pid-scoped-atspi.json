@@ -1,0 +1,372 @@
+{
+  "window": "Rust UI Template",
+  "application_pid": 3507911,
+  "nodes": [
+    {
+      "name": "Rust UI Template",
+      "role": "frame",
+      "depth": 1,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "panel",
+      "depth": 2,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "filler",
+      "depth": 3,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "separator",
+      "depth": 4,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Close",
+      "role": "button",
+      "depth": 4,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "filler",
+      "depth": 3,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Rust UI Template",
+      "role": "label",
+      "depth": 4,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "label",
+      "depth": 4,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "filler",
+      "depth": 2,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "filler",
+      "depth": 3,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "filler",
+      "depth": 4,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "scroll pane",
+      "depth": 5,
+      "focused": true,
+      "focusable": true
+    },
+    {
+      "name": "Nocturne \u00b7 Rust UI workspace",
+      "role": "document web",
+      "depth": 6,
+      "focused": true,
+      "focusable": true
+    },
+    {
+      "name": "Skip to content",
+      "role": "link",
+      "depth": 7,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "Workspace",
+      "role": "landmark",
+      "depth": 7,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "NOCTURNE",
+      "role": "link",
+      "depth": 8,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Main navigation",
+      "role": "landmark",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Library",
+      "role": "link",
+      "depth": 9,
+      "focused": true,
+      "focusable": true
+    },
+    {
+      "name": "Latest response",
+      "role": "link",
+      "depth": 9,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "Preferences",
+      "role": "link",
+      "depth": 9,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "About",
+      "role": "link",
+      "depth": 9,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "01 / Response lab",
+      "role": "link",
+      "depth": 8,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "02 / Preferences",
+      "role": "link",
+      "depth": 8,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "03 / Application info",
+      "role": "link",
+      "depth": 8,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "landmark",
+      "depth": 7,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "landmark",
+      "depth": 7,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Your library",
+      "role": "heading",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Signal & silence",
+      "role": "landmark",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "A small observatory above a winding trail in a violet mountain landscape.",
+      "role": "image",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Signal & silence",
+      "role": "heading",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Open response lab",
+      "role": "link",
+      "depth": 9,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "Workspace examples",
+      "role": "landmark",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Workspace examples",
+      "role": "heading",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "01 Response lab Slow, fast, cancel. The latest result wins.",
+      "role": "link",
+      "depth": 9,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "02 Preferences Make a few adjustments. Keep things local.",
+      "role": "link",
+      "depth": 9,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "03 Application info A clear view of the browser or native host.",
+      "role": "link",
+      "depth": 9,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "Built for the in-between.",
+      "role": "landmark",
+      "depth": 8,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Built for the in-between.",
+      "role": "heading",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "section",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "Explore the foundation \u2192",
+      "role": "link",
+      "depth": 10,
+      "focused": false,
+      "focusable": true
+    },
+    {
+      "name": "",
+      "role": "paragraph",
+      "depth": 9,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "landmark",
+      "depth": 7,
+      "focused": false,
+      "focusable": false
+    },
+    {
+      "name": "",
+      "role": "scroll bar",
+      "depth": 6,
+      "focused": false,
+      "focusable": false
+    }
+  ],
+  "missing": [],
+  "orca_tested": false
+}

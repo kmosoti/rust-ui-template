@@ -168,3 +168,8 @@ minimum runtime and broader transport dimensions.
 - *observed-in*: [overall architecture](../../docs/architecture.md)
 
 Revisit after current-head hosted artifacts and real human desktop/Orca evidence.
+
+[O-0023](O-0023-linux-physical-desktop.md) continues with the existing Fedora
+GNOME Wayland desktop, separately attributed hardware render-engine work and
+explicit human-observation status. Its first failure exposed a shared-desktop
+AT-SPI traversal problem that software compositor sessions did not reproduce.

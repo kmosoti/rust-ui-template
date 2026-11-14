@@ -1,0 +1,1154 @@
+{
+  "schema_version": 1,
+  "input_mechanism": "WebDriver W3C key actions",
+  "passed_checkpoints": [
+    "fresh-window-skip-link",
+    "library-launch",
+    "request-freshness",
+    "reverse-adjacent-tab",
+    "cancel",
+    "palette-navigation-and-persistence"
+  ],
+  "current_checkpoint": "palette-navigation-and-persistence",
+  "failed_checkpoint": null,
+  "focus_trace": [
+    {
+      "tag": "BODY",
+      "visible": false,
+      "label": "Skip to content\u25c8NOCTURNEYour personal workspace\u25a6Library\u2192Latest response\u2261Preferences\u25c7AboutIn this wor",
+      "focus_visible": false,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 1200,
+        "x": 0,
+        "height": 1634.5,
+        "y": 0
+      },
+      "outline": {
+        "width": "3px",
+        "color": "rgb(240, 239, 245)",
+        "style": "none"
+      }
+    },
+    {
+      "tag": "BODY",
+      "visible": false,
+      "label": "Skip to content\u25c8NOCTURNEYour personal workspace\u25a6Library\u2192Latest response\u2261Preferences\u25c7AboutIn this wor",
+      "focus_visible": false,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 1200,
+        "x": 0,
+        "height": 1634.5,
+        "y": 0
+      },
+      "outline": {
+        "width": "3px",
+        "color": "rgb(240, 239, 245)",
+        "style": "none"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Skip to content",
+      "focus_visible": true,
+      "id": "",
+      "href": "#workspace-content",
+      "rect": {
+        "width": 153.671875,
+        "x": 12,
+        "height": 48,
+        "y": 12
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Skip to content",
+      "focus_visible": true,
+      "id": "",
+      "href": "#workspace-content",
+      "rect": {
+        "width": 153.671875,
+        "x": 12,
+        "height": 48,
+        "y": 12
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "MAIN",
+      "visible": false,
+      "label": "Workspace / LibraryYour libraryA little space for your next big idea.03 EXAMPLESFeatured / Interacti",
+      "focus_visible": true,
+      "id": "workspace-content",
+      "href": null,
+      "rect": {
+        "width": 976,
+        "x": 224,
+        "height": 1513.515625,
+        "y": 0
+      },
+      "outline": {
+        "width": "3px",
+        "color": "rgb(240, 239, 245)",
+        "style": "auto"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Open response lab\u2192",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/",
+      "rect": {
+        "width": 196.71875,
+        "x": 280,
+        "height": 44,
+        "y": 704.5625
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BODY",
+      "visible": true,
+      "label": "Skip to content\u25c8NOCTURNEYour personal workspace\u25a6Library\u2192Latest response\u2261Preferences\u25c7AboutIn this wor",
+      "focus_visible": false,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 1200,
+        "x": 0,
+        "height": 900,
+        "y": 0
+      },
+      "outline": {
+        "width": "3px",
+        "color": "rgb(240, 239, 245)",
+        "style": "none"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "number",
+      "href": null,
+      "rect": {
+        "width": 320,
+        "x": 248,
+        "height": 50,
+        "y": 309.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "number",
+      "href": null,
+      "rect": {
+        "width": 320,
+        "x": 248,
+        "height": 50,
+        "y": 309.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "number",
+      "href": null,
+      "rect": {
+        "width": 320,
+        "x": 248,
+        "height": 50,
+        "y": 309.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "number",
+      "href": null,
+      "rect": {
+        "width": 320,
+        "x": 248,
+        "height": 50,
+        "y": 309.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Slow request",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 128.375,
+        "x": 248,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Slow request",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 128.375,
+        "x": 248,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "number",
+      "href": null,
+      "rect": {
+        "width": 320,
+        "x": 248,
+        "height": 50,
+        "y": 309.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "number",
+      "href": null,
+      "rect": {
+        "width": 320,
+        "x": 248,
+        "height": 50,
+        "y": 309.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Slow request",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 128.375,
+        "x": 248,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Fast request",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 123.921875,
+        "x": 388.375,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Fast request",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 123.921875,
+        "x": 388.375,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Slow request",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 128.375,
+        "x": 248,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Slow request",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 128.375,
+        "x": 248,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Fast request",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 123.921875,
+        "x": 388.375,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Cancel",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 80.96875,
+        "x": 524.296875,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Cancel",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 80.96875,
+        "x": 524.296875,
+        "height": 44,
+        "y": 383.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Skip to content",
+      "focus_visible": true,
+      "id": "",
+      "href": "#workspace-content",
+      "rect": {
+        "width": 153.671875,
+        "x": 12,
+        "height": 48,
+        "y": 12
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "\u25c8NOCTURNE",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/overview",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 30,
+        "y": 24
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Library",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/overview",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 105.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Latest response",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 157.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Preferences",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/settings",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 209.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Preferences",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/settings",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 209.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "About",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/about",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 261.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "01 / Response lab",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 20,
+        "y": 406.96875
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "02 / Preferences",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/settings",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 20,
+        "y": 442.96875
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "03 / Application info",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/about",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 20,
+        "y": 478.96875
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "SELECT",
+      "visible": true,
+      "label": "Nocturne (default)Signal Blue & PorcelainButter Yellow & Royal IrisLime Spark & GraphiteSulu & Deep ",
+      "focus_visible": true,
+      "id": "color-scheme",
+      "href": null,
+      "rect": {
+        "width": 512,
+        "x": 248,
+        "height": 56,
+        "y": 357.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "SELECT",
+      "visible": true,
+      "label": "Nocturne (default)Signal Blue & PorcelainButter Yellow & Royal IrisLime Spark & GraphiteSulu & Deep ",
+      "focus_visible": true,
+      "id": "color-scheme",
+      "href": null,
+      "rect": {
+        "width": 512,
+        "x": 248,
+        "height": 56,
+        "y": 357.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "display-name",
+      "href": null,
+      "rect": {
+        "width": 512,
+        "x": 248,
+        "height": 50,
+        "y": 662.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 20,
+        "x": 248,
+        "height": 20,
+        "y": 808.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 20,
+        "x": 248,
+        "height": 20,
+        "y": 879.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Apply preferences",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 165.09375,
+        "x": 248,
+        "height": 44,
+        "y": 734.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Skip to content",
+      "focus_visible": true,
+      "id": "",
+      "href": "#workspace-content",
+      "rect": {
+        "width": 153.671875,
+        "x": 12,
+        "height": 48,
+        "y": 12
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "\u25c8NOCTURNE",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/overview",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 30,
+        "y": 24
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Library",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/overview",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 105.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Library",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/overview",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 105.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Latest response",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 157.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Preferences",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/settings",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 209.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Preferences",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/settings",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 209.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "About",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/about",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 261.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "01 / Response lab",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 20,
+        "y": 406.96875
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "02 / Preferences",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/settings",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 20,
+        "y": 442.96875
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "03 / Application info",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/about",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 20,
+        "y": 478.96875
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "SELECT",
+      "visible": true,
+      "label": "Nocturne (default)Signal Blue & PorcelainButter Yellow & Royal IrisLime Spark & GraphiteSulu & Deep ",
+      "focus_visible": true,
+      "id": "color-scheme",
+      "href": null,
+      "rect": {
+        "width": 512,
+        "x": 248,
+        "height": 56,
+        "y": 357.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(0, 87, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "SELECT",
+      "visible": true,
+      "label": "Nocturne (default)Signal Blue & PorcelainButter Yellow & Royal IrisLime Spark & GraphiteSulu & Deep ",
+      "focus_visible": true,
+      "id": "color-scheme",
+      "href": null,
+      "rect": {
+        "width": 512,
+        "x": 248,
+        "height": 56,
+        "y": 357.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "display-name",
+      "href": null,
+      "rect": {
+        "width": 512,
+        "x": 248,
+        "height": 50,
+        "y": 662.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 20,
+        "x": 248,
+        "height": 20,
+        "y": 808.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "INPUT",
+      "visible": true,
+      "label": "",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 20,
+        "x": 248,
+        "height": 20,
+        "y": 879.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "BUTTON",
+      "visible": true,
+      "label": "Apply preferences",
+      "focus_visible": true,
+      "id": "",
+      "href": null,
+      "rect": {
+        "width": 165.09375,
+        "x": 248,
+        "height": 44,
+        "y": 734.578125
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Skip to content",
+      "focus_visible": true,
+      "id": "",
+      "href": "#workspace-content",
+      "rect": {
+        "width": 153.671875,
+        "x": 12,
+        "height": 48,
+        "y": 12
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "\u25c8NOCTURNE",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/overview",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 30,
+        "y": 24
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    },
+    {
+      "tag": "A",
+      "visible": true,
+      "label": "Library",
+      "focus_visible": true,
+      "id": "",
+      "href": "#/overview",
+      "rect": {
+        "width": 175,
+        "x": 24,
+        "height": 48,
+        "y": 105.984375
+      },
+      "outline": {
+        "width": "2px",
+        "color": "rgb(182, 156, 255)",
+        "style": "solid"
+      }
+    }
+  ],
+  "status": "passed",
+  "failure_summary": null,
+  "manual_keyboard_verified": false,
+  "orca_verified": false,
+  "viewport": {
+    "width": 1200,
+    "height": 900,
+    "dpr": 1
+  },
+  "freshness_timing": {
+    "slow_to_fast_seconds": 0.0385679219616577,
+    "slow_delay_seconds": 1.5,
+    "fast_delay_seconds": 0.15,
+    "slow_pending_before_fast": true,
+    "latest22_observed_seconds": 0.19535994401667267
+  },
+  "elapsed_seconds": 4.073003392084502
+}
