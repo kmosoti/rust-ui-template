@@ -1,0 +1,760 @@
+{
+  "provenance": {
+    "source": "5a2adc1e2a87a287a80e4c5ef5df3a2623629fb5",
+    "run": 43503141449,
+    "artifact": 14074374557,
+    "sha256": "b90719f276701d3e8bb32a013ee29184c8325ae65d8e0e3850f707c8d070ac21"
+  },
+  "api_queries": {
+    "jobs": {
+      "command": [
+        "gh",
+        "api",
+        "repos/kmosoti/rust-ui-template/actions/runs/43503141449/jobs"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    },
+    "cache_inventory": {
+      "command": [
+        "gh",
+        "api",
+        "repos/kmosoti/rust-ui-template/actions/caches?per_page=100"
+      ],
+      "returncode": 0,
+      "stderr": ""
+    }
+  },
+  "job_execution": {
+    "run_id": 43503141449,
+    "run_attempt": 1,
+    "job_id": 132153822813,
+    "workflow_name": "Android test APKs",
+    "head_branch": "develop",
+    "head_sha": "5a2adc1e2a87a287a80e4c5ef5df3a2623629fb5",
+    "runner_name": "GitHub Actions 1000004605",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-11-13T20:36:40Z",
+    "started_at": "2026-11-13T20:36:42Z",
+    "completed_at": "2026-11-13T20:45:50Z",
+    "wall_seconds": 548,
+    "restore_step_seconds": [
+      1,
+      0,
+      0
+    ],
+    "save_step_seconds": [
+      48,
+      12,
+      6
+    ],
+    "steps": [
+      {
+        "number": 1,
+        "name": "Set up job",
+        "seconds": 2,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:42Z",
+        "completed_at": "2026-11-13T20:36:44Z"
+      },
+      {
+        "number": 2,
+        "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "seconds": 1,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:44Z",
+        "completed_at": "2026-11-13T20:36:45Z"
+      },
+      {
+        "number": 3,
+        "name": "Run actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:45Z",
+        "completed_at": "2026-11-13T20:36:45Z"
+      },
+      {
+        "number": 4,
+        "name": "Identify runner image",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:45Z",
+        "completed_at": "2026-11-13T20:36:45Z"
+      },
+      {
+        "number": 5,
+        "name": "Run actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0",
+        "seconds": 1,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:45Z",
+        "completed_at": "2026-11-13T20:36:46Z"
+      },
+      {
+        "number": 6,
+        "name": "Run actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:46Z",
+        "completed_at": "2026-11-13T20:36:46Z"
+      },
+      {
+        "number": 7,
+        "name": "Run actions/cache/restore@a7833574556fa59680c1b7cb190c1735db73ebf0",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:46Z",
+        "completed_at": "2026-11-13T20:36:46Z"
+      },
+      {
+        "number": 8,
+        "name": "Profile restored cache without reading file contents",
+        "seconds": 1,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:46Z",
+        "completed_at": "2026-11-13T20:36:47Z"
+      },
+      {
+        "number": 9,
+        "name": "Run rustup toolchain install 1.100.0 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown --target aarch64-linux-android --target x86_64-linux-android",
+        "seconds": 11,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:47Z",
+        "completed_at": "2026-11-13T20:36:58Z"
+      },
+      {
+        "number": 10,
+        "name": "Run python3 scripts/setup_ci_tools.py && python3 scripts/setup_frontend.py && python3 scripts/setup_native_cli.py",
+        "seconds": 2,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:36:58Z",
+        "completed_at": "2026-11-13T20:37:00Z"
+      },
+      {
+        "number": 11,
+        "name": "Run echo \"$GITHUB_WORKSPACE/.tools\" >> \"$GITHUB_PATH\"",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:37:00Z",
+        "completed_at": "2026-11-13T20:37:00Z"
+      },
+      {
+        "number": 12,
+        "name": "Verified pinned SDK, NDK and emulator",
+        "seconds": 70,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:37:00Z",
+        "completed_at": "2026-11-13T20:38:10Z"
+      },
+      {
+        "number": 13,
+        "name": "Accept SDK licenses and verify JDK",
+        "seconds": 10,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:38:10Z",
+        "completed_at": "2026-11-13T20:38:20Z"
+      },
+      {
+        "number": 14,
+        "name": "Run cargo fetch --locked && cargo fetch --manifest-path apps/native/Cargo.toml --locked",
+        "seconds": 5,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:38:20Z",
+        "completed_at": "2026-11-13T20:38:25Z"
+      },
+      {
+        "number": 15,
+        "name": "Build shared production assets once",
+        "seconds": 57,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:38:25Z",
+        "completed_at": "2026-11-13T20:39:22Z"
+      },
+      {
+        "number": 16,
+        "name": "Rebuild package-owned embedded assets against cached dependencies",
+        "seconds": 1,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:39:22Z",
+        "completed_at": "2026-11-13T20:39:23Z"
+      },
+      {
+        "number": 17,
+        "name": "Build test-signed ARM64 and x86_64 APKs",
+        "seconds": 182,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:39:23Z",
+        "completed_at": "2026-11-13T20:42:25Z"
+      },
+      {
+        "number": 18,
+        "name": "Preserve application APKs before denial build",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:42:25Z",
+        "completed_at": "2026-11-13T20:42:25Z"
+      },
+      {
+        "number": 19,
+        "name": "Stage verified accessibility test asset",
+        "seconds": 1,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:42:25Z",
+        "completed_at": "2026-11-13T20:42:26Z"
+      },
+      {
+        "number": 20,
+        "name": "Compile AndroidX instrumentation with locked verified dependencies",
+        "seconds": 12,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:42:26Z",
+        "completed_at": "2026-11-13T20:42:38Z"
+      },
+      {
+        "number": 21,
+        "name": "Preserve instrumentation APK",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:42:38Z",
+        "completed_at": "2026-11-13T20:42:38Z"
+      },
+      {
+        "number": 22,
+        "name": "Build real restricted-window fixture",
+        "seconds": 6,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:42:38Z",
+        "completed_at": "2026-11-13T20:42:44Z"
+      },
+      {
+        "number": 23,
+        "name": "Run cp apps/native/gen/android/app/build/outputs/apk/universal/debug/*.apk artifacts/android-restricted-fixture.apk",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:42:44Z",
+        "completed_at": "2026-11-13T20:42:44Z"
+      },
+      {
+        "number": 24,
+        "name": "Allow runner KVM access",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:42:44Z",
+        "completed_at": "2026-11-13T20:42:44Z"
+      },
+      {
+        "number": 25,
+        "name": "Run df -h \"$GITHUB_WORKSPACE\"",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:42:44Z",
+        "completed_at": "2026-11-13T20:42:44Z"
+      },
+      {
+        "number": 26,
+        "name": "Launch offline bundled app and real denial fixture",
+        "seconds": 110,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:42:44Z",
+        "completed_at": "2026-11-13T20:44:34Z"
+      },
+      {
+        "number": 27,
+        "name": "Run sha256sum --check artifacts/android-apks.sha256",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:44:34Z",
+        "completed_at": "2026-11-13T20:44:34Z"
+      },
+      {
+        "number": 28,
+        "name": "Source drift gate",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:44:34Z",
+        "completed_at": "2026-11-13T20:44:34Z"
+      },
+      {
+        "number": 29,
+        "name": "Run actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f",
+        "seconds": 2,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:44:34Z",
+        "completed_at": "2026-11-13T20:44:36Z"
+      },
+      {
+        "number": 30,
+        "name": "Run actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f",
+        "seconds": 2,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:44:36Z",
+        "completed_at": "2026-11-13T20:44:38Z"
+      },
+      {
+        "number": 31,
+        "name": "Profile cache after successful validation",
+        "seconds": 2,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:44:38Z",
+        "completed_at": "2026-11-13T20:44:40Z"
+      },
+      {
+        "number": 32,
+        "name": "Run actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f",
+        "seconds": 1,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:44:40Z",
+        "completed_at": "2026-11-13T20:44:41Z"
+      },
+      {
+        "number": 33,
+        "name": "Run actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0",
+        "seconds": 48,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:44:41Z",
+        "completed_at": "2026-11-13T20:45:29Z"
+      },
+      {
+        "number": 34,
+        "name": "Run actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0",
+        "seconds": 12,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:45:29Z",
+        "completed_at": "2026-11-13T20:45:41Z"
+      },
+      {
+        "number": 35,
+        "name": "Run actions/cache/save@a7833574556fa59680c1b7cb190c1735db73ebf0",
+        "seconds": 6,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:45:41Z",
+        "completed_at": "2026-11-13T20:45:47Z"
+      },
+      {
+        "number": 69,
+        "name": "Post Run actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:45:47Z",
+        "completed_at": "2026-11-13T20:45:47Z"
+      },
+      {
+        "number": 70,
+        "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:45:47Z",
+        "completed_at": "2026-11-13T20:45:47Z"
+      },
+      {
+        "number": 71,
+        "name": "Complete job",
+        "seconds": 0,
+        "conclusion": "success",
+        "started_at": "2026-11-13T20:45:47Z",
+        "completed_at": "2026-11-13T20:45:47Z"
+      }
+    ]
+  },
+  "profile_phases": {
+    "restored": {
+      "phase": "restored",
+      "source": "5a2adc1e2a87a287a80e4c5ef5df3a2623629fb5",
+      "runner_image": {
+        "os": "ubuntu24",
+        "version": "20261111.370.1"
+      },
+      "cache_key": "android-partitions-v2",
+      "cache_hit": "false",
+      "cache_matched_key": "",
+      "synthetic_stale_probe": false,
+      "forced_cold": false,
+      "measurement_seconds": 0.000303,
+      "recursive_error_count": 0,
+      "components": {
+        "sdk": {
+          "key": "android-sdk-v2-Linux-X64-ubuntu24-20261111.370.1-9472db2b8f07767068619721a4e29b5e1a9951687455766c969e65c9c1523383",
+          "hit": "",
+          "matched_key": ""
+        },
+        "dependencies": {
+          "key": "android-deps-v2-Linux-X64-ubuntu24-20261111.370.1-jdk21-d20706e229140c80c9801469d306ac48ef3c83825f568f7bd5a85f28204bc8d5-c858fd60f889c891be61a3c0267b5de2b330ebc3b77fd0cda7a8f6f50c9208b1",
+          "hit": "",
+          "matched_key": ""
+        },
+        "targets": {
+          "key": "android-targets-v2-Linux-X64-ubuntu24-20261111.370.1-rust1.100.0-jdk21-2172e7af715ee1a6bbb411fbe16699a2e39816086a1b805307de5f124ab3dcb7-c858fd60f889c891be61a3c0267b5de2b330ebc3b77fd0cda7a8f6f50c9208b1",
+          "hit": "",
+          "matched_key": ""
+        }
+      },
+      "filesystem_totals_non_overlapping": {
+        "apparent_bytes": 0,
+        "allocated_bytes": 0
+      },
+      "partition_filesystem_groups": {
+        "sdk": {
+          "apparent_bytes": 0,
+          "allocated_bytes": 0,
+          "files": 0,
+          "symlinks": 0,
+          "buckets": {
+            "sdk": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            }
+          }
+        },
+        "dependencies": {
+          "apparent_bytes": 0,
+          "allocated_bytes": 0,
+          "files": 0,
+          "symlinks": 0,
+          "buckets": {
+            "cargo-registry": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            },
+            "cargo-git": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            },
+            "trunk-tools": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            },
+            "tool-archives": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            },
+            "gradle-cache": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            },
+            "gradle-wrapper": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            }
+          }
+        },
+        "targets": {
+          "apparent_bytes": 0,
+          "allocated_bytes": 0,
+          "files": 0,
+          "symlinks": 0,
+          "buckets": {
+            "frontend-target": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            },
+            "native-target": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            }
+          }
+        }
+      },
+      "sdk_children_filesystem_bytes": {}
+    },
+    "ready_to_save": {
+      "phase": "ready-to-save",
+      "source": "5a2adc1e2a87a287a80e4c5ef5df3a2623629fb5",
+      "runner_image": {
+        "os": "ubuntu24",
+        "version": "20261111.370.1"
+      },
+      "cache_key": "android-partitions-v2",
+      "cache_hit": "false",
+      "cache_matched_key": "",
+      "synthetic_stale_probe": false,
+      "forced_cold": false,
+      "measurement_seconds": 1.650528,
+      "recursive_error_count": 0,
+      "components": {
+        "sdk": {
+          "key": "android-sdk-v2-Linux-X64-ubuntu24-20261111.370.1-9472db2b8f07767068619721a4e29b5e1a9951687455766c969e65c9c1523383",
+          "hit": "",
+          "matched_key": ""
+        },
+        "dependencies": {
+          "key": "android-deps-v2-Linux-X64-ubuntu24-20261111.370.1-jdk21-d20706e229140c80c9801469d306ac48ef3c83825f568f7bd5a85f28204bc8d5-c858fd60f889c891be61a3c0267b5de2b330ebc3b77fd0cda7a8f6f50c9208b1",
+          "hit": "",
+          "matched_key": ""
+        },
+        "targets": {
+          "key": "android-targets-v2-Linux-X64-ubuntu24-20261111.370.1-rust1.100.0-jdk21-2172e7af715ee1a6bbb411fbe16699a2e39816086a1b805307de5f124ab3dcb7-c858fd60f889c891be61a3c0267b5de2b330ebc3b77fd0cda7a8f6f50c9208b1",
+          "hit": "",
+          "matched_key": ""
+        }
+      },
+      "filesystem_totals_non_overlapping": {
+        "apparent_bytes": 12683722261,
+        "allocated_bytes": 12912480256
+      },
+      "partition_filesystem_groups": {
+        "sdk": {
+          "apparent_bytes": 8713047443,
+          "allocated_bytes": 8806326272,
+          "files": 33290,
+          "symlinks": 37,
+          "buckets": {
+            "sdk": {
+              "apparent_bytes": 8713047443,
+              "allocated_bytes": 8806326272,
+              "files": 33290,
+              "symlinks": 37
+            }
+          }
+        },
+        "dependencies": {
+          "apparent_bytes": 1851800513,
+          "allocated_bytes": 1965297664,
+          "files": 42895,
+          "symlinks": 0,
+          "buckets": {
+            "cargo-registry": {
+              "apparent_bytes": 682045807,
+              "allocated_bytes": 750612480,
+              "files": 27892,
+              "symlinks": 0
+            },
+            "cargo-git": {
+              "apparent_bytes": 0,
+              "allocated_bytes": 0,
+              "files": 0,
+              "symlinks": 0
+            },
+            "trunk-tools": {
+              "apparent_bytes": 26377920,
+              "allocated_bytes": 26382336,
+              "files": 2,
+              "symlinks": 0
+            },
+            "tool-archives": {
+              "apparent_bytes": 17736621,
+              "allocated_bytes": 17739776,
+              "files": 3,
+              "symlinks": 0
+            },
+            "gradle-cache": {
+              "apparent_bytes": 969177621,
+              "allocated_bytes": 1012027392,
+              "files": 14294,
+              "symlinks": 0
+            },
+            "gradle-wrapper": {
+              "apparent_bytes": 156462544,
+              "allocated_bytes": 158535680,
+              "files": 704,
+              "symlinks": 0
+            }
+          }
+        },
+        "targets": {
+          "apparent_bytes": 2118874305,
+          "allocated_bytes": 2140856320,
+          "files": 7302,
+          "symlinks": 0,
+          "buckets": {
+            "frontend-target": {
+              "apparent_bytes": 548663305,
+              "allocated_bytes": 554831872,
+              "files": 2112,
+              "symlinks": 0
+            },
+            "native-target": {
+              "apparent_bytes": 1570211000,
+              "allocated_bytes": 1586024448,
+              "files": 5190,
+              "symlinks": 0
+            }
+          }
+        }
+      },
+      "sdk_children_filesystem_bytes": {
+        ".knownPackages": {
+          "apparent_bytes": 16,
+          "allocated_bytes": 4096,
+          "files": 1,
+          "symlinks": 0
+        },
+        "build-tools": {
+          "apparent_bytes": 311225638,
+          "allocated_bytes": 311947264,
+          "files": 340,
+          "symlinks": 0
+        },
+        "cmdline-tools": {
+          "apparent_bytes": 164756972,
+          "allocated_bytes": 164986880,
+          "files": 110,
+          "symlinks": 0
+        },
+        "emulator": {
+          "apparent_bytes": 903309732,
+          "allocated_bytes": 904187904,
+          "files": 400,
+          "symlinks": 0
+        },
+        "licenses": {
+          "apparent_bytes": 328,
+          "allocated_bytes": 32768,
+          "files": 8,
+          "symlinks": 0
+        },
+        "ndk": {
+          "apparent_bytes": 2494931177,
+          "allocated_bytes": 2517209088,
+          "files": 9657,
+          "symlinks": 37
+        },
+        "platform-tools": {
+          "apparent_bytes": 22216158,
+          "allocated_bytes": 22253568,
+          "files": 14,
+          "symlinks": 0
+        },
+        "platforms": {
+          "apparent_bytes": 231199849,
+          "allocated_bytes": 300212224,
+          "files": 22730,
+          "symlinks": 0
+        },
+        "system-images": {
+          "apparent_bytes": 4585407573,
+          "allocated_bytes": 4585492480,
+          "files": 30,
+          "symlinks": 0
+        }
+      }
+    }
+  },
+  "cache_inventory_compressed": {
+    "total_count": 11,
+    "total_size_in_bytes_compressed": 12070841344,
+    "android_v2_20261111_370_1_seeded_by_run": {
+      "entries": [
+        {
+          "partition": "sdk",
+          "id": 10497106323,
+          "key": "android-sdk-v2-Linux-X64-ubuntu24-20261111.370.1-9472db2b8f07767068619721a4e29b5e1a9951687455766c969e65c9c1523383",
+          "size_in_bytes_compressed": 3269377488,
+          "created_at": "2026-11-13T20:45:28.998737Z",
+          "last_accessed_at": "2026-11-13T20:45:28.998737Z",
+          "ref": "refs/heads/develop"
+        },
+        {
+          "partition": "dependencies",
+          "id": 10497123423,
+          "key": "android-deps-v2-Linux-X64-ubuntu24-20261111.370.1-jdk21-d20706e229140c80c9801469d306ac48ef3c83825f568f7bd5a85f28204bc8d5-c858fd60f889c891be61a3c0267b5de2b330ebc3b77fd0cda7a8f6f50c9208b1",
+          "size_in_bytes_compressed": 684898837,
+          "created_at": "2026-11-13T20:45:41.347897Z",
+          "last_accessed_at": "2026-11-13T20:45:41.347897Z",
+          "ref": "refs/heads/develop"
+        },
+        {
+          "partition": "targets",
+          "id": 10497127709,
+          "key": "android-targets-v2-Linux-X64-ubuntu24-20261111.370.1-rust1.100.0-jdk21-2172e7af715ee1a6bbb411fbe16699a2e39816086a1b805307de5f124ab3dcb7-c858fd60f889c891be61a3c0267b5de2b330ebc3b77fd0cda7a8f6f50c9208b1",
+          "size_in_bytes_compressed": 481497958,
+          "created_at": "2026-11-13T20:45:47.495937Z",
+          "last_accessed_at": "2026-11-13T20:45:47.495937Z",
+          "ref": "refs/heads/develop"
+        }
+      ],
+      "sum_size_in_bytes_compressed": 4435774283
+    },
+    "android_v2_20261101_360_1_prior_entries": {
+      "entries": [
+        {
+          "id": 10369204165,
+          "key": "android-deps-v2-Linux-X64-ubuntu24-20261101.360.1-jdk21-d20706e229140c80c9801469d306ac48ef3c83825f568f7bd5a85f28204bc8d5-c858fd60f889c891be61a3c0267b5de2b330ebc3b77fd0cda7a8f6f50c9208b1",
+          "size_in_bytes_compressed": 683180406,
+          "created_at": "2026-11-11T17:49:01.252725Z",
+          "last_accessed_at": "2026-11-13T18:11:47.325439Z",
+          "ref": "refs/heads/develop"
+        },
+        {
+          "id": 10369184852,
+          "key": "android-sdk-v2-Linux-X64-ubuntu24-20261101.360.1-9472db2b8f07767068619721a4e29b5e1a9951687455766c969e65c9c1523383",
+          "size_in_bytes_compressed": 3267755610,
+          "created_at": "2026-11-11T17:48:44.272349Z",
+          "last_accessed_at": "2026-11-13T18:10:52.018888Z",
+          "ref": "refs/heads/develop"
+        },
+        {
+          "id": 10369212413,
+          "key": "android-targets-v2-Linux-X64-ubuntu24-20261101.360.1-rust1.99.1-jdk21-835f83d59be916c539be36c75846a503306cea7f9f331ad4e41d06e88f6dc974-c858fd60f889c891be61a3c0267b5de2b330ebc3b77fd0cda7a8f6f50c9208b1",
+          "size_in_bytes_compressed": 543907393,
+          "created_at": "2026-11-11T17:49:09.379794Z",
+          "last_accessed_at": "2026-11-11T23:57:47.072438Z",
+          "ref": "refs/heads/develop"
+        }
+      ],
+      "sum_size_in_bytes_compressed": 4494843409
+    },
+    "other_active_entries": [
+      {
+        "id": 10342227772,
+        "key": "security-v1-Linux-X64-393f97c0a16e688765c96120f1c308d08b94b87624a3f8a7c0b6583d84a4df7d",
+        "size_in_bytes_compressed": 163382659,
+        "created_at": "2026-11-11T07:50:28.789631Z",
+        "last_accessed_at": "2026-11-13T20:36:45.965871Z",
+        "ref": "refs/heads/develop"
+      },
+      {
+        "id": 10342362252,
+        "key": "build-v1-Linux-X64-ubuntu24-20261101.360.1-native-3.24.41-2.52.6--rust1.99.1-b4e7c7d91b8ff76afbcd23388905db5391eff0f175d70bb5b52619cbc3b6e61e",
+        "size_in_bytes_compressed": 1261375724,
+        "created_at": "2026-11-11T07:54:18.697129Z",
+        "last_accessed_at": "2026-11-11T23:57:14.863996Z",
+        "ref": "refs/heads/develop"
+      },
+      {
+        "id": 10496847299,
+        "key": "build-v1-Linux-X64-ubuntu24-20261111.370.1-browser-portable-rust1.100.0-044c4c78601109b3372b88de94c52f0b24d19eefb73f773540e6e1140a98d093",
+        "size_in_bytes_compressed": 384806004,
+        "created_at": "2026-11-13T20:39:15.223080Z",
+        "last_accessed_at": "2026-11-13T20:39:15.223080Z",
+        "ref": "refs/heads/develop"
+      },
+      {
+        "id": 10496889657,
+        "key": "build-v1-Linux-X64-ubuntu24-20261111.370.1-core-portable-rust1.100.0-044c4c78601109b3372b88de94c52f0b24d19eefb73f773540e6e1140a98d093",
+        "size_in_bytes_compressed": 449559777,
+        "created_at": "2026-11-13T20:40:14.354594Z",
+        "last_accessed_at": "2026-11-13T20:40:14.354594Z",
+        "ref": "refs/heads/develop"
+      },
+      {
+        "id": 10497197108,
+        "key": "build-v1-Linux-X64-ubuntu24-20261111.127.1-native-3.24.41-2.52.6--rust1.100.0-044c4c78601109b3372b88de94c52f0b24d19eefb73f773540e6e1140a98d093",
+        "size_in_bytes_compressed": 881099488,
+        "created_at": "2026-11-13T20:47:25.983471Z",
+        "last_accessed_at": "2026-11-13T20:47:25.983471Z",
+        "ref": "refs/heads/develop"
+      }
+    ]
+  }
+}
