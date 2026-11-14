@@ -1,0 +1,469 @@
+{
+  "assessment_date_utc": "2026-11-14",
+  "toolchain": {
+    "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)\nbinary: rustc\ncommit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a\ncommit-date: 2026-11-09\nhost: x86_64-unknown-linux-gnu\nrelease: 1.100.0\nLLVM version: 23.1.5",
+    "cargo": "cargo 1.100.0 (3acc79c0c 2026-11-05)\nrelease: 1.100.0\ncommit-hash: 3acc79c0c841844675bc53a605922dbfc441e750\ncommit-date: 2026-11-05\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.6 (sys:0.21.0 vendored)\nlibcurl: 8.21.0-DEV (sys:0.4.90+curl-8.21.0 vendored ssl:OpenSSL/3.6.3)\nssl: OpenSSL 3.6.3 9 Jun 2026\nos: Fedora 44.0.0 [64-bit]"
+  },
+  "active_exceptions": [
+    {
+      "id": "RUSTSEC-2024-0436",
+      "package": "paste 1.0.15",
+      "kind": "unmaintained",
+      "expires": "2027-02-09",
+      "reason": "Leptos 0.8.23 requires the archived compile-time macro crate. No vulnerability is identified by this maintenance advisory; replacement requires upstream integration. Preserve advisory output and review before expiry."
+    },
+    {
+      "id": "RUSTSEC-2024-0370",
+      "package": "proc-macro-error 1.0.4",
+      "kind": "unmaintained",
+      "expires": "2027-02-09",
+      "reason": "GTK3 glib/gtk macros require this compile-time dependency. No vulnerability is identified by this maintenance advisory; replacing GTK/Tauri macros is beyond a safe patch. Preserve advisory output and review before expiry."
+    }
+  ],
+  "locked_cargo_tree_queries": {
+    "root_paste": {
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "<REPO_ROOT>/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-i",
+        "paste"
+      ],
+      "returncode": 0,
+      "stdout": "paste v1.0.15 (proc-macro)\n\u251c\u2500\u2500 either_of v0.1.9\n\u2502   \u251c\u2500\u2500 leptos v0.8.23\n\u2502   \u2502   \u251c\u2500\u2500 app-ui v0.1.0 (<REPO_ROOT>/crates/app-ui)\n\u2502   \u2502   \u2502   \u2514\u2500\u2500 client v0.1.0 (<REPO_ROOT>/crates/client)\n\u2502   \u2502   \u2514\u2500\u2500 client v0.1.0 (<REPO_ROOT>/crates/client)\n\u2502   \u2514\u2500\u2500 tachys v0.2.19\n\u2502       \u251c\u2500\u2500 leptos v0.8.23 (*)\n\u2502       \u251c\u2500\u2500 leptos_dom v0.8.8\n\u2502       \u2502   \u2514\u2500\u2500 leptos v0.8.23 (*)\n\u2502       \u2514\u2500\u2500 leptos_server v0.8.8\n\u2502           \u2514\u2500\u2500 leptos v0.8.23 (*)\n\u251c\u2500\u2500 leptos v0.8.23 (*)\n\u251c\u2500\u2500 reactive_graph v0.2.16\n\u2502   \u251c\u2500\u2500 leptos v0.8.23 (*)\n\u2502   \u251c\u2500\u2500 leptos_dom v0.8.8 (*)\n\u2502   \u251c\u2500\u2500 leptos_server v0.8.8 (*)\n\u2502   \u251c\u2500\u2500 reactive_stores v0.4.4\n\u2502   \u2502   \u2514\u2500\u2500 tachys v0.2.19 (*)\n\u2502   \u2514\u2500\u2500 tachys v0.2.19 (*)\n\u251c\u2500\u2500 reactive_stores v0.4.4 (*)\n\u2514\u2500\u2500 tachys v0.2.19 (*)",
+      "stderr": ""
+    },
+    "root_proc_macro_error": {
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "<REPO_ROOT>/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-i",
+        "proc-macro-error"
+      ],
+      "returncode": 101,
+      "stdout": "",
+      "stderr": "error: package ID specification `proc-macro-error` did not match any packages"
+    },
+    "native_proc_macro_error": {
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "<REPO_ROOT>/apps/native/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-i",
+        "proc-macro-error"
+      ],
+      "returncode": 0,
+      "stdout": "proc-macro-error v1.0.4\n\u251c\u2500\u2500 glib-macros v0.18.5 (proc-macro)\n\u2502   \u2514\u2500\u2500 glib v0.18.5\n\u2502       \u251c\u2500\u2500 atk v0.18.2\n\u2502       \u2502   \u2514\u2500\u2500 gtk v0.18.2\n\u2502       \u2502       \u251c\u2500\u2500 muda v0.20.0\n\u2502       \u2502       \u2502   \u2514\u2500\u2500 tauri v2.12.5\n\u2502       \u2502       \u2502       \u2514\u2500\u2500 rust-ui-native v0.1.0 (<REPO_ROOT>/apps/native)\n\u2502       \u2502       \u251c\u2500\u2500 tao v0.37.2\n\u2502       \u2502       \u2502   \u2514\u2500\u2500 tauri-runtime-wry v2.12.3\n\u2502       \u2502       \u2502       \u2514\u2500\u2500 tauri v2.12.5 (*)\n\u2502       \u2502       \u251c\u2500\u2500 tauri v2.12.5 (*)\n\u2502       \u2502       \u251c\u2500\u2500 tauri-runtime v2.12.2\n\u2502       \u2502       \u2502   \u251c\u2500\u2500 tauri v2.12.5 (*)\n\u2502       \u2502       \u2502   \u2514\u2500\u2500 tauri-runtime-wry v2.12.3 (*)\n\u2502       \u2502       \u251c\u2500\u2500 tauri-runtime-wry v2.12.3 (*)\n\u2502       \u2502       \u251c\u2500\u2500 webkit2gtk v2.0.2\n\u2502       \u2502       \u2502   \u251c\u2500\u2500 tauri v2.12.5 (*)\n\u2502       \u2502       \u2502   \u251c\u2500\u2500 tauri-runtime v2.12.2 (*)\n\u2502       \u2502       \u2502   \u251c\u2500\u2500 tauri-runtime-wry v2.12.3 (*)\n\u2502       \u2502       \u2502   \u2514\u2500\u2500 wry v0.57.2 (<REPO_ROOT>/vendor/wry-0.57.2)\n\u2502       \u2502       \u2502       \u2514\u2500\u2500 tauri-runtime-wry v2.12.3 (*)\n\u2502       \u2502       \u2514\u2500\u2500 wry v0.57.2 (<REPO_ROOT>/vendor/wry-0.57.2) (*)\n\u2502       \u251c\u2500\u2500 cairo-rs v0.18.5\n\u2502       \u2502   \u251c\u2500\u2500 gdk v0.18.2\n\u2502       \u2502   \u2502   \u251c\u2500\u2500 gdkx11 v0.18.2\n\u2502       \u2502   \u2502   \u2502   \u2514\u2500\u2500 wry v0.57.2 (<REPO_ROOT>/vendor/wry-0.57.2) (*)\n\u2502       \u2502   \u2502   \u251c\u2500\u2500 gtk v0.18.2 (*)\n\u2502       \u2502   \u2502   \u2514\u2500\u2500 webkit2gtk v2.0.2 (*)\n\u2502       \u2502   \u251c\u2500\u2500 gtk v0.18.2 (*)\n\u2502       \u2502   \u2514\u2500\u2500 webkit2gtk v2.0.2 (*)\n\u2502       \u251c\u2500\u2500 gdk v0.18.2 (*)\n\u2502       \u251c\u2500\u2500 gdk-pixbuf v0.18.5\n\u2502       \u2502   \u251c\u2500\u2500 gdk v0.18.2 (*)\n\u2502       \u2502   \u2514\u2500\u2500 gtk v0.18.2 (*)\n\u2502       \u251c\u2500\u2500 gdkx11 v0.18.2 (*)\n\u2502       \u251c\u2500\u2500 gio v0.18.4\n\u2502       \u2502   \u251c\u2500\u2500 gdk v0.18.2 (*)\n\u2502       \u2502   \u251c\u2500\u2500 gdk-pixbuf v0.18.5 (*)\n\u2502       \u2502   \u251c\u2500\u2500 gdkx11 v0.18.2 (*)\n\u2502       \u2502   \u251c\u2500\u2500 gtk v0.18.2 (*)\n\u2502       \u2502   \u251c\u2500\u2500 pango v0.18.3\n\u2502       \u2502   \u2502   \u251c\u2500\u2500 gdk v0.18.2 (*)\n\u2502       \u2502   \u2502   \u2514\u2500\u2500 gtk v0.18.2 (*)\n\u2502       \u2502   \u251c\u2500\u2500 soup3 v0.5.0\n\u2502       \u2502   \u2502   \u251c\u2500\u2500 webkit2gtk v2.0.2 (*)\n\u2502       \u2502   \u2502   \u2514\u2500\u2500 wry v0.57.2 (<REPO_ROOT>/vendor/wry-0.57.2) (*)\n\u2502       \u2502   \u2514\u2500\u2500 webkit2gtk v2.0.2 (*)\n\u2502       \u251c\u2500\u2500 gtk v0.18.2 (*)\n\u2502       \u251c\u2500\u2500 javascriptcore-rs v1.1.2\n\u2502       \u2502   \u251c\u2500\u2500 webkit2gtk v2.0.2 (*)\n\u2502       \u2502   \u2514\u2500\u2500 wry v0.57.2 (<REPO_ROOT>/vendor/wry-0.57.2) (*)\n\u2502       \u251c\u2500\u2500 pango v0.18.3 (*)\n\u2502       \u251c\u2500\u2500 soup3 v0.5.0 (*)\n\u2502       \u2514\u2500\u2500 webkit2gtk v2.0.2 (*)\n\u2514\u2500\u2500 gtk3-macros v0.18.2 (proc-macro)\n    \u2514\u2500\u2500 gtk v0.18.2 (*)",
+      "stderr": ""
+    },
+    "native_paste": {
+      "command": [
+        "cargo",
+        "tree",
+        "--manifest-path",
+        "<REPO_ROOT>/apps/native/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-i",
+        "paste"
+      ],
+      "returncode": 101,
+      "stdout": "",
+      "stderr": "error: package ID specification `paste` did not match any packages\n\nhelp: a package with a similar name exists: `atk`"
+    }
+  },
+  "upstream_crates_io_snapshot": {
+    "either_of": {
+      "source_file": "either_of.json",
+      "url": "https://crates.io/api/v1/crates/either_of",
+      "dependencies_url": "https://crates.io/api/v1/crates/either_of/0.1.9/dependencies",
+      "retrieved_at": "2026-11-14T05:01:25.094954+00:00",
+      "default_version": "0.1.9",
+      "max_version": "0.1.9",
+      "newest_version": "0.1.9",
+      "max_stable_version": "0.1.9",
+      "yanked": false,
+      "stable_release": {
+        "num": "0.1.9",
+        "created_at": "2026-04-16T17:11:09.328719Z",
+        "checksum": "5060e0a4cbf26a87550792688ade88e6b8aec9208613631a7a363bda7bc2d4cd",
+        "rust_version": "1.88",
+        "edition": "2021",
+        "license": "MIT"
+      },
+      "relevant_normal_build_dependencies": [
+        {
+          "crate_id": "paste",
+          "req": "^1.0",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        }
+      ]
+    },
+    "glib-macros": {
+      "source_file": "glib-macros.json",
+      "url": "https://crates.io/api/v1/crates/glib-macros",
+      "dependencies_url": "https://crates.io/api/v1/crates/glib-macros/0.22.9/dependencies",
+      "retrieved_at": "2026-11-14T05:01:24.729458+00:00",
+      "default_version": "0.22.9",
+      "max_version": "0.22.9",
+      "newest_version": "0.22.9",
+      "max_stable_version": "0.22.9",
+      "yanked": false,
+      "stable_release": {
+        "num": "0.22.9",
+        "created_at": "2026-08-30T17:44:39.293611Z",
+        "checksum": "c9597c68fa7bdf4154a3079642cd21c4dccac0b0bdd2897d82861523bf91e7b9",
+        "rust_version": "1.92",
+        "edition": "2024",
+        "license": "MIT"
+      },
+      "relevant_normal_build_dependencies": [
+        {
+          "crate_id": "proc-macro-crate",
+          "req": "^3.5",
+          "kind": "normal",
+          "optional": true,
+          "target": null
+        }
+      ]
+    },
+    "gtk": {
+      "source_file": "gtk.json",
+      "url": "https://crates.io/api/v1/crates/gtk",
+      "dependencies_url": "https://crates.io/api/v1/crates/gtk/0.19.0/dependencies",
+      "retrieved_at": "2026-11-14T05:01:24.442344+00:00",
+      "default_version": "0.19.0",
+      "max_version": "0.19.0",
+      "newest_version": "0.19.0",
+      "max_stable_version": "0.19.0",
+      "yanked": false,
+      "stable_release": {
+        "num": "0.19.0",
+        "created_at": "2026-09-08T06:26:27.182954Z",
+        "checksum": "a86cafafc177054a1d555a0b302044d2b5f82e1c1e23d152a7ba252dc6bfced0",
+        "rust_version": "1.92",
+        "edition": "2024",
+        "license": "MIT"
+      },
+      "relevant_normal_build_dependencies": [
+        {
+          "crate_id": "glib",
+          "req": "^0.22",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        },
+        {
+          "crate_id": "gtk3-macros",
+          "req": "^0.19.0",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        }
+      ]
+    },
+    "gtk3-macros": {
+      "source_file": "gtk3-macros.json",
+      "url": "https://crates.io/api/v1/crates/gtk3-macros",
+      "dependencies_url": "https://crates.io/api/v1/crates/gtk3-macros/0.19.0/dependencies",
+      "retrieved_at": "2026-11-14T05:01:24.493653+00:00",
+      "default_version": "0.19.0",
+      "max_version": "0.19.0",
+      "newest_version": "0.19.0",
+      "max_stable_version": "0.19.0",
+      "yanked": false,
+      "stable_release": {
+        "num": "0.19.0",
+        "created_at": "2026-09-08T06:26:22.016332Z",
+        "checksum": "5fcce21fcb0c4c4fc48bab8d4eee5aacdb361f85d234756430e6e793bd3d95cf",
+        "rust_version": "1.92",
+        "edition": "2024",
+        "license": "MIT"
+      },
+      "relevant_normal_build_dependencies": [
+        {
+          "crate_id": "proc-macro-crate",
+          "req": "^3.5",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        }
+      ]
+    },
+    "leptos": {
+      "source_file": "leptos.json",
+      "url": "https://crates.io/api/v1/crates/leptos",
+      "dependencies_url": "https://crates.io/api/v1/crates/leptos/0.8.23/dependencies",
+      "retrieved_at": "2026-11-14T05:01:24.621889+00:00",
+      "default_version": "0.8.23",
+      "max_version": "0.9.0-rc1",
+      "newest_version": "0.8.23",
+      "max_stable_version": "0.8.23",
+      "yanked": false,
+      "stable_release": {
+        "num": "0.8.23",
+        "created_at": "2026-10-31T16:19:20.873260Z",
+        "checksum": "4b0f9f061ff585050a77e18b93a58d6c881c6785f473fc98924c4f77da50d891",
+        "rust_version": "1.88",
+        "edition": "2021",
+        "license": "MIT"
+      },
+      "relevant_normal_build_dependencies": [
+        {
+          "crate_id": "either_of",
+          "req": "^0.1.9",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        },
+        {
+          "crate_id": "paste",
+          "req": "^1.0",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        },
+        {
+          "crate_id": "reactive_graph",
+          "req": "^0.2.16",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        },
+        {
+          "crate_id": "tachys",
+          "req": "^0.2.19",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        }
+      ]
+    },
+    "paste": {
+      "source_file": "paste.json",
+      "url": "https://crates.io/api/v1/crates/paste",
+      "dependencies_url": "https://crates.io/api/v1/crates/paste/1.0.15/dependencies",
+      "retrieved_at": "2026-11-14T05:01:24.844224+00:00",
+      "default_version": "1.0.15",
+      "max_version": "1.0.15",
+      "newest_version": "1.0.15",
+      "max_stable_version": "1.0.15",
+      "yanked": false,
+      "stable_release": {
+        "num": "1.0.15",
+        "created_at": "2024-05-07T01:50:22.784771Z",
+        "checksum": "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a",
+        "rust_version": "1.31",
+        "edition": "2018",
+        "license": "MIT OR Apache-2.0"
+      },
+      "relevant_normal_build_dependencies": []
+    },
+    "proc-macro-error": {
+      "source_file": "proc-macro-error.json",
+      "url": "https://crates.io/api/v1/crates/proc-macro-error",
+      "dependencies_url": "https://crates.io/api/v1/crates/proc-macro-error/1.0.4/dependencies",
+      "retrieved_at": "2026-11-14T05:01:25.006956+00:00",
+      "default_version": "1.0.4",
+      "max_version": "1.0.4",
+      "newest_version": "1.0.4",
+      "max_stable_version": "1.0.4",
+      "yanked": false,
+      "stable_release": {
+        "num": "1.0.4",
+        "created_at": "2020-07-31T18:08:20.096247Z",
+        "checksum": "da25490ff9892aab3fcf7c36f08cfb902dd3e71ca0f9f9517bea02a73a5ce38c",
+        "rust_version": null,
+        "edition": "2018",
+        "license": "MIT OR Apache-2.0"
+      },
+      "relevant_normal_build_dependencies": []
+    },
+    "proc-macro-error2": {
+      "source_file": "proc-macro-error2.json",
+      "url": "https://crates.io/api/v1/crates/proc-macro-error2",
+      "dependencies_url": "https://crates.io/api/v1/crates/proc-macro-error2/2.0.1/dependencies",
+      "retrieved_at": "2026-11-14T05:01:24.947098+00:00",
+      "default_version": "2.0.1",
+      "max_version": "2.0.1",
+      "newest_version": "2.0.1",
+      "max_stable_version": "2.0.1",
+      "yanked": false,
+      "stable_release": {
+        "num": "2.0.1",
+        "created_at": "2024-09-06T20:04:43.796942Z",
+        "checksum": "11ec05c52be0a07b08061f7dd003e7d7092e0472bc731b4af7bb1ef876109802",
+        "rust_version": "1.61",
+        "edition": "2021",
+        "license": "MIT OR Apache-2.0"
+      },
+      "relevant_normal_build_dependencies": []
+    },
+    "reactive_graph": {
+      "source_file": "reactive_graph.json",
+      "url": "https://crates.io/api/v1/crates/reactive_graph",
+      "dependencies_url": "https://crates.io/api/v1/crates/reactive_graph/0.2.16/dependencies",
+      "retrieved_at": "2026-11-14T05:01:25.237581+00:00",
+      "default_version": "0.2.16",
+      "max_version": "0.3.0-rc1",
+      "newest_version": "0.3.0-rc1",
+      "max_stable_version": "0.2.16",
+      "yanked": false,
+      "stable_release": {
+        "num": "0.2.16",
+        "created_at": "2026-10-14T16:14:12.427665Z",
+        "checksum": "3bcec36a2d1b9a53a4129b3270b19e3df6f6b88c2e7c97ed9404dc9307f137d7",
+        "rust_version": "1.88",
+        "edition": "2021",
+        "license": "MIT"
+      },
+      "relevant_normal_build_dependencies": [
+        {
+          "crate_id": "paste",
+          "req": "^1.0",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        }
+      ]
+    },
+    "reactive_stores": {
+      "source_file": "reactive_stores.json",
+      "url": "https://crates.io/api/v1/crates/reactive_stores",
+      "dependencies_url": "https://crates.io/api/v1/crates/reactive_stores/0.4.4/dependencies",
+      "retrieved_at": "2026-11-14T05:01:25.292584+00:00",
+      "default_version": "0.4.4",
+      "max_version": "0.5.0-rc1",
+      "newest_version": "0.5.0-rc1",
+      "max_stable_version": "0.4.4",
+      "yanked": false,
+      "stable_release": {
+        "num": "0.4.4",
+        "created_at": "2026-09-26T19:32:18.813881Z",
+        "checksum": "a29e469b556f25486678e9f5f65fa21a0351d98affde9a7eea9fee286bf8ebd6",
+        "rust_version": "1.88",
+        "edition": "2021",
+        "license": "MIT"
+      },
+      "relevant_normal_build_dependencies": [
+        {
+          "crate_id": "paste",
+          "req": "^1.0",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        },
+        {
+          "crate_id": "reactive_graph",
+          "req": "^0.2.15",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        }
+      ]
+    },
+    "tachys": {
+      "source_file": "tachys.json",
+      "url": "https://crates.io/api/v1/crates/tachys",
+      "dependencies_url": "https://crates.io/api/v1/crates/tachys/0.2.19/dependencies",
+      "retrieved_at": "2026-11-14T05:01:25.401045+00:00",
+      "default_version": "0.2.19",
+      "max_version": "0.3.0-rc1",
+      "newest_version": "0.3.0-rc1",
+      "max_stable_version": "0.2.19",
+      "yanked": false,
+      "stable_release": {
+        "num": "0.2.19",
+        "created_at": "2026-09-26T19:32:39.091779Z",
+        "checksum": "e47e2220bb9d2a3be976a22a0fb7685a0b84499bb11ea5cb3bbc82907675ac68",
+        "rust_version": "1.88",
+        "edition": "2021",
+        "license": "MIT"
+      },
+      "relevant_normal_build_dependencies": [
+        {
+          "crate_id": "either_of",
+          "req": "^0.1.9",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        },
+        {
+          "crate_id": "paste",
+          "req": "^1.0",
+          "kind": "normal",
+          "optional": false,
+          "target": null
+        },
+        {
+          "crate_id": "reactive_graph",
+          "req": "^0.2.15",
+          "kind": "normal",
+          "optional": true,
+          "target": null
+        },
+        {
+          "crate_id": "reactive_stores",
+          "req": "^0.4.4",
+          "kind": "normal",
+          "optional": true,
+          "target": null
+        }
+      ]
+    },
+    "tauri": {
+      "source_file": "tauri.json",
+      "url": "https://crates.io/api/v1/crates/tauri",
+      "dependencies_url": "https://crates.io/api/v1/crates/tauri/2.12.5/dependencies",
+      "retrieved_at": "2026-11-14T05:01:24.675810+00:00",
+      "default_version": "2.12.5",
+      "max_version": "3.0.0-alpha.6",
+      "newest_version": "3.0.0-alpha.6",
+      "max_stable_version": "2.12.5",
+      "yanked": false,
+      "stable_release": {
+        "num": "2.12.5",
+        "created_at": "2026-10-21T11:54:45.622972Z",
+        "checksum": "5fb0244332cfb9cee7e2a568bf5da29a36ed8fdbd717f6f47a66b6b7b358c072",
+        "rust_version": "1.90",
+        "edition": "2024",
+        "license": "Apache-2.0 OR MIT"
+      },
+      "relevant_normal_build_dependencies": [
+        {
+          "crate_id": "gtk",
+          "req": "^0.18",
+          "kind": "normal",
+          "optional": false,
+          "target": "cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))"
+        },
+        {
+          "crate_id": "muda",
+          "req": "^0.20",
+          "kind": "normal",
+          "optional": false,
+          "target": "cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\", target_os = \"windows\", target_os = \"macos\"))"
+        },
+        {
+          "crate_id": "webkit2gtk",
+          "req": "^2",
+          "kind": "normal",
+          "optional": true,
+          "target": "cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))"
+        }
+      ]
+    }
+  }
+}
